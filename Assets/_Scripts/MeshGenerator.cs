@@ -1,18 +1,23 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace _Scripts
 {
     // Simple Mesh Generator
     // Generates a plane mesh
     // Based on Marching Squares Algorithm
-    public class MeshGenerator : MonoBehaviour
+    public class MeshGenerator
     {
         private SquareGrid squareGrid;
         private List<Vector3> vertices;
         private List<int> triangles;
 
-        public void GenerateMesh(double[,] map, float maxHeight,float squareSize) {
+        private Color[] colors;
+
+        public void GenerateMesh(Mesh mesh, Gradient gradient, float[,] map, float maxHeight, float squareSize)
+        {
             squareGrid = new SquareGrid(map, maxHeight, squareSize);
 
             vertices = new List<Vector3>();
@@ -22,22 +27,26 @@ namespace _Scripts
             {
                 for (int y = 0; y < squareGrid.squares.GetLength(1); y++)
                 {
-                    TriangulateSquare(squareGrid.squares[x,y]);
+                    TriangulateSquare(squareGrid.squares[x, y]);
                 }
             }
 
-            Mesh mesh = new Mesh();
-            GetComponent<MeshFilter>().mesh = mesh;
+            AssignColor(gradient, vertices, maxHeight);
+
+            // Mesh mesh = new Mesh();
+            mesh.Clear();
 
             mesh.vertices = vertices.ToArray();
             mesh.triangles = triangles.ToArray();
+            mesh.colors = colors;
+
             mesh.RecalculateNormals();
         }
 
         void TriangulateSquare(Square square)
         {
             MeshFromPoints(square.topLeft, square.topRight, square.bottomRight, square.bottomLeft);
-            
+
             // switch (square.configuration)
             // {
             //     // case 0:
@@ -126,18 +135,20 @@ namespace _Scripts
             // }
         }
 
+        // Assign point as vertex
         void AssignVertices(Node[] points)
         {
             for (int i = 0; i < points.Length; i++)
             {
-                if (points[i].vertexIndex == -1)    // if node index unknown (index = -1), add to vertices and add index
+                if (points[i].vertexIndex == -1) // if node index unknown (index = -1), add to vertices and add index
                 {
                     points[i].vertexIndex = vertices.Count;
-                    vertices.Add(points[i].position);   // add vertex to vertices list, automatically increases vertices count
+                    vertices.Add(points[i].position); // add vertex to vertices list, automatically increases vertices count
                 }
             }
         }
 
+        // Create triangle from nodes
         void CreateTriangle(Node a, Node b, Node c)
         {
             triangles.Add(a.vertexIndex);
@@ -145,40 +156,39 @@ namespace _Scripts
             triangles.Add(c.vertexIndex);
         }
 
-        // void OnDrawGizmos() {
-        //     if (squareGrid != null) {
-        //         for (int x = 0; x < squareGrid.squares.GetLength(0); x ++) {
-        //             for (int y = 0; y < squareGrid.squares.GetLength(1); y ++) {
-        //
-        //                 Gizmos.color = (squareGrid.squares[x,y].topLeft.active)?Color.black:Color.white;
-        //                 Gizmos.DrawCube(squareGrid.squares[x,y].topLeft.position, Vector3.one * .4f);
-        //
-        //                 Gizmos.color = (squareGrid.squares[x,y].topRight.active)?Color.black:Color.white;
-        //                 Gizmos.DrawCube(squareGrid.squares[x,y].topRight.position, Vector3.one * .4f);
-        //
-        //                 Gizmos.color = (squareGrid.squares[x,y].bottomRight.active)?Color.black:Color.white;
-        //                 Gizmos.DrawCube(squareGrid.squares[x,y].bottomRight.position, Vector3.one * .4f);
-        //
-        //                 Gizmos.color = (squareGrid.squares[x,y].bottomLeft.active)?Color.black:Color.white;
-        //                 Gizmos.DrawCube(squareGrid.squares[x,y].bottomLeft.position, Vector3.one * .4f);
-        //
-        //
-        //                 Gizmos.color = Color.grey;
-        //                 Gizmos.DrawCube(squareGrid.squares[x,y].centreTop.position, Vector3.one * .15f);
-        //                 Gizmos.DrawCube(squareGrid.squares[x,y].centreRight.position, Vector3.one * .15f);
-        //                 Gizmos.DrawCube(squareGrid.squares[x,y].centreBottom.position, Vector3.one * .15f);
-        //                 Gizmos.DrawCube(squareGrid.squares[x,y].centreLeft.position, Vector3.one * .15f);
-        //
-        //             }
-        //         }
-        //     }
-        // }
+        // Assign the color to the vertex
+        void AssignColor(Gradient gradient, List<Vector3> vertices, float maxHeight)
+        {
+            float min = maxHeight;
+            float max = 0;
+            colors = new Color[vertices.Count];
+
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                // Debug.Log("vertices[i].y: " + vertices[i].y);
+                float height = Mathf.InverseLerp(0.0f, maxHeight, vertices[i].y);
+                colors[i] = gradient.Evaluate(height);
+
+                if (vertices[i].y < min)
+                {
+                    min = vertices[i].y;
+                    // Debug.Log(minHeight);
+                }
+                if (vertices[i].y > max)
+                {
+                    max = vertices[i].y;
+                    // Debug.Log(minHeight);
+                }
+            }
+            Debug.Log("minHeight: " + min);
+            Debug.Log("maxHeight: " + max);
+        }
 
         private class SquareGrid
         {
             public Square[,] squares;
 
-            public SquareGrid(double[,] map, float maxHeight, float squareSize)
+            public SquareGrid(float[,] map, float maxHeight, float squareSize)
             {
                 int nodeCountX = map.GetLength(0);
                 int nodeCountY = map.GetLength(1);
@@ -190,13 +200,14 @@ namespace _Scripts
                 // create control nodes
                 for (int x = 0; x < nodeCountX; x++)
                 {
-                    for (int y = 0; y < nodeCountY; y++)
+                    for (int z = 0; z < nodeCountY; z++)
                     {
-                        Vector3 pos = new Vector3(-mapWidth / 2 + x * squareSize + squareSize / 2, (float) map[x, y] * maxHeight, -mapHeigth / 2 + y * squareSize + squareSize / 2);
-                        nodes[x, y] = new Node(pos);
+                        Vector3 pos = new Vector3(-mapWidth / 2 + x * squareSize + squareSize / 2, 
+                            (float)map[x, z] * maxHeight, -mapHeigth / 2 + z * squareSize + squareSize / 2);
+                        nodes[x, z] = new Node(pos);
                     }
                 }
-            
+
                 // create squares from nodes
                 squares = new Square[nodeCountX - 1, nodeCountY - 1];
                 for (int x = 0; x < nodeCountX - 1; x++)

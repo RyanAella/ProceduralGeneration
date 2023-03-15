@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace _Scripts
@@ -6,26 +7,27 @@ namespace _Scripts
      * This class controls the entire generation process.
      * All required parameters are collected in it and passed to the corresponding methods.
      */
-    public class MapGenerator : MonoBehaviour
+    [Serializable]
+    public class MapGenerator
     {
         // Resolution: default 16:9
-        [SerializeField] private Vector2Int resolution = new(128, 72);
+        [SerializeField] private Vector2Int resolution = new(16, 16);
 
         // General
-        [Header("General")] [Range(0, 100)] public int fillPercentage = 45;
+        // [Header("General")] [Range(0, 100)] public int fillPercentage = 45;
 
         // Seed
-        [Header("Seed")] public bool useRandomSeed = true;
+        [Header("Seed")] public bool useRandomSeed = false;
         public string seed = "Hello World!";
         [Range(1000.0f, 1000000.0f)] public float seedScale = 100000.0f;
 
         // Gradient noise settings
-        [Header("Gradient Noise")] [Range(0.0f, 1.0f)]
-        public float noiseScale = 0.033f;
-        
-        // Height and Square size
-        public float terrainHeight = 1.0f;
-        public float squareSize = 1.0f;
+        [Header("Gradient Noise")] [Range(0.0f, 1.0f)] [SerializeField]
+        private float noiseScale = 0.325f;
+
+        [SerializeField] private int octaves = 3;
+        [SerializeField] private float amplitude = 0.05f;
+        [SerializeField] private float frequency = 2.0f;
 
         // Script access
         // private CellMapGenerator _cellMapGenerator;
@@ -62,34 +64,20 @@ namespace _Scripts
         // // private CellDebugger _debugger;
 
 
-        double[,] map;
+        float[,] map;
 
-        void Start()
+        public float[,] GenerateMap(Mesh mesh, Gradient gradient)
         {
-            GenerateMap();
-        }
-
-        void Update()
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                GenerateMap();
-            }
-        }
-
-        void GenerateMap()
-        {
-            map = new double[resolution.x, resolution.y];
+            map = new float[resolution.x, resolution.y];
             FillMap();
 
-            MeshGenerator meshGen = GetComponent<MeshGenerator>();
-            meshGen.GenerateMesh(map, terrainHeight, squareSize);
+            return map;
         }
 
         void FillMap()
         {
-            float threshold;
-            double noiseValue;
+            // float threshold;
+            float noiseValue;
             int width = resolution.x;
             int height = resolution.y;
 
@@ -101,26 +89,36 @@ namespace _Scripts
 
             float seedOffset = seed.GetHashCode() / seedScale;
 
-            for (int x = 0; x < width; x++)
+            float fr = frequency;
+            float amp = amplitude;
+
+            for (int l = 0; l < octaves; l++)
             {
-                for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
                 {
-                    // Get the coordinates
-                    float sampleX = (x + seedOffset) * noiseScale;
-                    float sampleZ = (y + seedOffset) * noiseScale;
+                    for (int y = 0; y < height; y++)
+                    {
+                        // Get the coordinates
+                        float sampleX = ((float)x + seedOffset) /*/ width*/ * noiseScale ;
+                        float sampleZ = ((float)y + seedOffset) /*/ height*/ * noiseScale ;
 
-                    // if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
-                    // {
-                    //     map[x, y] = 1;
-                    //     break;
-                    // }
+                        // if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
+                        // {
+                        //     map[x, y] = 1;
+                        //     break;
+                        // }
 
-                    // Interpolate between 0.0 and 1.0 by settings.percentage / 100
-                    threshold = Mathf.Lerp(0.0f, 1.0f, (float)fillPercentage / 100);
-                    noiseValue = Mathf.PerlinNoise(sampleX, sampleZ);
+                        fr = Mathf.Pow(frequency, l);
+                        amp = Mathf.Pow(amplitude, l);
 
-                    map[x, y] = noiseValue; //(noiseValue < threshold) ? 1 : 0;
-                    Debug.Log("noiseValue: " + noiseValue);
+                        // Interpolate between 0.0 and 1.0 by settings.percentage / 100
+                        // threshold = Mathf.Lerp(0.0f, 1.0f, (float)fillPercentage / 100);
+                        noiseValue = (Mathf.PerlinNoise(sampleX + fr, sampleZ + fr));
+
+                        noiseValue = amp * noiseValue;
+
+                        map[x, y] += noiseValue;
+                    }
                 }
             }
         }
@@ -147,23 +145,6 @@ namespace _Scripts
         //     }
         //
         //     return wallCount;
-        // }
-
-
-        // void OnDrawGizmos()
-        // {
-        //     if (map != null)
-        //     {
-        //         for (int x = 0; x < resolution.x; x++)
-        //         {
-        //             for (int y = 0; y < resolution.y; y++)
-        //             {
-        //                 Gizmos.color = (map[x, y] == 1) ? Color.black : Color.white;
-        //                 Vector3 pos = new Vector3(-resolution.x / 2 + x + .5f, 0, -resolution.y / 2 + y + .5f);
-        //                 Gizmos.DrawCube(pos, Vector3.one);
-        //             }
-        //         }
-        //     }
         // }
     }
 }
