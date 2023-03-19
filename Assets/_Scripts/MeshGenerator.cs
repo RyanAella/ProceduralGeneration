@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace _Scripts
 {
@@ -13,15 +12,16 @@ namespace _Scripts
         private SquareGrid squareGrid;
         private List<Vector3> vertices;
         private List<int> triangles;
+        private List<Vector2> uvs;
 
-        private Color[] colors;
 
-        public void GenerateMesh(Mesh mesh, Gradient gradient, float[,] map, float maxHeight, float squareSize)
+        public void GenerateMesh(Mesh mesh, float[,] map, float maxHeight, float squareSize)
         {
             squareGrid = new SquareGrid(map, maxHeight, squareSize);
 
             vertices = new List<Vector3>();
             triangles = new List<int>();
+            uvs = new List<Vector2>();
 
             for (int x = 0; x < squareGrid.squares.GetLength(0); x++)
             {
@@ -31,14 +31,24 @@ namespace _Scripts
                 }
             }
 
-            AssignColor(gradient, vertices, maxHeight);
+            int resolutionX = map.GetLength(0);
+            int resolutionY = map.GetLength(1);
+
+            // uvs
+            for (int x = 0; x < resolutionX; x++)
+            {
+                for (int y = 0; y < resolutionY; y++)
+                {
+                    uvs.Add(new Vector2((float) x / resolutionX, (float) y / resolutionY));
+                }
+            }
 
             // Mesh mesh = new Mesh();
             mesh.Clear();
 
             mesh.vertices = vertices.ToArray();
             mesh.triangles = triangles.ToArray();
-            mesh.colors = colors;
+            mesh.uv = uvs.ToArray();
 
             mesh.RecalculateNormals();
         }
@@ -156,34 +166,6 @@ namespace _Scripts
             triangles.Add(c.vertexIndex);
         }
 
-        // Assign the color to the vertex
-        void AssignColor(Gradient gradient, List<Vector3> vertices, float maxHeight)
-        {
-            float min = maxHeight;
-            float max = 0;
-            colors = new Color[vertices.Count];
-
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                // Debug.Log("vertices[i].y: " + vertices[i].y);
-                float height = Mathf.InverseLerp(0.0f, maxHeight, vertices[i].y);
-                colors[i] = gradient.Evaluate(height);
-
-                if (vertices[i].y < min)
-                {
-                    min = vertices[i].y;
-                    // Debug.Log(minHeight);
-                }
-                if (vertices[i].y > max)
-                {
-                    max = vertices[i].y;
-                    // Debug.Log(minHeight);
-                }
-            }
-            Debug.Log("minHeight: " + min);
-            Debug.Log("maxHeight: " + max);
-        }
-
         private class SquareGrid
         {
             public Square[,] squares;
@@ -193,7 +175,7 @@ namespace _Scripts
                 int nodeCountX = map.GetLength(0);
                 int nodeCountY = map.GetLength(1);
                 float mapWidth = nodeCountX * squareSize;
-                float mapHeigth = nodeCountY * squareSize;
+                float mapHeight = nodeCountY * squareSize;
 
                 Node[,] nodes = new Node[nodeCountX, nodeCountY];
 
@@ -203,7 +185,7 @@ namespace _Scripts
                     for (int z = 0; z < nodeCountY; z++)
                     {
                         Vector3 pos = new Vector3(-mapWidth / 2 + x * squareSize + squareSize / 2, 
-                            (float)map[x, z] * maxHeight, -mapHeigth / 2 + z * squareSize + squareSize / 2);
+                            (float)map[x, z] * maxHeight, -mapHeight / 2 + z * squareSize + squareSize / 2);
                         nodes[x, z] = new Node(pos);
                     }
                 }
@@ -266,9 +248,9 @@ namespace _Scripts
             public Vector3 position;
             public int vertexIndex = -1;
 
-            public Node(Vector3 _pos)
+            public Node(Vector3 pos)
             {
-                position = _pos;
+                position = pos;
             }
         }
 

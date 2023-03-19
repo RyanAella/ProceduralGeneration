@@ -10,8 +10,8 @@ namespace _Scripts
     [Serializable]
     public class MapGenerator
     {
-        // Resolution: default 16:9
-        [SerializeField] private Vector2Int resolution = new(16, 16);
+        // // Resolution: default 16:9
+        // [SerializeField] private Vector2Int resolution = new(16, 16);
 
         // General
         // [Header("General")] [Range(0, 100)] public int fillPercentage = 45;
@@ -26,8 +26,8 @@ namespace _Scripts
         private float noiseScale = 0.325f;
 
         [SerializeField] private int octaves = 3;
-        [SerializeField] private float amplitude = 0.05f;
-        [SerializeField] private float frequency = 2.0f;
+        [SerializeField] private float persistance = 0.5f;
+        [SerializeField] private float lacunarity = 2.0f;
 
         // Script access
         // private CellMapGenerator _cellMapGenerator;
@@ -64,19 +64,10 @@ namespace _Scripts
         // // private CellDebugger _debugger;
 
 
-        float[,] map;
+        // float[,] map;
 
-        public float[,] GenerateMap(Mesh mesh, Gradient gradient)
+        /*public float[,] GenerateMap(Vector2Int resolution, float[,] map)
         {
-            map = new float[resolution.x, resolution.y];
-            FillMap();
-
-            return map;
-        }
-
-        void FillMap()
-        {
-            // float threshold;
             float noiseValue;
             int width = resolution.x;
             int height = resolution.y;
@@ -99,8 +90,8 @@ namespace _Scripts
                     for (int y = 0; y < height; y++)
                     {
                         // Get the coordinates
-                        float sampleX = ((float)x + seedOffset) /*/ width*/ * noiseScale ;
-                        float sampleZ = ((float)y + seedOffset) /*/ height*/ * noiseScale ;
+                        float sampleX = ((x - width / 2) + seedOffset) * noiseScale ;
+                        float sampleZ = ((y - height / 2) + seedOffset) * noiseScale ;
 
                         // if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
                         // {
@@ -121,8 +112,81 @@ namespace _Scripts
                     }
                 }
             }
-        }
 
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    Debug.Log("Value at [" + x + ", " + y + "]: "+ map[x,y]);
+                }
+            }
+            
+            return map;
+        }*/
+
+        public float[,] GenerateMap2(float[,] map)
+        {
+            // setting min and max value for comparison
+            float maxValue = float.MinValue;    // initialize maxValue to the smallest possible float value, 
+            float minValue = float.MaxValue;    // initialize minValue to the biggest possible float value, -> both will be changed
+            
+            float width = map.GetLength(0);
+            float height = map.GetLength(1);
+            
+            // Check if a random seed is wanted
+            if (useRandomSeed)
+            {
+                seed = Time.realtimeSinceStartupAsDouble.ToString();
+            }
+
+            float seedOffset = seed.GetHashCode() / seedScale;
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    float value = 0.0f;
+                    float frequency = 1.0f;
+                    float amplitude = 1.0f;
+                    
+                    for (int l = 0; l < octaves; l++)
+                    {
+                        // Get the coordinates
+                        float sampleX = ((x - width / 2) + seedOffset) * noiseScale ;
+                        float sampleZ = ((y - height / 2) + seedOffset) * noiseScale ;
+
+                        // calculate noise value with modified amplitude and frequency
+                        value += amplitude * Mathf.PerlinNoise(sampleX * frequency, sampleZ * frequency);
+                        
+                        frequency *= lacunarity;  // double the frequency each octave
+                        amplitude *= persistance;  // half the amplitude
+                    }
+
+                    if (value > maxValue)
+                    {
+                        maxValue = value;
+                    } else if (value < minValue)
+                    {
+                        minValue = value;
+                    }
+
+                    // add value to point xy
+                    map[x, y] = value;
+                }
+            }
+            
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    // Debug.Log("Value at [" + x + ", " + y + "] before lerp: "+ map[x,y]);
+                    map[x, y] = Mathf.InverseLerp(minValue, maxValue, map[x, y]);
+                    // Debug.Log("Value at [" + x + ", " + y + "] after lerp: "+ map[x,y]);
+                }
+            }
+            
+            return map;
+        }
         // int GetSurroundingWallCount(int gridX, int gridY)
         // {
         //     int wallCount = 0;
