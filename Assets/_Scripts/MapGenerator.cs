@@ -84,7 +84,7 @@ namespace _Scripts
             // Check if a random seed is wanted
             if (useRandomSeed)
             {
-                seed = Time.realtimeSinceStartupAsDouble.ToString();
+                // seed = Time.realtimeSinceStartupAsDouble.ToString();
             }
 
             float seedOffset = seed.GetHashCode() / seedScale;
