@@ -1,5 +1,6 @@
 using System;
 using _Scripts.ScriptableObjects;
+using _Scripts.Time;
 using UnityEngine;
 
 namespace _Scripts
@@ -25,6 +26,9 @@ namespace _Scripts
         // For the use of OnValidate()
         private bool _scriptLoaded;
 
+        private TimeManager _timer;
+
+
         void Awake()
         {
             meshRenderer = GetComponent<MeshRenderer>();
@@ -33,6 +37,9 @@ namespace _Scripts
 
         void Start()
         {
+            // ingame timer reference
+            _timer = TimeManager.Instance;
+
             // später WaterGenerator und sein Object instantiaten
 
             mesh = new Mesh()
@@ -80,5 +87,12 @@ namespace _Scripts
             ColorGenerator colorGenerator = new ColorGenerator();
             colorGenerator.AssignColor(gradient, mesh, maxTerrainHeight);
         }
+
+
+        // private void Update()
+        // {
+        //     Debug.Log(
+        //         $"Year {timer.Year:00}, Month {timer.Month:00}, Week {timer.Week:00}");
+        // }
     }
 }
