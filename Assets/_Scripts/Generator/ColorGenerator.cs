@@ -1,14 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace _Scripts
+namespace _Scripts.Generator
 {
-    public class ColorGenerator
+    public static class ColorGenerator
     {
-        // private List<Vector3> vertices;
-
         // Assign the color to the vertex
-        public void AssignColor(Gradient gradient, Mesh mesh, float maxHeight)
+        public static void AssignColor(Gradient gradient, Mesh mesh, float maxHeight)
         {
             Color[] colors = new Color[mesh.vertices.Length];
 
