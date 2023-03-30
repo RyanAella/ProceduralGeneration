@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using _Scripts.ScriptableObjects;
 using UnityEngine;
 
 namespace _Scripts.Generator
@@ -16,15 +17,12 @@ namespace _Scripts.Generator
         /// <summary>
         /// This method generates the mesh.
         /// </summary>
-        /// <param name="mesh">The final mesh.</param>
-        /// <param name="map">The heightmap.</param>
-        /// <param name="maxHeight">The maximum height of the final mesh.</param>
-        /// <param name="squareSize">The size per square.</param>
-        public static void GenerateMesh(Mesh mesh, float[,] map, float maxHeight, float squareSize)
+        /// <param name="mesh">The final mesh</param>
+        /// <param name="map">The heightmap</param>
+        /// <param name="generalSettings">The general settings of the simulation</param>
+        public static void GenerateMesh(Mesh mesh, float[,] map, GeneralSettings generalSettings)
         {
-            // Create a new SquareGrid
-            _squareGrid = new SquareGrid(map, maxHeight, squareSize);
-
+            _squareGrid = new SquareGrid(map, generalSettings.maxTerrainHeight, generalSettings.squareSize);
             _vertices = new List<Vector3>();
             _triangles = new List<int>();
             _uvs = new List<Vector2>();
@@ -46,7 +44,7 @@ namespace _Scripts.Generator
             {
                 for (int y = 0; y < resolutionY; y++)
                 {
-                    _uvs.Add(new Vector2((float) x / resolutionX, (float) y / resolutionY));
+                    _uvs.Add(new Vector2((float)x / resolutionX, (float)y / resolutionY));
                 }
             }
 
@@ -98,7 +96,8 @@ namespace _Scripts.Generator
                 if (point.VertexIndex == -1) // if node index unknown (index = -1), add to vertices and add index
                 {
                     point.VertexIndex = _vertices.Count;
-                    _vertices.Add(point.Position); // add vertex to vertices list, automatically increases vertices count
+                    _vertices.Add(point
+                        .Position); // add vertex to vertices list, automatically increases vertices count
                 }
             }
         }
@@ -122,7 +121,7 @@ namespace _Scripts.Generator
         private class SquareGrid
         {
             public readonly Square[,] squares;
-            
+
             /// <param name="map"></param>
             /// <param name="maxHeight"></param>
             /// <param name="squareSize"></param>
@@ -140,8 +139,8 @@ namespace _Scripts.Generator
                 {
                     for (int z = 0; z < nodeCountY; z++)
                     {
-                        Vector3 pos = new Vector3(-mapWidth / 2 + x * squareSize + squareSize / 2, 
-                            (float)map[x, z] * maxHeight, -mapHeight / 2 + z * squareSize + squareSize / 2);
+                        Vector3 pos = new Vector3(-mapWidth / 2 + x * squareSize + squareSize / 2,
+                            map[x, z] * maxHeight, -mapHeight / 2 + z * squareSize + squareSize / 2);
                         nodes[x, z] = new Node(pos);
                     }
                 }

@@ -5,7 +5,12 @@ namespace _Scripts.Generator
 {
     public static class ColorGenerator
     {
-        // Assign the color to the vertex
+        /// <summary>
+        /// Assign the color to the vertex.
+        /// </summary>
+        /// <param name="gradient">The color gradient.</param>
+        /// <param name="mesh">The mesh.</param>
+        /// <param name="maxHeight">The maximum terrain height.</param>
         public static void AssignColor(Gradient gradient, Mesh mesh, float maxHeight)
         {
             Color[] colors = new Color[mesh.vertices.Length];

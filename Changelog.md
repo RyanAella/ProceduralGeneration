@@ -1,6 +1,20 @@
 ﻿# Changelog World Generation
 
 
+## [0.5.1] - 2023-03-30
+## Added
+- Classes:
+  - NoiseGenerator
+- ScriptableObjects
+  - GeneralSettings
+
+## Changed
+  - MapGenerator -> GroundGenerator
+
+- CodeCleanup
+- CodeRefactoring
+
+
 ## [0.4.0] - 2023-03-23
 ## Added
 - Classes:
@@ -10,8 +24,9 @@
     - Check for correct input
     - 3 different timeScales
     - Resume
-    - Pause
-- Changed:
+    - Pause 
+  
+## Changed
   - MapGenerator -> GroundGenerator
   - WaterGenerator
   - MeshGenerator

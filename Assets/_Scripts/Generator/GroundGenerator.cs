@@ -1,115 +1,156 @@
-using System;
+using _Scripts.Helper;
+using _Scripts.ScriptableObjects;
+using _Scripts.Time;
 using UnityEngine;
 
 namespace _Scripts.Generator
 {
     /// <summary>
-    /// Class <c>GroundGenerator</c> (Singleton) generates the ground map.
+    /// This class controls the generation of the ground and water maps and meshes.
     /// </summary>
-    [Serializable]
-    public class GroundGenerator
+    [RequireComponent(typeof(MeshFilter))]
+    public class GroundGenerator : MonoBehaviour
     {
-        // Seed
-        [Header("Seed")] public bool useRandomSeed = false;
-        public string seed = "Hello World!";
-        [Range(1000.0f, 1000000.0f)] public float seedScale = 100000.0f;
+        // [SerializeField]
+        [SerializeField] private GeneralSettings generalSettings;
+        [SerializeField] private NoiseGenerator noiseGenerator;
+        [SerializeField] private Gradient gradient;
 
-        // Gradient noise settings
-        [Header("Gradient Noise")] [Range(0.0f, 1.0f)] [SerializeField] private float noiseScale = 0.325f;
-        [SerializeField] private int octaves = 3;
-        [SerializeField] private float persistence = 0.5f;
-        [SerializeField] private float lacunarity = 2.0f;
-
-        /** 
-         * <param name="map"> The map which needs to contain the heightmap.</param>
-         * <returns> The final heightmap</returns>
-         */
-        public float[,] GenerateMap(float[,] map)
-        {
-            // setting min and max value for comparison
-            float maxValue = float.MinValue;    // initialize maxValue to the smallest possible float value, 
-            float minValue = float.MaxValue;    // initialize minValue to the biggest possible float value, -> both will be changed
-            
-            float width = map.GetLength(0);
-            float height = map.GetLength(1);
-            
-            // Check if a random seed is wanted
-            if (useRandomSeed)
-            {
-                seed = UnityEngine.Time.realtimeSinceStartupAsDouble.ToString();
-            }
-
-            float seedOffset = seed.GetHashCode() / seedScale;
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    float value = 0.0f;
-                    float frequency = 1.0f;
-                    float amplitude = 1.0f;
-                    
-                    for (int l = 0; l < octaves; l++)
-                    {
-                        // Get the coordinates
-                        float sampleX = ((x - width / 2) + seedOffset) * noiseScale ;
-                        float sampleZ = ((y - height / 2) + seedOffset) * noiseScale ;
-
-                        // calculate noise value with modified amplitude and frequency
-                        value += amplitude * Mathf.PerlinNoise(sampleX * frequency, sampleZ * frequency);
-                        
-                        frequency *= lacunarity;  // double the frequency each octave
-                        amplitude *= persistence;  // half the amplitude
-                    }
-
-                    // Get the new min and max values
-                    if (value > maxValue)
-                    {
-                        maxValue = value;
-                    } else if (value < minValue)
-                    {
-                        minValue = value;
-                    }
-
-                    // add value to point xy
-                    map[x, y] = value;
-                }
-            }
-            
-            // Get each point back into bounds
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    map[x, y] = Mathf.InverseLerp(minValue, maxValue, map[x, y]);
-                }
-            }
-            
-            return map;
-        }
+        // public
+        public GameObject DemoCarrot;
+        public GameObject DemoBurrow;
         
-        // int GetSurroundingWallCount(int gridX, int gridY)
+        // private
+        private Mesh _mesh;
+        private MeshRenderer _meshRenderer;
+        
+        private Spawner _spawner;
+        private TimeManager _timer;
+        private ValueClamp _clamp;
+
+        private float[,] _map;
+        private Vector2[] _boundaries;
+
+        // For the use of OnValidate()
+        private bool _scriptLoaded;
+
+        // Only for Debugging
+        private bool _running;
+
+        private void Start()
+        {
+            _meshRenderer = GetComponent<MeshRenderer>();
+            _meshRenderer.enabled = true;
+
+            _timer = TimeManager.Instance;
+            _clamp = new ValueClamp();
+            _spawner = new Spawner();
+            noiseGenerator = new NoiseGenerator();
+
+            _mesh = new Mesh()
+            {
+                name = "Ground Mesh"
+            };
+
+            gameObject.tag = "Ground";
+            gameObject.layer = LayerMask.NameToLayer("Ground");
+
+            GetComponent<MeshFilter>().sharedMesh = _mesh;
+
+            _map = new float[generalSettings.resolution.x, generalSettings.resolution.y];
+
+            for (int x = 0; x < generalSettings.resolution.x; x++)
+            {
+                for (int y = 0; y < generalSettings.resolution.y; y++)
+                {
+                    float sampleX = x - generalSettings.resolution.x / 2;
+                    float sampleY = y - generalSettings.resolution.y / 2;
+
+                    // _map[x, y] = _noiseGenerator.GenerateNoiseValue(sampleX, sampleY);
+                    _map[x, y] = noiseGenerator.GenerateNoiseValueWithFbm(sampleX, sampleY);
+                    
+                    _clamp.Compare(_map[x, y]);
+                }
+            }
+
+            // Get each point back into bounds
+            for (int x = 0; x < generalSettings.resolution.x; x++)
+            {
+                for (int y = 0; y < generalSettings.resolution.y; y++)
+                {
+                    _map[x, y] = _clamp.ClampValue(_map[x, y]);
+                }
+            }
+
+            MeshGenerator.GenerateMesh(_mesh, _map, generalSettings);
+            ColorGenerator.AssignColor(gradient, _mesh, generalSettings.maxTerrainHeight);
+
+            // _spawner.SpawnCarrot(DemoCarrot, GeneratorFunctions.GetSurfacePoint(2.3f, 4.7f, generalSettings, noiseGenerator, _clamp));
+            // _spawner.SpawnBurrow(DemoCarrot, GeneratorFunctions.GetSurfacePoint(5.4f, 4.7f, generalSettings, noiseGenerator, _clamp));
+            _spawner.SpawnBurrow(DemoCarrot, GeneratorFunctions.GetSurfacePoint(0.0f, 0.0f, generalSettings, noiseGenerator, _clamp));
+            _spawner.SpawnBurrow(DemoCarrot, GeneratorFunctions.GetSurfacePoint(8.0f, 8.0f, generalSettings, noiseGenerator, _clamp));
+            _spawner.SpawnBurrow(DemoCarrot, GeneratorFunctions.GetSurfacePoint(15.0f, 15.0f, generalSettings, noiseGenerator, _clamp));
+            // _spawner.SpawnBurrow(DemoCarrot, GeneratorFunctions.GetSurfacePoint(14.6f, 8.7f, generalSettings, noiseGenerator, _clamp));
+            // _spawner.SpawnBurrow(DemoCarrot, GeneratorFunctions.GetSurfacePoint(3.9f, 12.7f, generalSettings, noiseGenerator, _clamp));
+
+            _scriptLoaded = true;
+            _running = true;
+        }
+
+        // private void OnValidate()
         // {
-        //     int wallCount = 0;
-        //     for (int neighbourX = gridX - 1; neighbourX <= gridX + 1; neighbourX++)
-        //     {
-        //         for (int neighbourY = gridY - 1; neighbourY <= gridY + 1; neighbourY++)
-        //         {
-        //             if (neighbourX >= 0 && neighbourX < width && neighbourY >= 0 && neighbourY < height)
-        //             {
-        //                 if (neighbourX != gridX || neighbourY != gridY)
-        //                 {
-        //                     wallCount += map[neighbourX, neighbourY];
-        //                 }
-        //             }
-        //             else
-        //             {
-        //                 wallCount++;
-        //             }
-        //         }
-        //     }
+        //     if (!_scriptLoaded) return;
         //
-        //     return wallCount;
+        //     // später WaterGenerator und sein Object instantiaten
+        //
+        //     _mesh = new Mesh()
+        //     {
+        //         name = "Ground Mesh"
+        //     };
+        //
+        //     gameObject.tag = "Ground";
+        //     gameObject.layer = LayerMask.NameToLayer("Ground");
+        //
+        //     GetComponent<MeshFilter>().sharedMesh = _mesh;
+        //
+        //     // groundGenerator = new GroundGenerator();
+        //     // _map = new float[generalSettings.resolution.x, generalSettings.resolution.y];
+        //     // _map = groundGenerator.GenerateMap(_map);
+        //
+        //     MeshGenerator.GenerateMesh(_mesh, _map, generalSettings.maxTerrainHeight, generalSettings.squareSize);
+        //     ColorGenerator.AssignColor(gradient, _mesh, generalSettings.maxTerrainHeight);
         // }
+
+        private void Update()
+        {
+            // Debug.Log(_timer.GetCurrentDate().ToString("/"));
+
+            // Only for Debugging
+            if (Input.GetKeyDown(KeyCode.P) && _running)
+            {
+                _timer.Stop();
+                _running = false;
+            }
+            else if (Input.GetKeyDown(KeyCode.P) && !_running)
+            {
+                _timer.Resume();
+                _running = true;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha1) && _running)
+            {
+                _timer.SetTimeScale(1.0f);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha2) && _running)
+            {
+                _timer.SetTimeScale(2.0f);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha3) && _running)
+            {
+                _timer.SetTimeScale(3.0f);
+            }
+        }
     }
 }
