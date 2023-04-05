@@ -1,6 +1,11 @@
 ﻿# Changelog World Generation
 
 
+## [0.5.2] - 2023-04-05
+## Added
+- Mesh Collider
+
+
 ## [0.5.1] - 2023-03-30
 ## Added
 - Classes:

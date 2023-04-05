@@ -299,6 +299,7 @@ GameObject:
   - component: {fileID: 322203371}
   - component: {fileID: 322203374}
   - component: {fileID: 322203373}
+  - component: {fileID: 322203375}
   m_Layer: 4
   m_Name: Water
   m_TagString: Untagged
@@ -384,6 +385,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &322203375
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322203370}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 279590105}
 --- !u!1 &478983657
 GameObject:
   m_ObjectHideFlags: 0
@@ -868,9 +883,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1755731338}
+  - component: {fileID: 1755731342}
   - component: {fileID: 1755731341}
   - component: {fileID: 1755731343}
-  - component: {fileID: 1755731342}
+  - component: {fileID: 1755731344}
   m_Layer: 0
   m_Name: Ground
   m_TagString: Untagged
@@ -994,4 +1010,18 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1755731336}
+  m_Mesh: {fileID: 765355699}
+--- !u!64 &1755731344
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755731336}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
   m_Mesh: {fileID: 765355699}
