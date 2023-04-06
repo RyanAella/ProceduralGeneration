@@ -318,9 +318,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7aaec0fe5590dfd43bc15ec6c034417c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolution: {x: 150, y: 150}
-  maxTerrainHeight: 10
-  squareSize: 1
+  generalSettings: {fileID: 11400000, guid: 22871bac2f6726641b0f5d842a4349ec, type: 2}
 --- !u!4 &322203372
 Transform:
   m_ObjectHideFlags: 0
@@ -364,7 +362,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6a230fb9fe4760646bb092a435a68980, type: 2}
+  - {fileID: 2100000, guid: 4e6f4df06a6660c428c651e485befe0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -946,11 +944,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1755731336}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c0fc068182ddbb4591921dbbb37ba66, type: 3}
+  m_Script: {fileID: 11500000, guid: b155aacf199ddfa4883f8c890efca703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolution: {x: 16, y: 16}
-  groundGenerator:
+  generalSettings: {fileID: 11400000, guid: 22871bac2f6726641b0f5d842a4349ec, type: 2}
+  noiseGenerator:
     useRandomSeed: 0
     seed: Hello World!
     seedScale: 100000
@@ -962,10 +960,10 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 0.6623015, g: 0.6886792, b: 0.40606087, a: 1}
     key1: {r: 0.770984, g: 0.8018868, b: 0.5182004, a: 1}
-    key2: {r: 0.7988608, g: 0.8301887, b: 0.54432184, a: 1}
-    key3: {r: 0.19090424, g: 0.735849, b: 0.3413741, a: 1}
-    key4: {r: 0.18925084, g: 0.6596497, b: 0.31798002, a: 1}
-    key5: {r: 0.18783373, g: 0.5943396, b: 0.29792905, a: 1}
+    key2: {r: 0.7988608, g: 0.8301887, b: 0.54432184, a: 0}
+    key3: {r: 0.19090424, g: 0.735849, b: 0.3413741, a: 0}
+    key4: {r: 0.18925084, g: 0.6596497, b: 0.31798002, a: 0}
+    key5: {r: 0.18783373, g: 0.5943396, b: 0.29792905, a: 0}
     key6: {r: 0.5660378, g: 0.5633678, b: 0.5633678, a: 0}
     key7: {r: 1, g: 1, b: 1, a: 0}
     ctime0: 0
@@ -978,17 +976,16 @@ MonoBehaviour:
     ctime7: 65535
     atime0: 0
     atime1: 65535
-    atime2: 65535
-    atime3: 65535
-    atime4: 65535
-    atime5: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 0
     m_NumColorKeys: 8
     m_NumAlphaKeys: 2
-  maxTerrainHeight: 10
-  squareSize: 10
+  DemoCarrot: {fileID: 4740231162571601898, guid: 5e3031ac9c1c8ec4d9d2b229365ad20b, type: 3}
 --- !u!33 &1755731343
 MeshFilter:
   m_ObjectHideFlags: 0

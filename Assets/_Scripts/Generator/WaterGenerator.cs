@@ -25,6 +25,7 @@ namespace _Scripts.Generator
         {
             if (_instance == null)
             {
+                transform.parent = null;
                 DontDestroyOnLoad(gameObject);
                 _instance = this;
             }

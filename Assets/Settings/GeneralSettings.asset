@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: GeneralSettings
   m_EditorClassIdentifier: 
   resolution: {x: 16, y: 16}
+  maxTerrainHeight: 10
+  squareSize: 10

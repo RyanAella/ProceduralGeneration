@@ -18,7 +18,7 @@ namespace _Scripts.Generator
 
         // public
         public GameObject DemoCarrot;
-        public GameObject DemoBurrow;
+        // public GameObject DemoBurrow;
         
         // private
         private Mesh _mesh;
