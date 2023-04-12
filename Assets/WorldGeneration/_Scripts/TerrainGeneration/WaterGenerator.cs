@@ -1,41 +1,41 @@
-using _Scripts.ScriptableObjects;
 using UnityEngine;
+using WorldGeneration._Scripts.ScriptableObjects;
 
-namespace _Scripts.Generator
+namespace WorldGeneration._Scripts.TerrainGeneration
 {
     /// <summary>
     /// This class generates the water map.
     /// </summary>
     public class WaterGenerator : MonoBehaviour
     {
-        // [SerializeField]
-        [SerializeField] private GeneralSettings generalSettings;
-
         // private
-        private static WaterGenerator _instance;
-        
+        public static WaterGenerator Instance;
+
         private float[,] _map;
         private Mesh _mesh;
         private MeshRenderer _meshRenderer;
 
-        // For the use of OnValidate()
-        private bool _scriptLoaded;
-
         private void Awake()
         {
-            if (_instance == null)
+            if (Instance == null)
             {
                 transform.parent = null;
                 DontDestroyOnLoad(gameObject);
-                _instance = this;
+                Instance = this;
             }
-            else if (_instance != this)
+            else if (Instance != this)
             {
                 Destroy(gameObject);
             }
         }
 
-        private void Start()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="resolution"></param>
+        /// <param name="maxTerrainHeight"></param>
+        /// <param name="generalSettings"></param>
+        public void GenerateWater(Vector2Int resolution, float maxTerrainHeight, GeneralSettings generalSettings)
         {
             _meshRenderer = GetComponent<MeshRenderer>();
             _meshRenderer.enabled = true;
@@ -48,7 +48,7 @@ namespace _Scripts.Generator
             gameObject.tag = "Water";
             gameObject.layer = LayerMask.NameToLayer("Water");
 
-            _map = new float[generalSettings.resolution.x, generalSettings.resolution.y];
+            _map = new float[resolution.x, resolution.y];
 
             // // System.Random prng = new System.Random();
             // float prng = Random.Range(0.0f, 1.0f);
@@ -64,46 +64,12 @@ namespace _Scripts.Generator
             //     }
             // }
 
-            MeshGenerator.GenerateMesh(_mesh, _map, generalSettings);
+            MeshGenerator.GenerateMesh(_mesh, _map, maxTerrainHeight, generalSettings);
 
             GetComponent<MeshFilter>().sharedMesh = _mesh;
 
-            _scriptLoaded = true;
+            transform.position = new Vector3(transform.position.x, maxTerrainHeight / 3.0f,
+                transform.position.z);
         }
-
-        // private void OnValidate()
-        // {
-        //     if (!_scriptLoaded) return;
-        //     
-        //     // Debug.Log(Mathf.Lerp(-1.0f, 1.0f, 0.5f));
-        //     
-        //     _mesh = new Mesh()
-        //     {
-        //         name = "Water Mesh"
-        //     };
-        //
-        //     gameObject.tag = "Water";
-        //     gameObject.layer = LayerMask.NameToLayer("Water");
-        //     
-        //     _map = new float[generalSettings.resolution.x, generalSettings.resolution.y];
-        //     
-        //     // // System.Random prng = new System.Random();
-        //     // float prng = Random.Range(0.0f, 1.0f);
-        //     //
-        //     // int width = generalSettings.resolution.x;
-        //     // int height = generalSettings.resolution.y;
-        //     //
-        //     // for (int x = 0; x < width; x++)
-        //     // {
-        //     //     for (int y = 0; y < height; y++)
-        //     //     {
-        //     //         map[x, y] = 0.2f;//Mathf.Lerp(0.0f, 1.0f, (float) prng);
-        //     //     }
-        //     // }
-        //     
-        //     MeshGenerator.GenerateMesh(_mesh, _map, generalSettings.maxTerrainHeight, squareSize);
-        //     
-        //     GetComponent<MeshFilter>().sharedMesh = _mesh;
-        // }
     }
 }

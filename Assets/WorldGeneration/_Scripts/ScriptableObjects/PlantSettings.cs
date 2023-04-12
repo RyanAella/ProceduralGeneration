@@ -1,8 +1,7 @@
-using System;
-using _Scripts.Time;
+using Time;
 using UnityEngine;
 
-namespace _Scripts.ScriptableObjects
+namespace WorldGeneration._Scripts.ScriptableObjects
 {
     [CreateAssetMenu(menuName = "ScriptableObjects/Settings/Plant")]
     public class PlantSettings : ScriptableObject

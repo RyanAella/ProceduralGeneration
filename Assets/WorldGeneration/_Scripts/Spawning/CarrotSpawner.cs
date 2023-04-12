@@ -1,26 +1,19 @@
 using UnityEngine;
 
-namespace WorldGeneration._Scripts
+namespace WorldGeneration._Scripts.Spawning
 {
-    public class Spawner
+    public class CarrotSpawner : AssetSpawner
     {
-        public void SpawnBurrow(GameObject burrow, Vector3 burrowPos)
+        public override void Spawn(GameObject carrot, Vector3 carrotPos)
         {
-            // float xSize = mesh.
             // Vector3 newPos = new Vector3(Random.Range(xMin, xMax), Random.Range(yMin, yMax), 0);
             // GameObject octo = Instantiate(enemyPrefab, newPos, Quaternion.identity) as GameObject;
             
-            Object.Instantiate(burrow, burrowPos, Quaternion.identity);
-        }
-        
-        public void SpawnCarrot(GameObject carrot, Vector3 carrotPos)
-        {
             // float xSize = mesh.
             // Vector3 newPos = new Vector3(Random.Range(xMin, xMax), Random.Range(yMin, yMax), 0);
             // GameObject octo = Instantiate(enemyPrefab, newPos, Quaternion.identity) as GameObject;
             
             Object.Instantiate(carrot, carrotPos, Quaternion.identity);
         }
-        
     }
 }

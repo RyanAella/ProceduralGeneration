@@ -1,53 +1,62 @@
-using _Scripts.Helper;
-using _Scripts.ScriptableObjects;
-using _Scripts.Time;
 using UnityEngine;
+using WorldGeneration._Scripts.Helper;
+using WorldGeneration._Scripts.ScriptableObjects;
 
-namespace _Scripts.Generator
+namespace WorldGeneration._Scripts.TerrainGeneration
 {
     /// <summary>
-    /// This class controls the generation of the ground and water maps and meshes.
+    ///     This class controls the generation of the ground and water maps and meshes.
     /// </summary>
     [RequireComponent(typeof(MeshFilter))]
     public class GroundGenerator : MonoBehaviour
     {
         // [SerializeField]
-        [SerializeField] private GeneralSettings generalSettings;
-        [SerializeField] private NoiseGenerator noiseGenerator;
         [SerializeField] private Gradient gradient;
 
         // public
-        public GameObject DemoCarrot;
-        // public GameObject DemoBurrow;
+        public static GroundGenerator Instance;
         
         // private
-        private Mesh _mesh;
-        private MeshRenderer _meshRenderer;
-        
-        private Spawner _spawner;
-        private TimeManager _timer;
-        private ValueClamp _clamp;
-
-        private float[,] _map;
         private Vector2[] _boundaries;
 
-        // For the use of OnValidate()
-        private bool _scriptLoaded;
+        private float[,] _map;
+        
+        private Mesh _mesh;
+        private MeshRenderer _meshRenderer;
 
-        // Only for Debugging
+        // ...
         private bool _running;
 
-        private void Start()
+        private void Awake()
+        {
+            if (Instance == null)
+            {
+                transform.parent = null;
+                DontDestroyOnLoad(gameObject);
+                Instance = this;
+            }
+            else if (Instance != this)
+            {
+                Destroy(gameObject);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="maxTerrainHeight"></param>
+        /// <param name="generalSettings"></param>
+        /// <param name="noiseGenerator"></param>
+        /// <param name="noiseSettings"></param>
+        /// <param name="clamp"></param>
+        /// <param name="resolution"></param>
+        public void GenerateGround(Vector2Int resolution, float maxTerrainHeight, GeneralSettings generalSettings,
+            NoiseGenerator noiseGenerator, NoiseSettings noiseSettings, ValueClamp clamp)
         {
             _meshRenderer = GetComponent<MeshRenderer>();
             _meshRenderer.enabled = true;
 
-            _timer = TimeManager.Instance;
-            _clamp = new ValueClamp();
-            _spawner = new Spawner();
-            noiseGenerator = new NoiseGenerator();
-
-            _mesh = new Mesh()
+            _mesh = new Mesh
             {
                 name = "Ground Mesh"
             };
@@ -57,100 +66,84 @@ namespace _Scripts.Generator
 
             GetComponent<MeshFilter>().sharedMesh = _mesh;
 
-            _map = new float[generalSettings.resolution.x, generalSettings.resolution.y];
+            _map = new float[resolution.x, resolution.y];
 
-            for (int x = 0; x < generalSettings.resolution.x; x++)
+            for (var x = 0; x < resolution.x; x++)
             {
-                for (int y = 0; y < generalSettings.resolution.y; y++)
+                for (var y = 0; y < resolution.y; y++)
                 {
-                    float sampleX = x - generalSettings.resolution.x / 2;
-                    float sampleY = y - generalSettings.resolution.y / 2;
+                    float sampleX = x - resolution.x / 2;
+                    float sampleY = y - resolution.y / 2;
 
                     // _map[x, y] = _noiseGenerator.GenerateNoiseValue(sampleX, sampleY);
-                    _map[x, y] = noiseGenerator.GenerateNoiseValueWithFbm(sampleX, sampleY);
-                    
-                    _clamp.Compare(_map[x, y]);
+                    _map[x, y] = noiseGenerator.GenerateNoiseValueWithFbm(noiseSettings, sampleX, sampleY);
+
+                    clamp.Compare(_map[x, y]);
                 }
             }
 
             // Get each point back into bounds
-            for (int x = 0; x < generalSettings.resolution.x; x++)
-            {
-                for (int y = 0; y < generalSettings.resolution.y; y++)
-                {
-                    _map[x, y] = _clamp.ClampValue(_map[x, y]);
-                }
+                for (var x = 0; x < resolution.x; x++)
+                for (var y = 0; y < resolution.y; y++)
+                    _map[x, y] = clamp.ClampValue(_map[x, y]);
+
+                MeshGenerator.GenerateMesh(_mesh, _map, maxTerrainHeight, generalSettings);
+                ColorGenerator.AssignColor(gradient, _mesh, maxTerrainHeight);
             }
+        
 
-            MeshGenerator.GenerateMesh(_mesh, _map, generalSettings);
-            ColorGenerator.AssignColor(gradient, _mesh, generalSettings.maxTerrainHeight);
-
-            // _spawner.SpawnCarrot(DemoCarrot, GeneratorFunctions.GetSurfacePoint(2.3f, 4.7f, generalSettings, noiseGenerator, _clamp));
-            // _spawner.SpawnBurrow(DemoCarrot, GeneratorFunctions.GetSurfacePoint(5.4f, 4.7f, generalSettings, noiseGenerator, _clamp));
-            _spawner.SpawnBurrow(DemoCarrot, GeneratorFunctions.GetSurfacePoint(0.0f, 0.0f, generalSettings, noiseGenerator, _clamp));
-            _spawner.SpawnBurrow(DemoCarrot, GeneratorFunctions.GetSurfacePoint(8.0f, 8.0f, generalSettings, noiseGenerator, _clamp));
-            _spawner.SpawnBurrow(DemoCarrot, GeneratorFunctions.GetSurfacePoint(15.0f, 15.0f, generalSettings, noiseGenerator, _clamp));
-            // _spawner.SpawnBurrow(DemoCarrot, GeneratorFunctions.GetSurfacePoint(14.6f, 8.7f, generalSettings, noiseGenerator, _clamp));
-            // _spawner.SpawnBurrow(DemoCarrot, GeneratorFunctions.GetSurfacePoint(3.9f, 12.7f, generalSettings, noiseGenerator, _clamp));
-
-            _scriptLoaded = true;
-            _running = true;
-        }
-
-        // private void OnValidate()
-        // {
-        //     if (!_scriptLoaded) return;
-        //
-        //     // später WaterGenerator und sein Object instantiaten
-        //
-        //     _mesh = new Mesh()
-        //     {
-        //         name = "Ground Mesh"
-        //     };
-        //
-        //     gameObject.tag = "Ground";
-        //     gameObject.layer = LayerMask.NameToLayer("Ground");
-        //
-        //     GetComponent<MeshFilter>().sharedMesh = _mesh;
-        //
-        //     // groundGenerator = new GroundGenerator();
-        //     // _map = new float[generalSettings.resolution.x, generalSettings.resolution.y];
-        //     // _map = groundGenerator.GenerateMap(_map);
-        //
-        //     MeshGenerator.GenerateMesh(_mesh, _map, generalSettings.maxTerrainHeight, generalSettings.squareSize);
-        //     ColorGenerator.AssignColor(gradient, _mesh, generalSettings.maxTerrainHeight);
-        // }
-
-        private void Update()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="wallPrefab"></param>
+        /// <param name="maxTerrainHeight"></param>
+        /// <param name="generalSettings"></param>
+        /// <param name="resolution"></param>
+        public void GenerateWall(GameObject wallPrefab, Vector2Int resolution, float maxTerrainHeight, GeneralSettings generalSettings)
         {
-            // Debug.Log(_timer.GetCurrentDate().ToString("/"));
+            // Generate the left wall
+            var tempTransform = transform;
+            var tempTransformPos = tempTransform.position;
+            // var resolution = resolution;
+            var squareSize = generalSettings.squareSize;
 
-            // Only for Debugging
-            if (Input.GetKeyDown(KeyCode.P) && _running)
-            {
-                _timer.Stop();
-                _running = false;
-            }
-            else if (Input.GetKeyDown(KeyCode.P) && !_running)
-            {
-                _timer.Resume();
-                _running = true;
-            }
+            var yScale = (generalSettings.maxBorderHeight + maxTerrainHeight) * 2;
 
-            if (Input.GetKeyDown(KeyCode.Alpha1) && _running)
-            {
-                _timer.SetTimeScale(1.0f);
-            }
+            var xPos = tempTransformPos.x - (float)resolution.x / 2 * squareSize + squareSize / 2 -
+                       wallPrefab.transform.localScale.x / 2;
+            var zPos = tempTransformPos.z;
+            var position = new Vector3(xPos, 0, zPos);
+            var newObject = Instantiate(wallPrefab, position, Quaternion.identity, tempTransform); // generate left
+            newObject.name = "left_wall";
+            var objScale = newObject.transform.localScale;
+            newObject.transform.localScale =
+                new Vector3(objScale.x, yScale, (resolution.y - 1) * squareSize + objScale.z * 2);
 
-            if (Input.GetKeyDown(KeyCode.Alpha2) && _running)
-            {
-                _timer.SetTimeScale(2.0f);
-            }
 
-            if (Input.GetKeyDown(KeyCode.Alpha3) && _running)
-            {
-                _timer.SetTimeScale(3.0f);
-            }
+            // Generate the right wall
+            position = new Vector3(-xPos, 0, zPos);
+            newObject = Instantiate(wallPrefab, position, Quaternion.identity, tempTransform); // generate right
+            newObject.name = "right_wall";
+            objScale = newObject.transform.localScale;
+            newObject.transform.localScale =
+                new Vector3(objScale.x, yScale, (resolution.y - 1) * squareSize + objScale.z * 2);
+
+            // Generate the upper wall
+            xPos = tempTransformPos.x;
+            zPos = tempTransformPos.z - (float)resolution.y / 2 * squareSize + squareSize / 2 -
+                   wallPrefab.transform.localScale.z / 2;
+            position = new Vector3(xPos, 0, -zPos);
+            newObject = Instantiate(wallPrefab, position, Quaternion.identity, tempTransform); // generate up
+            newObject.name = "upper_wall";
+            objScale = newObject.transform.localScale;
+            newObject.transform.localScale = new Vector3((resolution.x - 1) * squareSize, yScale, objScale.y);
+
+            // Generate the lower wall
+            position = new Vector3(xPos, 0, zPos);
+            newObject = Instantiate(wallPrefab, position, Quaternion.identity, tempTransform); // generate down
+            newObject.name = "lower_wall";
+            objScale = newObject.transform.localScale;
+            newObject.transform.localScale = new Vector3((resolution.x - 1) * squareSize, yScale, objScale.y);
         }
     }
 }

@@ -1,81 +1,65 @@
-using System;
 using UnityEngine;
+using WorldGeneration._Scripts.ScriptableObjects;
 
-namespace _Scripts.Generator
+namespace WorldGeneration._Scripts.TerrainGeneration
 {
     /// <summary>
-    /// Generates a Noise value with or without Fractional Brownian Motion.
+    ///     Generates a Noise value with or without Fractional Brownian Motion.
     /// </summary>
-    [Serializable]
     public class NoiseGenerator
     {
-        // Seed
-        [Header("Seed")] public bool useRandomSeed = false;
-        public string seed = "Hello World!";
-        [Range(1000.0f, 1000000.0f)] public float seedScale = 100000.0f;
-
-        // Gradient noise settings
-        [Header("Gradient Noise")] [Range(0.0f, 1.0f)] [SerializeField]
-        private float noiseScale = 0.325f;
-
-        [SerializeField] private int octaves = 3;
-        [SerializeField] private float persistence = 0.5f;
-        [SerializeField] private float lacunarity = 2.0f;
-
         /// <summary>
-        /// Takes two coordinates and generates a Noise value.
+        ///     Takes two coordinates and generates a Noise value.
         /// </summary>
+        /// <param name="noiseSettings"></param>
         /// <param name="x">xCoordinate</param>
         /// <param name="y">yCoordinate</param>
         /// <returns>A float value</returns>
-        public float GenerateNoiseValue(float x, float y)
+        public float GenerateNoiseValue(NoiseSettings noiseSettings, float x, float y)
         {
             // Check if a random seed is wanted
-            if (useRandomSeed)
-            {
-                seed = UnityEngine.Time.realtimeSinceStartupAsDouble.ToString();
-            }
+            if (noiseSettings.useRandomSeed)
+                noiseSettings.seed = UnityEngine.Time.realtimeSinceStartupAsDouble.ToString();
 
-            float seedOffset = seed.GetHashCode() / seedScale;
+            var seedOffset = noiseSettings.seed.GetHashCode() / noiseSettings.seedScale;
 
             // Get the coordinates
-            float sampleX = (x + seedOffset) * noiseScale;
-            float sampleZ = (y + seedOffset) * noiseScale;
+            var sampleX = (x + seedOffset) * noiseSettings.noiseScale;
+            var sampleZ = (y + seedOffset) * noiseSettings.noiseScale;
 
             return Mathf.PerlinNoise(sampleX, sampleZ);
         }
 
         /// <summary>
-        /// Takes two coordinates and generates a Noise value with Fractional Brownian Motion.
+        ///     Takes two coordinates and generates a Noise value with Fractional Brownian Motion.
         /// </summary>
+        /// <param name="noiseSettings"></param>
         /// <param name="x">xCoordinate</param>
         /// <param name="y">yCoordinate</param>
         /// <returns>A float value</returns>
-        public float GenerateNoiseValueWithFbm(float x, float y)
+        public float GenerateNoiseValueWithFbm(NoiseSettings noiseSettings, float x, float y)
         {
             // Check if a random seed is wanted
-            if (useRandomSeed)
-            {
-                seed = UnityEngine.Time.realtimeSinceStartupAsDouble.ToString();
-            }
+            if (noiseSettings.useRandomSeed)
+                noiseSettings.seed = UnityEngine.Time.realtimeSinceStartupAsDouble.ToString();
 
-            float seedOffset = seed.GetHashCode() / seedScale;
+            var seedOffset = noiseSettings.seed.GetHashCode() / noiseSettings.seedScale;
 
-            float value = 0.0f;
-            float frequency = 1.0f;
-            float amplitude = 1.0f;
+            var value = 0.0f;
+            var frequency = 1.0f;
+            var amplitude = 1.0f;
 
-            for (int l = 0; l < octaves; l++)
+            for (var l = 0; l < noiseSettings.octaves; l++)
             {
                 // Get the coordinates
-                float sampleX = (x + seedOffset) * noiseScale;
-                float sampleZ = (y + seedOffset) * noiseScale;
+                var sampleX = (x + seedOffset) * noiseSettings.noiseScale;
+                var sampleZ = (y + seedOffset) * noiseSettings.noiseScale;
 
                 // calculate noise value with modified amplitude and frequency
                 value += amplitude * Mathf.PerlinNoise(sampleX * frequency, sampleZ * frequency);
 
-                frequency *= lacunarity; // double the frequency each octave
-                amplitude *= persistence; // half the amplitude
+                frequency *= noiseSettings.lacunarity; // double the frequency each octave
+                amplitude *= noiseSettings.persistence; // half the amplitude
             }
 
             return value;

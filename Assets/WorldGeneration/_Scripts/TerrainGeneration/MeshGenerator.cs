@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using _Scripts.ScriptableObjects;
 using UnityEngine;
+using WorldGeneration._Scripts.ScriptableObjects;
 
-namespace _Scripts.Generator
+namespace WorldGeneration._Scripts.TerrainGeneration
 {
     /// <summary>
     /// Class <c>MeshGenerator</c> generates the ground mesh based on the Marching Squares Algorithm.
@@ -19,20 +19,21 @@ namespace _Scripts.Generator
         /// </summary>
         /// <param name="mesh">The final mesh</param>
         /// <param name="map">The heightmap</param>
+        /// <param name="maxTerrainHeight"></param>
         /// <param name="generalSettings">The general settings of the simulation</param>
-        public static void GenerateMesh(Mesh mesh, float[,] map, GeneralSettings generalSettings)
+        public static void GenerateMesh(Mesh mesh, float[,] map, float maxTerrainHeight, GeneralSettings generalSettings)
         {
-            _squareGrid = new SquareGrid(map, generalSettings.maxTerrainHeight, generalSettings.squareSize);
+            _squareGrid = new SquareGrid(map, maxTerrainHeight, generalSettings.squareSize);
             _vertices = new List<Vector3>();
             _triangles = new List<int>();
             _uvs = new List<Vector2>();
 
             // Square calculation
-            for (int x = 0; x < _squareGrid.squares.GetLength(0); x++)
+            for (int x = 0; x < _squareGrid.Squares.GetLength(0); x++)
             {
-                for (int y = 0; y < _squareGrid.squares.GetLength(1); y++)
+                for (int y = 0; y < _squareGrid.Squares.GetLength(1); y++)
                 {
-                    TriangulateSquare(_squareGrid.squares[x, y]);
+                    TriangulateSquare(_squareGrid.Squares[x, y]);
                 }
             }
 
@@ -120,7 +121,7 @@ namespace _Scripts.Generator
         /// </summary>
         private class SquareGrid
         {
-            public readonly Square[,] squares;
+            public readonly Square[,] Squares;
 
             /// <param name="map"></param>
             /// <param name="maxHeight"></param>
@@ -146,12 +147,12 @@ namespace _Scripts.Generator
                 }
 
                 // create squares from nodes
-                squares = new Square[nodeCountX - 1, nodeCountY - 1];
+                Squares = new Square[nodeCountX - 1, nodeCountY - 1];
                 for (int x = 0; x < nodeCountX - 1; x++)
                 {
                     for (int y = 0; y < nodeCountY - 1; y++)
                     {
-                        squares[x, y] = new Square(nodes[x, y + 1], nodes[x + 1, y + 1],
+                        Squares[x, y] = new Square(nodes[x, y + 1], nodes[x + 1, y + 1],
                             nodes[x + 1, y], nodes[x, y]);
                     }
                 }

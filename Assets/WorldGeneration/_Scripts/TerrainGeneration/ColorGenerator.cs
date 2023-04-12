@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace _Scripts.Generator
+namespace WorldGeneration._Scripts.TerrainGeneration
 {
     public static class ColorGenerator
     {
