@@ -1,6 +1,24 @@
 ﻿# Changelog World Generation
 
 
+## [0.7.0] - 2023-04-13
+# Added
+- Random Spawner for carrots
+
+# Changed
+- OpenSimplexNoise instead of Perlin Noise
+
+
+## [0.6.0] - 2023-04-12
+- Code Refactoring
+
+## Added
+- WorldManager
+- TerrainManager
+- AssetManager
+- Spawner
+
+
 ## [0.5.2] - 2023-04-05
 ## Added
 - Mesh Collider

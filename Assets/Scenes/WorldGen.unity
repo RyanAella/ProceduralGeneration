@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 322203374}
   m_Layer: 4
   m_Name: Water
-  m_TagString: Untagged
+  m_TagString: Water
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -154,7 +154,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7aaec0fe5590dfd43bc15ec6c034417c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generalSettings: {fileID: 11400000, guid: 22871bac2f6726641b0f5d842a4349ec, type: 2}
 --- !u!4 &322203372
 Transform:
   m_ObjectHideFlags: 0
@@ -163,7 +162,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 322203370}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.07, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -263,7 +262,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &484512867
 GameObject:
@@ -378,7 +377,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!43 &765355699
 Mesh:
@@ -627,7 +626,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &963194229
 MonoBehaviour:
@@ -662,6 +661,58 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
+--- !u!1 &1437496113
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1437496115}
+  - component: {fileID: 1437496116}
+  m_Layer: 0
+  m_Name: WorldManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1437496115
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437496113}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1437496116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437496113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c964d0900c1b50449c5e5c803ccf399, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resolution: {x: 16, y: 16}
+  maxTerrainHeight: 150
+  waterLevel: 0.15
+  generalSettings: {fileID: 11400000, guid: 22871bac2f6726641b0f5d842a4349ec, type: 2}
+  noiseSettings: {fileID: 11400000, guid: fb78098282b2a5342bad8ffa96571dbd, type: 2}
+  wallPrefab: {fileID: 1192836021279129591, guid: fa2f5d8d18b72a54ebdb765f32d7eb91, type: 3}
+  demoCarrot: {fileID: 4740231162571601898, guid: 5e3031ac9c1c8ec4d9d2b229365ad20b, type: 3}
+  maxNumberOfCarrots: 20
 --- !u!1 &1542835366
 GameObject:
   m_ObjectHideFlags: 0
@@ -693,7 +744,7 @@ Transform:
   - {fileID: 1755731338}
   - {fileID: 322203372}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1755731336
 GameObject:
@@ -708,9 +759,9 @@ GameObject:
   - component: {fileID: 1755731341}
   - component: {fileID: 1755731343}
   - component: {fileID: 1755731344}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Ground
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -784,15 +835,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b155aacf199ddfa4883f8c890efca703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generalSettings: {fileID: 11400000, guid: 22871bac2f6726641b0f5d842a4349ec, type: 2}
-  noiseGenerator:
-    useRandomSeed: 0
-    seed: Hello World!
-    seedScale: 100000
-    noiseScale: 0.325
-    octaves: 3
-    persistence: 0.5
-    lacunarity: 2
   gradient:
     serializedVersion: 2
     key0: {r: 0.6623015, g: 0.6886792, b: 0.40606087, a: 1}
@@ -822,8 +864,6 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 8
     m_NumAlphaKeys: 2
-  DemoCarrot: {fileID: 4740231162571601898, guid: 5e3031ac9c1c8ec4d9d2b229365ad20b, type: 3}
-  DemoBurrow: {fileID: 5117566678298620094, guid: 9b1af0250b33ab64daae44b053617bf6, type: 3}
 --- !u!33 &1755731343
 MeshFilter:
   m_ObjectHideFlags: 0
