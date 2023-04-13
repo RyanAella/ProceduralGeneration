@@ -46,12 +46,11 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         /// </summary>
         /// <param name="maxTerrainHeight"></param>
         /// <param name="generalSettings"></param>
-        /// <param name="noiseGenerator"></param>
+        /// <param name="noiseWithClamp"></param>
         /// <param name="noiseSettings"></param>
-        /// <param name="clamp"></param>
         /// <param name="resolution"></param>
         public void GenerateGround(Vector2Int resolution, float maxTerrainHeight, GeneralSettings generalSettings,
-            NoiseGenerator noiseGenerator, NoiseSettings noiseSettings, ValueClamp clamp)
+            NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp)
         {
             _meshRenderer = GetComponent<MeshRenderer>();
             _meshRenderer.enabled = true;
@@ -76,16 +75,16 @@ namespace WorldGeneration._Scripts.TerrainGeneration
                     float sampleY = y - resolution.y / 2;
 
                     // _map[x, y] = _noiseGenerator.GenerateNoiseValue(sampleX, sampleY);
-                    _map[x, y] = noiseGenerator.GenerateNoiseValueWithFbm(noiseSettings, sampleX, sampleY);
+                    _map[x, y] = noiseWithClamp.NoiseGenerator.GenerateNoiseValueWithFbm(noiseSettings, sampleX, sampleY);
 
-                    clamp.Compare(_map[x, y]);
+                    noiseWithClamp.ValueClamp.Compare(_map[x, y]);
                 }
             }
 
             // Get each point back into bounds
                 for (var x = 0; x < resolution.x; x++)
                 for (var y = 0; y < resolution.y; y++)
-                    _map[x, y] = clamp.ClampValue(_map[x, y]);
+                    _map[x, y] = noiseWithClamp.ValueClamp.ClampValue(_map[x, y]);
 
                 MeshGenerator.GenerateMesh(_mesh, _map, maxTerrainHeight, generalSettings);
                 ColorGenerator.AssignColor(gradient, _mesh, maxTerrainHeight);

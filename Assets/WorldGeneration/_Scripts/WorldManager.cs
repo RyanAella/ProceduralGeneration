@@ -10,44 +10,45 @@ namespace WorldGeneration._Scripts
     public class WorldManager : MonoBehaviour
     {
         // [SerializeField]
+        [Header("General Settings")]
         [SerializeField] private Vector2Int resolution = new(128, 128);
         [SerializeField] private float maxTerrainHeight = 180.0f;
+        [Range(0.0f, 1.0f)][SerializeField] private float waterLevel = 0.3f;
         [SerializeField] private GeneralSettings generalSettings;
         [SerializeField] private NoiseSettings noiseSettings;
+        
+        [Header("Objects")]
         [SerializeField] private GameObject wallPrefab;
         [SerializeField] private GameObject demoCarrot;
-        [SerializeField] private AssetManager assetManager;
-        private ValueClamp _clamp;
-        private NoiseGenerator _noiseGenerator;
+        [SerializeField] private int maxNumberOfCarrots = 20;
+
+        // private
+        private TerrainManager _terrainManager;
+        private AssetManager _assetManager;
+        private TimeManager _timer;
+
+        private NoiseWithClamp _noiseWithClamp;
 
         private bool _running;
         private Vector2[] _corners;
 
-        // private
-        private TerrainManager _terrainManager;
-        private TimeManager _timer;
-
         // Start is called before the first frame update
         private void Start()
         {
-            assetManager = AssetManager.GetInstance();
-
+            _terrainManager = TerrainManager.GetInstance();
+            _assetManager = AssetManager.GetInstance();
             _timer = TimeManager.Instance;
 
-            _terrainManager = TerrainManager.GetInstance();
+            _noiseWithClamp.NoiseGenerator = new NoiseGenerator();
+            _noiseWithClamp.ValueClamp = new ValueClamp();
 
-            _noiseGenerator = new NoiseGenerator();
-            _clamp = new ValueClamp();
+            _terrainManager.GenerateTerrain(resolution, maxTerrainHeight, waterLevel, generalSettings, noiseSettings, wallPrefab,
+                _noiseWithClamp);
 
-            _terrainManager.GenerateTerrain(resolution, maxTerrainHeight, generalSettings, noiseSettings, wallPrefab,
-                _clamp);
+            _corners = GeneratorFunctions.GetCornerPoints(generalSettings, noiseSettings, _noiseWithClamp);
 
-            _corners = GeneratorFunctions.GetCornerPoints(generalSettings, noiseSettings, _noiseGenerator,
-                _clamp);
-
-            assetManager.SpawnAssets(resolution, maxTerrainHeight, generalSettings, noiseSettings, _noiseGenerator,
-                demoCarrot, _corners, _clamp);
-
+            _assetManager.SpawnAssets(resolution, maxTerrainHeight, waterLevel, generalSettings, noiseSettings, _noiseWithClamp,
+                demoCarrot, _corners, maxNumberOfCarrots);
 
             _running = true;
         }
@@ -55,8 +56,6 @@ namespace WorldGeneration._Scripts
         // Update is called once per frame
         private void Update()
         {
-            // Debug.Log(_timer.GetCurrentDate().ToString("/"));
-
             // Only for Debugging
             if (Input.GetKeyDown(KeyCode.P) && _running)
             {
@@ -78,10 +77,13 @@ namespace WorldGeneration._Scripts
             // Reload Terrain
             if (Input.GetKey(KeyCode.R) && _running)
             {
-                _terrainManager.GenerateTerrain(resolution, maxTerrainHeight, generalSettings, noiseSettings,
-                    wallPrefab, _clamp);
-                assetManager.SpawnAssets(resolution, maxTerrainHeight, generalSettings, noiseSettings, _noiseGenerator,
-                    demoCarrot, _corners, _clamp);
+                _terrainManager.GenerateTerrain(resolution, maxTerrainHeight, waterLevel, generalSettings, noiseSettings, wallPrefab,
+                    _noiseWithClamp);
+
+                _corners = GeneratorFunctions.GetCornerPoints(generalSettings, noiseSettings, _noiseWithClamp);
+
+                _assetManager.SpawnAssets(resolution, maxTerrainHeight, waterLevel, generalSettings, noiseSettings, _noiseWithClamp,
+                    demoCarrot, _corners, maxNumberOfCarrots);
             }
         }
     }

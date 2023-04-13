@@ -15,19 +15,18 @@ namespace WorldGeneration._Scripts.Helper
         /// <param name="maxTerrainHeight"></param>
         /// <param name="generalSettings">The general settings of the simulation</param>
         /// <param name="noiseSettings"></param>
-        /// <param name="noiseGenerator">A reference to the NoiseGenerator class</param>
-        /// <param name="clamp">A reference to the ValueClamp class</param>
+        /// <param name="noiseWithClamp"></param>
         /// <returns></returns>
         public static Vector3 GetSurfacePoint(float x, float y, Vector2Int resolution, float maxTerrainHeight, GeneralSettings generalSettings,
-            NoiseSettings noiseSettings, NoiseGenerator noiseGenerator, ValueClamp clamp)
+            NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp)
         {
             float xPos = x - (float) resolution.x / 2;
             float zPos = y - (float) resolution.y / 2;
-            float yPos = noiseGenerator.GenerateNoiseValueWithFbm(noiseSettings, xPos, zPos);
+            float yPos = noiseWithClamp.NoiseGenerator.GenerateNoiseValueWithFbm(noiseSettings, xPos, zPos);
 
             xPos = xPos * generalSettings.squareSize + generalSettings.squareSize / 2.0f;
             zPos = zPos * generalSettings.squareSize + generalSettings.squareSize / 2.0f;
-            yPos = clamp.ClampValue(yPos) * maxTerrainHeight;
+            yPos = noiseWithClamp.ValueClamp.ClampValue(yPos) * maxTerrainHeight;
 
             return new Vector3(xPos, yPos, zPos);
         }
@@ -40,8 +39,9 @@ namespace WorldGeneration._Scripts.Helper
         /// <param name="clamp"></param>
         /// <returns></returns>
         public static Vector2[] GetCornerPoints(GeneralSettings generalSettings, NoiseSettings noiseSettings,
-            NoiseGenerator noiseGenerator, ValueClamp clamp)
+            NoiseWithClamp noiseWithClamp)
         {
+            // Fertig bauen, Achtung GeneralSettings no longer working
             var corners = new Vector2[4];
 
             // lower left corner

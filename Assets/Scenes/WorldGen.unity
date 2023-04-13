@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 322203374}
   m_Layer: 4
   m_Name: Water
-  m_TagString: Untagged
+  m_TagString: Water
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -706,19 +706,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resolution: {x: 128, y: 128}
-  maxTerrainHeight: 180
+  maxTerrainHeight: 50
   generalSettings: {fileID: 11400000, guid: 22871bac2f6726641b0f5d842a4349ec, type: 2}
   noiseSettings: {fileID: 11400000, guid: fb78098282b2a5342bad8ffa96571dbd, type: 2}
   wallPrefab: {fileID: 1192836021279129591, guid: fa2f5d8d18b72a54ebdb765f32d7eb91, type: 3}
   demoCarrot: {fileID: 4740231162571601898, guid: 5e3031ac9c1c8ec4d9d2b229365ad20b, type: 3}
-  _assetManager:
-    carrotPrefab: {fileID: 4740231162571601898, guid: 5e3031ac9c1c8ec4d9d2b229365ad20b, type: 3}
-    distanceBetweenChecks: 0.25
-    rangeOfCheck: 30
-    layerMask:
-      serializedVersion: 2
-      m_Bits: 0
-    spawnChance: 5
 --- !u!1 &1542835366
 GameObject:
   m_ObjectHideFlags: 0

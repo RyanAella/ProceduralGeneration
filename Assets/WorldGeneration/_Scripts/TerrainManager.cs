@@ -34,20 +34,19 @@ namespace WorldGeneration._Scripts
         /// <param name="noiseSettings"></param>
         /// <param name="wallPrefab"></param>
         /// <param name="resolution"></param>
-        /// <param name="clamp"></param>
-        /// <param name="finished"></param>
-        public void GenerateTerrain(Vector2Int resolution, float maxTerrainHeight, GeneralSettings generalSettings, NoiseSettings noiseSettings, GameObject wallPrefab, ValueClamp clamp)
+        /// <param name="noiseWithClamp"></param>
+        public void GenerateTerrain(Vector2Int resolution, float maxTerrainHeight, float waterLevel, GeneralSettings generalSettings, NoiseSettings noiseSettings, GameObject wallPrefab, NoiseWithClamp noiseWithClamp)
         {
             _noiseGenerator = new NoiseGenerator();
 
             _groundGenerator = GroundGenerator.Instance;
             _waterGenerator = WaterGenerator.Instance;
             
-            _groundGenerator.GenerateGround(resolution, maxTerrainHeight, generalSettings, _noiseGenerator, noiseSettings, clamp);
+            _groundGenerator.GenerateGround(resolution, maxTerrainHeight, generalSettings, noiseSettings, noiseWithClamp);
             _groundGenerator.GenerateWall(wallPrefab, resolution, maxTerrainHeight, generalSettings);
 
             _waterGenerator = WaterGenerator.Instance;
-            _waterGenerator.GenerateWater(resolution, maxTerrainHeight, generalSettings);
+            _waterGenerator.GenerateWater(resolution, maxTerrainHeight, waterLevel, generalSettings);
         }
     }
 }
