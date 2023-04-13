@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-namespace Time
+namespace InGameTime
 {
     /// <summary>
     /// Struct <c>InGameDate</c> is representation of the inGame time in dd:ww:mm:yyyy

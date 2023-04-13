@@ -4,7 +4,7 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
-using _Scripts.Time;
+// using _Scripts.Time;
 
 public class AgentRabbit : CustomAgent
 {

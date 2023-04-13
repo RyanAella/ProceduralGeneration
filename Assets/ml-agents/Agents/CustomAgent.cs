@@ -1,4 +1,4 @@
-using _Scripts.Time;
+using InGameTime;
 using System;
 using System.Collections;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-using Time;
+using InGameTime;
 using UnityEngine;
 using WorldGeneration._Scripts.ScriptableObjects;
 

@@ -1,5 +1,5 @@
 using System;
-using Time;
+using InGameTime;
 using UnityEngine;
 
 namespace WorldGeneration._Scripts.ScriptableObjects
