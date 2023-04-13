@@ -1,5 +1,5 @@
-using UnityEngine;
 using WorldGeneration._Scripts.ScriptableObjects;
+using WorldGeneration._Scripts.TerrainGeneration.NoiseTest;
 
 namespace WorldGeneration._Scripts.TerrainGeneration
 {
@@ -8,6 +8,13 @@ namespace WorldGeneration._Scripts.TerrainGeneration
     /// </summary>
     public class NoiseGenerator
     {
+        private readonly OpenSimplexNoise _simplexNoise;
+
+        public NoiseGenerator(NoiseSettings noiseSettings)
+        {
+            _simplexNoise = new OpenSimplexNoise(noiseSettings.seed.GetHashCode());
+        }
+
         /// <summary>
         ///     Takes two coordinates and generates a Noise value.
         /// </summary>
@@ -18,16 +25,17 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         public float GenerateNoiseValue(NoiseSettings noiseSettings, float x, float y)
         {
             // Check if a random seed is wanted
-            if (noiseSettings.useRandomSeed)
-                noiseSettings.seed = UnityEngine.Time.realtimeSinceStartupAsDouble.ToString();
+            // if (noiseSettings.useRandomSeed)
+            //     noiseSettings.seed = UnityEngine.Time.realtimeSinceStartupAsDouble.ToString();
 
-            var seedOffset = noiseSettings.seed.GetHashCode() / noiseSettings.seedScale;
+            // var seedOffset = noiseSettings.seed.GetHashCode() / noiseSettings.seedScale;
 
             // Get the coordinates
-            var sampleX = (x + seedOffset) * noiseSettings.noiseScale;
-            var sampleZ = (y + seedOffset) * noiseSettings.noiseScale;
+            var sampleX = x /*+ seedOffset*/ * noiseSettings.noiseScale;
+            var sampleZ = y /*+ seedOffset*/ * noiseSettings.noiseScale;
 
-            return Mathf.PerlinNoise(sampleX, sampleZ);
+            // return Mathf.PerlinNoise(sampleX, sampleZ);
+            return (float)_simplexNoise.Evaluate(sampleX, sampleZ);
         }
 
         /// <summary>
@@ -40,10 +48,10 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         public float GenerateNoiseValueWithFbm(NoiseSettings noiseSettings, float x, float y)
         {
             // Check if a random seed is wanted
-            if (noiseSettings.useRandomSeed)
-                noiseSettings.seed = UnityEngine.Time.realtimeSinceStartupAsDouble.ToString();
+            // if (noiseSettings.useRandomSeed)
+            //     noiseSettings.seed = UnityEngine.Time.realtimeSinceStartupAsDouble.ToString();
 
-            var seedOffset = noiseSettings.seed.GetHashCode() / noiseSettings.seedScale;
+            // var seedOffset = noiseSettings.seed.GetHashCode() / noiseSettings.seedScale;
 
             var value = 0.0f;
             var frequency = 1.0f;
@@ -52,11 +60,12 @@ namespace WorldGeneration._Scripts.TerrainGeneration
             for (var l = 0; l < noiseSettings.octaves; l++)
             {
                 // Get the coordinates
-                var sampleX = (x + seedOffset) * noiseSettings.noiseScale;
-                var sampleZ = (y + seedOffset) * noiseSettings.noiseScale;
+                // var sampleX = (x /*+ seedOffset*/) * noiseSettings.noiseScale;
+                // var sampleZ = (y /*+ seedOffset*/) * noiseSettings.noiseScale;
 
                 // calculate noise value with modified amplitude and frequency
-                value += amplitude * Mathf.PerlinNoise(sampleX * frequency, sampleZ * frequency);
+                // value += amplitude * Mathf.PerlinNoise(sampleX * frequency, sampleZ * frequency);
+                value += amplitude * GenerateNoiseValue(noiseSettings, x * frequency, y * frequency);
 
                 frequency *= noiseSettings.lacunarity; // double the frequency each octave
                 amplitude *= noiseSettings.persistence; // half the amplitude

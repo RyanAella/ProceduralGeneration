@@ -15,7 +15,7 @@ MonoBehaviour:
   useRandomSeed: 0
   seed: Hello World!
   seedScale: 100000
-  noiseScale: 0.0260522
+  noiseScale: 0.0768
   octaves: 8
   persistence: 0.5
   lacunarity: 2

@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using WorldGeneration._Scripts.Helper;
 using WorldGeneration._Scripts.ScriptableObjects;
 using WorldGeneration._Scripts.TerrainGeneration;
 
@@ -13,7 +12,6 @@ namespace WorldGeneration._Scripts
         private static TerrainManager _instance;
         private GroundGenerator _groundGenerator;
         private WaterGenerator _waterGenerator;
-        private NoiseGenerator _noiseGenerator;
 
         public static TerrainManager GetInstance()
         {
@@ -27,7 +25,6 @@ namespace WorldGeneration._Scripts
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="maxTerrainHeight"></param>
         /// <param name="generalSettings"></param>
@@ -35,14 +32,16 @@ namespace WorldGeneration._Scripts
         /// <param name="wallPrefab"></param>
         /// <param name="resolution"></param>
         /// <param name="noiseWithClamp"></param>
-        public void GenerateTerrain(Vector2Int resolution, float maxTerrainHeight, float waterLevel, GeneralSettings generalSettings, NoiseSettings noiseSettings, GameObject wallPrefab, NoiseWithClamp noiseWithClamp)
+        /// <param name="map"></param>
+        public void GenerateTerrain(Vector2Int resolution, float maxTerrainHeight, float waterLevel,
+            GeneralSettings generalSettings, NoiseSettings noiseSettings, GameObject wallPrefab,
+            NoiseWithClamp noiseWithClamp, out float[,] map)
         {
-            _noiseGenerator = new NoiseGenerator();
-
             _groundGenerator = GroundGenerator.Instance;
             _waterGenerator = WaterGenerator.Instance;
-            
-            _groundGenerator.GenerateGround(resolution, maxTerrainHeight, generalSettings, noiseSettings, noiseWithClamp);
+
+            _groundGenerator.GenerateGround(resolution, maxTerrainHeight, generalSettings, noiseSettings,
+                noiseWithClamp, out map);
             _groundGenerator.GenerateWall(wallPrefab, resolution, maxTerrainHeight, generalSettings);
 
             _waterGenerator = WaterGenerator.Instance;

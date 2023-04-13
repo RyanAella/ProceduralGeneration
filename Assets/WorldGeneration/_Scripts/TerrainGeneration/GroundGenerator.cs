@@ -1,5 +1,4 @@
 using UnityEngine;
-using WorldGeneration._Scripts.Helper;
 using WorldGeneration._Scripts.ScriptableObjects;
 
 namespace WorldGeneration._Scripts.TerrainGeneration
@@ -10,17 +9,17 @@ namespace WorldGeneration._Scripts.TerrainGeneration
     [RequireComponent(typeof(MeshFilter))]
     public class GroundGenerator : MonoBehaviour
     {
+        // public
+        public static GroundGenerator Instance;
+
         // [SerializeField]
         [SerializeField] private Gradient gradient;
 
-        // public
-        public static GroundGenerator Instance;
-        
         // private
         private Vector2[] _boundaries;
 
         private float[,] _map;
-        
+
         private Mesh _mesh;
         private MeshRenderer _meshRenderer;
 
@@ -42,15 +41,15 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="maxTerrainHeight"></param>
         /// <param name="generalSettings"></param>
         /// <param name="noiseWithClamp"></param>
         /// <param name="noiseSettings"></param>
         /// <param name="resolution"></param>
+        /// <param name="map"></param>
         public void GenerateGround(Vector2Int resolution, float maxTerrainHeight, GeneralSettings generalSettings,
-            NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp)
+            NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp, out float[,] map)
         {
             _meshRenderer = GetComponent<MeshRenderer>();
             _meshRenderer.enabled = true;
@@ -65,40 +64,38 @@ namespace WorldGeneration._Scripts.TerrainGeneration
 
             GetComponent<MeshFilter>().sharedMesh = _mesh;
 
-            _map = new float[resolution.x, resolution.y];
+            // noiseWithClamp.ValueClamp = new ValueClamp();
+            map = new float[resolution.x, resolution.y];
 
             for (var x = 0; x < resolution.x; x++)
+            for (var y = 0; y < resolution.y; y++)
             {
-                for (var y = 0; y < resolution.y; y++)
-                {
-                    float sampleX = x - resolution.x / 2;
-                    float sampleY = y - resolution.y / 2;
+                var sampleX = x - (float)resolution.x / 2;
+                var sampleY = y - (float)resolution.y / 2;
 
-                    // _map[x, y] = _noiseGenerator.GenerateNoiseValue(sampleX, sampleY);
-                    _map[x, y] = noiseWithClamp.NoiseGenerator.GenerateNoiseValueWithFbm(noiseSettings, sampleX, sampleY);
+                map[x, y] = noiseWithClamp.NoiseGenerator.GenerateNoiseValueWithFbm(noiseSettings, sampleX, sampleY);
 
-                    noiseWithClamp.ValueClamp.Compare(_map[x, y]);
-                }
+                noiseWithClamp.ValueClamp.Compare(map[x, y]);
             }
 
             // Get each point back into bounds
-                for (var x = 0; x < resolution.x; x++)
-                for (var y = 0; y < resolution.y; y++)
-                    _map[x, y] = noiseWithClamp.ValueClamp.ClampValue(_map[x, y]);
+            for (var x = 0; x < resolution.x; x++)
+            for (var y = 0; y < resolution.y; y++)
+                map[x, y] = noiseWithClamp.ValueClamp.ClampValue(map[x, y]);
 
-                MeshGenerator.GenerateMesh(_mesh, _map, maxTerrainHeight, generalSettings);
-                ColorGenerator.AssignColor(gradient, _mesh, maxTerrainHeight);
-            }
-        
+            MeshGenerator.GenerateMesh(_mesh, map, maxTerrainHeight, generalSettings);
+            ColorGenerator.AssignColor(gradient, _mesh, maxTerrainHeight);
+        }
+
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="wallPrefab"></param>
         /// <param name="maxTerrainHeight"></param>
         /// <param name="generalSettings"></param>
         /// <param name="resolution"></param>
-        public void GenerateWall(GameObject wallPrefab, Vector2Int resolution, float maxTerrainHeight, GeneralSettings generalSettings)
+        public void GenerateWall(GameObject wallPrefab, Vector2Int resolution, float maxTerrainHeight,
+            GeneralSettings generalSettings)
         {
             // Generate the left wall
             var tempTransform = transform;

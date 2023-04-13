@@ -17,17 +17,61 @@ namespace WorldGeneration._Scripts.Helper
         /// <param name="noiseSettings"></param>
         /// <param name="noiseWithClamp"></param>
         /// <returns></returns>
-        public static Vector3 GetSurfacePoint(float x, float y, Vector2Int resolution, float maxTerrainHeight, GeneralSettings generalSettings,
-            NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp)
+        public static Vector3 GetSurfacePoint(float x, float z, Vector2Int resolution, float maxTerrainHeight,
+            float[,] map, GeneralSettings generalSettings
+            /*NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp*/)
         {
-            float xPos = x - (float) resolution.x / 2;
-            float zPos = y - (float) resolution.y / 2;
-            float yPos = noiseWithClamp.NoiseGenerator.GenerateNoiseValueWithFbm(noiseSettings, xPos, zPos);
+            // var xPos = x - (float)resolution.x / 2;
+            // var zPos = z - (float)resolution.y / 2;
+            // var yPos = noiseWithClamp.NoiseGenerator.GenerateNoiseValueWithFbm(noiseSettings, xPos, zPos);
+            //
+            // // xPos = x * generalSettings.squareSize + generalSettings.squareSize / 2.0f;
+            // // zPos = zPos * generalSettings.squareSize + generalSettings.squareSize / 2.0f;
+            // yPos = noiseWithClamp.ValueClamp.ClampValue(yPos) /* * maxTerrainHeight*/;
+            //
+            // var mapWidth = resolution.x * generalSettings.squareSize;
+            // var mapHeight = resolution.y * generalSettings.squareSize;
+            //
+            // var pos = new Vector3(-mapWidth / 2 + x * generalSettings.squareSize + generalSettings.squareSize / 2,
+            //     yPos * maxTerrainHeight,
+            //     -mapHeight / 2 + z * generalSettings.squareSize + generalSettings.squareSize / 2);
 
-            xPos = xPos * generalSettings.squareSize + generalSettings.squareSize / 2.0f;
-            zPos = zPos * generalSettings.squareSize + generalSettings.squareSize / 2.0f;
-            yPos = noiseWithClamp.ValueClamp.ClampValue(yPos) * maxTerrainHeight;
+            int xLow, xHigh, zLow, zHigh;
 
+            xLow = Mathf.FloorToInt(x);
+            xHigh = Mathf.CeilToInt(x);
+            zLow = Mathf.FloorToInt(z);
+            zHigh = Mathf.CeilToInt(z);
+            
+            // Debug.Log(xLow + ", " + zLow);
+
+            float val00, val01, val10, val11, xRange, zRange;
+            val00 = map[xLow, zLow];
+            val01 = map[xLow, zHigh];
+            val10 = map[xHigh, zLow];
+            val11 = map[xHigh, zHigh];
+
+            // xRange = xHigh - xLow;
+            // zRange = zHigh - zLow;
+            xRange = 1;
+            zRange = 1;
+
+            // values for:
+            //      - r1 val00 -> val10,
+            //      - r2 val01 -> val11
+            float r1, r2;
+            r1 = (xHigh - x) * val00 + (x - xLow) * val10;
+            r2 = (xHigh - x) * val01 + (x - xLow) * val11;
+
+            float yPos = (zHigh - z) * r1 + (z - zLow) * r2;
+
+            var mapWidth = resolution.x * generalSettings.squareSize;
+            var mapHeight = resolution.y * generalSettings.squareSize;
+
+            float xPos = -mapWidth / 2 + x * generalSettings.squareSize + generalSettings.squareSize / 2;
+            float zPos = -mapHeight / 2 + z * generalSettings.squareSize + generalSettings.squareSize / 2;
+            yPos *= maxTerrainHeight;
+            
             return new Vector3(xPos, yPos, zPos);
         }
 
@@ -45,7 +89,8 @@ namespace WorldGeneration._Scripts.Helper
             var corners = new Vector2[4];
 
             // lower left corner
-            corners[0] = new Vector2(0, 0); //GetSurfacePoint(0,0, generalSettings, noiseSettings, noiseGenerator, clamp);
+            corners[0] =
+                new Vector2(0, 0); //GetSurfacePoint(0,0, generalSettings, noiseSettings, noiseGenerator, clamp);
 
             // // upper left corner
             // var z = generalSettings.resolution.y;
@@ -69,7 +114,9 @@ namespace WorldGeneration._Scripts.Helper
         // setting min and max value for comparison
         private float _maxValue = float.MinValue; // initialize maxValue to the smallest possible float value, 
 
-        private float _minValue = float.MaxValue; // initialize minValue to the biggest possible float value, -> both will be changed
+        private float
+            _minValue = float
+                .MaxValue; // initialize minValue to the biggest possible float value, -> both will be changed
 
         /// <summary>
         ///     Compares a value with existing min and max values.
