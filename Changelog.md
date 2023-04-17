@@ -1,6 +1,12 @@
 ﻿# Changelog World Generation
 
 
+[0.8.0] - 2023-04-14
+## Added
+- Grass Mesh (From Daniel Ilet - https://github.com/daniel-ilett/shaders-6grass)
+- Random Spawner for Grass
+
+
 ## [0.7.0] - 2023-04-13
 # Added
 - Random Spawner for carrots

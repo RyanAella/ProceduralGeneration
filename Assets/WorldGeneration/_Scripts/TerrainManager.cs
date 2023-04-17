@@ -27,6 +27,7 @@ namespace WorldGeneration._Scripts
         /// <summary>
         /// </summary>
         /// <param name="maxTerrainHeight"></param>
+        /// <param name="waterLevel"></param>
         /// <param name="generalSettings"></param>
         /// <param name="noiseSettings"></param>
         /// <param name="wallPrefab"></param>

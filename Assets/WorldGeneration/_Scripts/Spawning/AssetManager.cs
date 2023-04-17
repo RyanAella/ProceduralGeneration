@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using WorldGeneration._Scripts.Helper;
 using WorldGeneration._Scripts.ScriptableObjects;
-using WorldGeneration._Scripts.TerrainGeneration;
 using Random = UnityEngine.Random;
 
 namespace WorldGeneration._Scripts.Spawning
@@ -12,7 +11,7 @@ namespace WorldGeneration._Scripts.Spawning
     {
         // private
         private static AssetManager _instance;
-        private CarrotSpawner _carrotSpawner;
+        private AssetSpawner _assetSpawner;
 
         public static AssetManager GetInstance()
         {
@@ -26,28 +25,23 @@ namespace WorldGeneration._Scripts.Spawning
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="resolution"></param>
         /// <param name="maxTerrainHeight"></param>
-        /// <param name="waterLevel"></param>
         /// <param name="generalSettings"></param>
-        /// <param name="noiseSettings"></param>
         /// <param name="map"></param>
-        /// <param name="noiseWithClamp"></param>
-        /// <param name="demoCarrot"></param>
-        /// <param name="corners"></param>
-        /// <param name="maxNumberOfCarrots"></param>
-        public void SpawnAssets(Vector2Int resolution, float maxTerrainHeight, float waterLevel,
-            GeneralSettings generalSettings,
-            NoiseSettings noiseSettings, float[,] map, NoiseWithClamp noiseWithClamp, GameObject demoCarrot,
-            Vector2[] corners, int maxNumberOfCarrots)
+        /// <param name="carrotSettings"></param>
+        /// <param name="carrots"></param>
+        /// <param name="grassSettings"></param>
+        /// <param name="grass"></param>
+        public void SpawnAssets(Vector2Int resolution, float maxTerrainHeight, GeneralSettings generalSettings,
+            float[,] map, PlantSettings carrotSettings, Transform carrots, PlantSettings grassSettings, Transform grass)
         {
-            _carrotSpawner = new CarrotSpawner();
+            _assetSpawner = new AssetSpawner();
 
-            for (var i = 0; i <= maxNumberOfCarrots; i++)
+            for (var i = 0; i < carrotSettings.maxNumber; i++)
             {
-                var posFound = false;
+                // var posFound = false;
                 float xPos, zPos;
                 Vector3 pos;
 
@@ -59,30 +53,71 @@ namespace WorldGeneration._Scripts.Spawning
                 //
                 // Debug.Log(pos.ToString());
 
+                // while (!posFound)
+                // {
+                // xPos = Random.Range(-generalSettings.squareSize * (resolution.x - 1) / 2,
+                //     generalSettings.squareSize * (resolution.x - 1) / 2 + generalSettings.squareSize * (resolution.x - 1) / 2);
+                // zPos = Random.Range(-generalSettings.squareSize * (resolution.y - 1) / 2,
+                //     generalSettings.squareSize * (resolution.y - 1) / 2 + generalSettings.squareSize * (resolution.y - 1) / 2);
+                
+                xPos = Random.Range(-generalSettings.squareSize * (resolution.x - 1) / 2,
+                    generalSettings.squareSize * (resolution.x - 1) / 2);
+                zPos = Random.Range(-generalSettings.squareSize * (resolution.y - 1) / 2,
+                    generalSettings.squareSize * (resolution.y - 1) / 2);
 
-                while (!posFound)
-                {
-                    xPos = Random.Range(0.0f, 1.0f) * (resolution.x - 1);
-                    zPos = Random.Range(0.0f, 1.0f) * (resolution.y - 1);
-                    // Debug.Log("xPos: " + xPos);
-                    // Debug.Log("zPos: "+ zPos);
-                    
-                    pos = GeneratorFunctions.GetSurfacePoint(xPos, zPos, resolution, maxTerrainHeight, map, generalSettings
-                        /*noiseSettings, noiseWithClamp*/);
-                    if (pos.y > maxTerrainHeight * waterLevel && pos.y < maxTerrainHeight * 0.8f)
-                    {
-                        _carrotSpawner.Spawn(demoCarrot, pos);
-                        posFound = true;
-                    }
-                }
+                // zPos = Random.Range(0.0f, 1.0f) * (resolution.y - 1);
+                // Debug.Log("xPos: " + xPos);
+                // Debug.Log("zPos: "+ zPos);
 
+                pos = GeneratorFunctions.GetSurfacePointFromWorldCoordinate(xPos, zPos, resolution, maxTerrainHeight,
+                    map,
+                    generalSettings);
+                // pos = GeneratorFunctions.GetSurfacePoint(xPos, zPos, resolution, maxTerrainHeight, map,
+                //     generalSettings);
+                // if (pos.y > maxTerrainHeight * waterLevel && pos.y < maxTerrainHeight * 0.8f)
+                // {
+                var carrot = _assetSpawner.Spawn(carrotSettings.plantPrefab, pos);
+                carrot.transform.SetParent(carrots);
 
-                // _carrotSpawner.Spawn(demoCarrot,
+                carrotSettings.plants.Add(carrot);
+
+                // posFound = true;
+                // }
+                // }
+
+                // _assetSpawner.Spawn(demoCarrot,
                 //     GeneratorFunctions.GetSurfacePoint(0.0f, 0.0f, resolution, maxTerrainHeight, generalSettings,
                 //         noiseSettings, noiseWithClamp));
-                // _carrotSpawner.Spawn(demoCarrot,
+                // _assetSpawner.Spawn(demoCarrot,
                 //     GeneratorFunctions.GetSurfacePoint(resolution.x - 1, resolution.y - 1, resolution, maxTerrainHeight,
                 //         generalSettings, noiseSettings, noiseWithClamp));
+            }
+
+            for (var i = 0; i < grassSettings.maxNumber; i++)
+            {
+                // var posFound = false;
+                float xPos, zPos;
+                Vector3 pos;
+
+                xPos = Random.Range(-generalSettings.squareSize * (resolution.x - 1) / 2,
+                    generalSettings.squareSize * (resolution.x - 1) / 2);
+                zPos = Random.Range(-generalSettings.squareSize * (resolution.y - 1) / 2,
+                    generalSettings.squareSize * (resolution.y - 1) / 2);
+
+                // xPos = Random.Range(
+                //     -generalSettings.squareSize * resolution.x / 2 /* + generalSettings.squareSize / 2*/,
+                //     -generalSettings.squareSize * resolution.x / 2 + generalSettings.squareSize * resolution.x /*+
+                //     generalSettings.squareSize / 2*/);
+                // zPos = Random.Range(
+                //     -generalSettings.squareSize * resolution.y / 2 /* + generalSettings.squareSize / 2*/,
+                //     -generalSettings.squareSize * resolution.y / 2 + generalSettings.squareSize * resolution.y /*+
+                //     generalSettings.squareSize / 2*/);
+
+                pos = GeneratorFunctions.GetSurfacePointFromWorldCoordinate(xPos, zPos, resolution, maxTerrainHeight,
+                    map, generalSettings);
+
+                var plant = _assetSpawner.Spawn(grassSettings.plantPrefab, pos);
+                plant.transform.SetParent(grass);
             }
         }
     }

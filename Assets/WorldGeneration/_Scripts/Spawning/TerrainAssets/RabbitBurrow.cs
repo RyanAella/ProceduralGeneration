@@ -7,24 +7,20 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
     public class RabbitBurrow : MonoBehaviour
     {
         [SerializeField] private BurrowSettings settings;
-
-        private TimeManager _timer;
         private InGameDate _birthDate;
-        
-        void Start()
+        private TimeManager _timer;
+
+        private void Start()
         {
             _timer = TimeManager.Instance;
             _birthDate = _timer.GetCurrentDate();
             settings.lifespan = new InGameDate().CalcDate(settings.lifespan);
-            settings.isOccupied = true;
+            settings.isOccupied = false;
         }
 
-        void Update()
+        private void Update()
         {
-            if (_birthDate.AddDates(settings.lifespan).Equals(_timer.GetCurrentDate()))
-            {
-                Destroy(gameObject);
-            }
+            if (_birthDate.AddDates(settings.lifespan).Equals(_timer.GetCurrentDate())) Destroy(gameObject);
         }
     }
 }

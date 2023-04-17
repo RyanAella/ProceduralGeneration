@@ -7,24 +7,19 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
     public class Carrot : MonoBehaviour
     {
         [SerializeField] private PlantSettings settings;
-        
-        private TimeManager _timer;
         private InGameDate _birthDate;
+        private TimeManager _timer;
 
-        void Start()
+        private void Start()
         {
             _timer = TimeManager.Instance;
             _birthDate = _timer.GetCurrentDate();
             settings.lifespan = new InGameDate().CalcDate(settings.lifespan);
         }
 
-        void Update()
+        private void Update()
         {
-            if (_birthDate.AddDates(settings.lifespan).Equals(_timer.GetCurrentDate()))
-            {
-                Debug.Log("Carrot Dies");
-                Destroy(gameObject);
-            }
+            if (_birthDate.AddDates(settings.lifespan).Equals(_timer.GetCurrentDate())) Destroy(gameObject);
         }
     }
 }
