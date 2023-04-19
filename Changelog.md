@@ -7,11 +7,20 @@
 - Random Spawner for Grass
 
 
+## [0.8.0] - 2023-04-19
+## Added
+- Random Spawner for Grass
+
+## Changed
+- Wrong calculation for InGameDates
+- Code Refactoring
+
+
 ## [0.7.0] - 2023-04-13
-# Added
+## Added
 - Random Spawner for carrots
 
-# Changed
+## Changed
 - OpenSimplexNoise instead of Perlin Noise
 
 

@@ -23,6 +23,8 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         private Mesh _mesh;
         private MeshRenderer _meshRenderer;
 
+        private GameObject _leftWall, _rightWall, _upperWall, _lowerWall;
+
         // ...
         private bool _running;
 
@@ -97,10 +99,14 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         public void GenerateWall(GameObject wallPrefab, Vector2Int resolution, float maxTerrainHeight,
             GeneralSettings generalSettings)
         {
+            Destroy(_leftWall);
+            Destroy(_rightWall);
+            Destroy(_upperWall);
+            Destroy(_lowerWall);
+            
             // Generate the left wall
             var tempTransform = transform;
             var tempTransformPos = tempTransform.position;
-            // var resolution = resolution;
             var squareSize = generalSettings.squareSize;
 
             var yScale = (generalSettings.maxBorderHeight + maxTerrainHeight) * 2;
@@ -109,19 +115,19 @@ namespace WorldGeneration._Scripts.TerrainGeneration
                        wallPrefab.transform.localScale.x / 2;
             var zPos = tempTransformPos.z;
             var position = new Vector3(xPos, 0, zPos);
-            var newObject = Instantiate(wallPrefab, position, Quaternion.identity, tempTransform); // generate left
-            newObject.name = "left_wall";
-            var objScale = newObject.transform.localScale;
-            newObject.transform.localScale =
+            _leftWall = Instantiate(wallPrefab, position, Quaternion.identity, tempTransform); // generate left
+            _leftWall.name = "left_wall";
+            var objScale = _leftWall.transform.localScale;
+            _leftWall.transform.localScale =
                 new Vector3(objScale.x, yScale, (resolution.y - 1) * squareSize + objScale.z * 2);
 
 
             // Generate the right wall
             position = new Vector3(-xPos, 0, zPos);
-            newObject = Instantiate(wallPrefab, position, Quaternion.identity, tempTransform); // generate right
-            newObject.name = "right_wall";
-            objScale = newObject.transform.localScale;
-            newObject.transform.localScale =
+            _rightWall = Instantiate(wallPrefab, position, Quaternion.identity, tempTransform); // generate right
+            _rightWall.name = "right_wall";
+            objScale = _rightWall.transform.localScale;
+            _rightWall.transform.localScale =
                 new Vector3(objScale.x, yScale, (resolution.y - 1) * squareSize + objScale.z * 2);
 
             // Generate the upper wall
@@ -129,17 +135,17 @@ namespace WorldGeneration._Scripts.TerrainGeneration
             zPos = tempTransformPos.z - (float)resolution.y / 2 * squareSize + squareSize / 2 -
                    wallPrefab.transform.localScale.z / 2;
             position = new Vector3(xPos, 0, -zPos);
-            newObject = Instantiate(wallPrefab, position, Quaternion.identity, tempTransform); // generate up
-            newObject.name = "upper_wall";
-            objScale = newObject.transform.localScale;
-            newObject.transform.localScale = new Vector3((resolution.x - 1) * squareSize, yScale, objScale.y);
+            _upperWall = Instantiate(wallPrefab, position, Quaternion.identity, tempTransform); // generate up
+            _upperWall.name = "upper_wall";
+            objScale = _upperWall.transform.localScale;
+            _upperWall.transform.localScale = new Vector3((resolution.x - 1) * squareSize, yScale, objScale.y);
 
             // Generate the lower wall
             position = new Vector3(xPos, 0, zPos);
-            newObject = Instantiate(wallPrefab, position, Quaternion.identity, tempTransform); // generate down
-            newObject.name = "lower_wall";
-            objScale = newObject.transform.localScale;
-            newObject.transform.localScale = new Vector3((resolution.x - 1) * squareSize, yScale, objScale.y);
+            _lowerWall = Instantiate(wallPrefab, position, Quaternion.identity, tempTransform); // generate down
+            _lowerWall.name = "lower_wall";
+            objScale = _lowerWall.transform.localScale;
+            _lowerWall.transform.localScale = new Vector3((resolution.x - 1) * squareSize, yScale, objScale.y);
         }
     }
 }

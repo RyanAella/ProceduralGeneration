@@ -5,12 +5,13 @@ using UnityEngine;
 namespace WorldGeneration._Scripts.ScriptableObjects
 {
     [CreateAssetMenu(menuName = "ScriptableObjects/Settings/Plant")]
-    public class PlantSettings : ScriptableObject
+    public class AssetSettings : ScriptableObject
     {
-        public GameObject plantPrefab;
+        public GameObject assetPrefab;
+        public Transform parent;
         public InGameDate lifespan;
         public int maxNumber;
 
-        [HideInInspector] public List<GameObject> plants;
+        public List<GameObject> assets;
     }
 }

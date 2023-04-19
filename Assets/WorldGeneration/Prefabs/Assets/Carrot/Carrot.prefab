@@ -216,6 +216,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings: {fileID: 11400000, guid: 928989c489e8f804896e3f8a5546e47e, type: 2}
+  lifespan:
+    day: 5
+    week: 0
+    month: 0
+    year: 0
 --- !u!65 &7114642702552914957
 BoxCollider:
   m_ObjectHideFlags: 0
