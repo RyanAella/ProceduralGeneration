@@ -79,7 +79,7 @@ namespace WorldGeneration._Scripts
                     // _parent = Instantiate(assetSetting.parent, transform);
                     _parents.Add(assetSetting, Instantiate(assetSetting.parent, transform));
                     assetSetting.assets = new List<GameObject>();
-                    _assetManager.InitialSpawnAssets(resolution, maxTerrainHeight, generalSettings, _map, assetSetting,
+                    _assetManager.InitialSpawnAssets(resolution, maxTerrainHeight, waterLevel, generalSettings, _map, assetSetting,
                         _parents[assetSetting]);
                 }
 
@@ -137,7 +137,7 @@ namespace WorldGeneration._Scripts
                         _parent = Instantiate(assetSetting.parent, transform);
                         _parents.Add(assetSetting, _parent);
                         assetSetting.assets = new List<GameObject>();
-                        _assetManager.InitialSpawnAssets(resolution, maxTerrainHeight, generalSettings, _map,
+                        _assetManager.InitialSpawnAssets(resolution, maxTerrainHeight, waterLevel, generalSettings, _map,
                             assetSetting,
                             _parent);
                     }
@@ -156,7 +156,7 @@ namespace WorldGeneration._Scripts
                     {
                         var count = assetSetting.maxNumber - assetSetting.assets.Count;
                         // _parent = _parents[assetSetting];
-                        _assetManager.SpawnAssets(resolution, maxTerrainHeight, generalSettings, _map, assetSetting,
+                        _assetManager.SpawnAssets(resolution, maxTerrainHeight, waterLevel, generalSettings, _map, assetSetting,
                             _parents[assetSetting], count);
                     }
                 }

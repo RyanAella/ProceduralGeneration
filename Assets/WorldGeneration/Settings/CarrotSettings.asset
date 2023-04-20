@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb49cc67eeb6695419aeb8803d01e343, type: 3}
   m_Name: CarrotSettings
   m_EditorClassIdentifier: 
-  assetPrefab: {fileID: 4740231162571601898, guid: 5e3031ac9c1c8ec4d9d2b229365ad20b, type: 3}
+  assetPrefab: {fileID: 3408820267349212646, guid: 59b337d6ca414244ebad1988ded5f9f1, type: 3}
   parent: {fileID: 6574853312113808479, guid: ccb15d0787a121e468daec9e0d527868, type: 3}
   lifespan:
     day: 5
