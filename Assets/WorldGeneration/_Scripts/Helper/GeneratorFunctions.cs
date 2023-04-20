@@ -1,25 +1,22 @@
 using UnityEngine;
 using WorldGeneration._Scripts.ScriptableObjects;
-using WorldGeneration._Scripts.TerrainGeneration;
 
 namespace WorldGeneration._Scripts.Helper
 {
     public static class GeneratorFunctions
     {
         /// <summary>
-        ///     Get the height of a Vector2 on the map.
+        ///     Get the height / y coordinate from a Vector2 on the map.
         /// </summary>
-        /// <param name="x">The x coordinate</param>
-        /// <param name="y">The y coordinate</param>
+        /// <param name="x">The logical x coordinate</param>
+        /// <param name="z">The logical z coordinate</param>
         /// <param name="resolution"></param>
         /// <param name="maxTerrainHeight"></param>
+        /// <param name="map"></param>
         /// <param name="generalSettings">The general settings of the simulation</param>
-        /// <param name="noiseSettings"></param>
-        /// <param name="noiseWithClamp"></param>
-        /// <returns></returns>
-        public static Vector3 GetSurfacePoint(float x, float z, Vector2Int resolution, float maxTerrainHeight,
-            float[,] map, GeneralSettings generalSettings
-            /*NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp*/)
+        /// <returns>Vector3 in world coordinates</returns>
+        private static Vector3 GetSurfacePoint(float x, float z, Vector2Int resolution, float maxTerrainHeight,
+            float[,] map, GeneralSettings generalSettings)
         {
             // var xPos = x - (float)resolution.x / 2;
             // var zPos = z - (float)resolution.y / 2;
@@ -36,76 +33,57 @@ namespace WorldGeneration._Scripts.Helper
             //     yPos * maxTerrainHeight,
             //     -mapHeight / 2 + z * generalSettings.squareSize + generalSettings.squareSize / 2);
 
-            int xLow, xHigh, zLow, zHigh;
+            var xLow = Mathf.FloorToInt(x);
+            var xHigh = Mathf.CeilToInt(x);
+            var zLow = Mathf.FloorToInt(z);
+            var zHigh = Mathf.CeilToInt(z);
 
-            xLow = Mathf.FloorToInt(x);
-            xHigh = Mathf.CeilToInt(x);
-            zLow = Mathf.FloorToInt(z);
-            zHigh = Mathf.CeilToInt(z);
-            
             // Debug.Log(xLow + ", " + zLow);
-
-            float val00, val01, val10, val11, xRange, zRange;
-            val00 = map[xLow, zLow];
-            val01 = map[xLow, zHigh];
-            val10 = map[xHigh, zLow];
-            val11 = map[xHigh, zHigh];
-
+            var val00 = map[xLow, zLow];
+            var val01 = map[xLow, zHigh];
+            var val10 = map[xHigh, zLow];
+            var val11 /*, xRange, zRange*/ = map[xHigh, zHigh];
             // xRange = xHigh - xLow;
             // zRange = zHigh - zLow;
-            xRange = 1;
-            zRange = 1;
-
+            // xRange = 1;
+            // zRange = 1;
             // values for:
             //      - r1 val00 -> val10,
             //      - r2 val01 -> val11
-            float r1, r2;
-            r1 = (xHigh - x) * val00 + (x - xLow) * val10;
-            r2 = (xHigh - x) * val01 + (x - xLow) * val11;
+            var r1 = (xHigh - x) * val00 + (x - xLow) * val10;
+            var r2 = (xHigh - x) * val01 + (x - xLow) * val11;
 
-            float yPos = (zHigh - z) * r1 + (z - zLow) * r2;
+            var yPos = (zHigh - z) * r1 + (z - zLow) * r2;
 
             var mapWidth = resolution.x * generalSettings.squareSize;
             var mapHeight = resolution.y * generalSettings.squareSize;
 
-            float xPos = -mapWidth / 2 + x * generalSettings.squareSize + generalSettings.squareSize / 2;
-            float zPos = -mapHeight / 2 + z * generalSettings.squareSize + generalSettings.squareSize / 2;
+            var xPos = -mapWidth / 2 + x * generalSettings.squareSize + generalSettings.squareSize / 2;
+            var zPos = -mapHeight / 2 + z * generalSettings.squareSize + generalSettings.squareSize / 2;
             yPos *= maxTerrainHeight;
-            
+
             return new Vector3(xPos, yPos, zPos);
         }
 
         /// <summary>
+        ///     Get the height / y coordinate from a Vector2 from world coordinates.
         /// </summary>
+        /// <param name="x">The world x coordinate</param>
+        /// <param name="z">The world z coordinate</param>
+        /// <param name="resolution"></param>
+        /// <param name="maxTerrainHeight"></param>
+        /// <param name="map"></param>
         /// <param name="generalSettings"></param>
-        /// <param name="noiseSettings"></param>
-        /// <param name="noiseGenerator"></param>
-        /// <param name="clamp"></param>
-        /// <returns></returns>
-        public static Vector2[] GetCornerPoints(GeneralSettings generalSettings, NoiseSettings noiseSettings,
-            NoiseWithClamp noiseWithClamp)
+        /// <returns>Vector3 in world coordinates</returns>
+        public static Vector3 GetSurfacePointFromWorldCoordinate(float x, float z, Vector2Int resolution,
+            float maxTerrainHeight, float[,] map, GeneralSettings generalSettings)
         {
-            // Fertig bauen, Achtung GeneralSettings no longer working
-            var corners = new Vector2[4];
+            var mapWidth = resolution.x * generalSettings.squareSize;
 
-            // lower left corner
-            corners[0] =
-                new Vector2(0, 0); //GetSurfacePoint(0,0, generalSettings, noiseSettings, noiseGenerator, clamp);
+            var xPosL = (x + mapWidth / 2 - generalSettings.squareSize / 2) / generalSettings.squareSize;
+            var zPosL = (z + mapWidth / 2 - generalSettings.squareSize / 2) / generalSettings.squareSize;
 
-            // // upper left corner
-            // var z = generalSettings.resolution.y;
-            // corners[1] = GetSurfacePoint(0,z, generalSettings, noiseSettings, noiseGenerator, clamp);
-            //
-            // // upper right corner
-            // var x = generalSettings.resolution.x;
-            // corners[2] = GetSurfacePoint(x,0, generalSettings, noiseSettings, noiseGenerator, clamp);
-            //
-            // // upper right corner
-            // x = generalSettings.resolution.x;
-            // z = generalSettings.resolution.y;
-            // corners[3] = GetSurfacePoint(x,z, generalSettings, noiseSettings, noiseGenerator, clamp);
-
-            return corners;
+            return GetSurfacePoint(xPosL, zPosL, resolution, maxTerrainHeight, map, generalSettings);
         }
     }
 

@@ -15,10 +15,18 @@ namespace InGameTime
         public int month;
         public int year;
 
-        /** 
-         * <param name="format"> Possible formats are: " ", ":", ";", "," and "/" as default.</param>
-         * <returns> a string representation of the InGameDate</returns>
-         */
+        public InGameDate(int day, int week, int month, int year)
+        {
+            this.day = day;
+            this.week = week;
+            this.month = month;
+            this.year = year;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="format">Possible formats are: " ", ":", ";", "," and "/" as default.</param>
+        /// <returns>a string representation of the InGameDate</returns>
         public String ToString(String format)
         {
             switch (format)
@@ -41,11 +49,11 @@ namespace InGameTime
             }
         }
 
-        /** 
-         * Add a date to the current InGame time.
-         * <param name="date">InGameDate that has to be added to the current date.</param>
-         * <returns> A new InGameDate </returns>
-         */
+        /// <summary>
+        /// Add a date to the current InGame time.
+        /// </summary>
+        /// <param name="date">InGameDate that has to be added to the current date.</param>
+        /// <returns>A new InGameDate</returns>
         public InGameDate AddDates(InGameDate date)
         {
             return new InGameDate
@@ -57,78 +65,97 @@ namespace InGameTime
             };
         }
 
-        /** 
-         * Calculates the correct date.
-         * <param name="date">InGameDate that has to be calculated.</param>
-         * <returns> date - The correct date </returns>
-         */
+        /// <summary>
+        /// Subtract a date from the current InGame time.
+        /// </summary>
+        /// <param name="date">InGameDate that has to be subtracted from the current date.</param>
+        /// <returns>A new InGameDate</returns>
+        public InGameDate SubtractDates(InGameDate date)
+        {
+            return new InGameDate
+            {
+                day = day - date.day,
+                week = week - date.week,
+                month = month - date.month,
+                year = year - date.year,
+            };
+        }
+        
+        /// <summary>
+        /// Calculates the correct date.
+        /// </summary>
+        /// <param name="date">InGameDate that has to be calculated.</param>
+        /// <returns>date - The correct date</returns>
         public InGameDate CalcDate(InGameDate date)
         {
             if (date.day >= 7)
             {
-                date = DaysToDate(date.day);
+                date.week += date.day / 7;
+                date.day %= 7;
             }
-            else if (date.week >= 4)
+            if (date.week >= 4)
             {
-                date = WeeksToDate(date.week);
+                date.month += date.week / 4;
+                date.week %= 4;
             }
-            else if (date.month >= 12)
+            if (date.month >= 12)
             {
-                date = MonthsToDate(date.month);
+                date.year += date.month / 12;
+                date.month %= 12;
             }
 
             return date;
         }
 
-        /** 
-         * If days >= 7 the date needs to be recalculated.
-         * <param name="days">The number of days that need to be recalculated.</param>
-         * <returns> A new InGameDate </returns>
-         */
-        public static InGameDate DaysToDate(int days)
-        {
-            int weeks = days / 7;
-            int months = weeks / 4;
-
-            return new InGameDate
-            {
-                day = days % 7,
-                week = weeks % 4,
-                month = months % 12,
-                year = months / 12,
-            };
-        }
-
-        /** 
-         * If weeks >= 4 the date needs to be recalculated.
-         * <param name="weeks">The number of weeks that need to be recalculated.</param>
-         * <returns> A new InGameDate </returns>
-         */
-        public static InGameDate WeeksToDate(int weeks)
-        {
-            int months = weeks / 4;
-
-            return new InGameDate
-            {
-                week = weeks % 4,
-                month = months % 12,
-                year = months / 12,
-            };
-        }
-
-        /** 
-         * If months >= 12 the date needs to be recalculated.
-         * <param name="months">The number of days that need to be recalculated.</param>
-         * <returns> A new InGameDate </returns>
-         */
-        public static InGameDate MonthsToDate(int months)
-        {
-            return new InGameDate
-            {
-                month = months % 12,
-                year = months / 12,
-            };
-        }
+        // /// <summary>
+        // /// If days >= 7 the date needs to be recalculated.
+        // /// </summary>
+        // /// <param name="days">The number of days that need to be recalculated.</param>
+        // /// <returns>A new InGameDate</returns>
+        // public static InGameDate DaysToDate(int days)
+        // {
+        //     int weeks = days / 7;
+        //     int months = weeks / 4;
+        //
+        //     return new InGameDate
+        //     {
+        //         day = days % 7,
+        //         week = weeks % 4,
+        //         month = months % 12,
+        //         year = months / 12,
+        //     };
+        // }
+        //
+        // /// <summary>
+        // /// If weeks >= 4 the date needs to be recalculated.
+        // /// </summary>
+        // /// <param name="weeks">The number of weeks that need to be recalculated.</param>
+        // /// <returns>A new InGameDate</returns>
+        // public static InGameDate WeeksToDate(int weeks)
+        // {
+        //     int months = weeks / 4;
+        //
+        //     return new InGameDate
+        //     {
+        //         week = weeks % 4,
+        //         month = months % 12,
+        //         year = months / 12,
+        //     };
+        // }
+        //
+        // /// <summary>
+        // /// If months >= 12 the date needs to be recalculated.
+        // /// </summary>
+        // /// <param name="months">The number of days that need to be recalculated.</param>
+        // /// <returns>A new InGameDate</returns>
+        // public static InGameDate MonthsToDate(int months)
+        // {
+        //     return new InGameDate
+        //     {
+        //         month = months % 12,
+        //         year = months / 12,
+        //     };
+        // }
     }
 
     /// <summary>
@@ -137,14 +164,17 @@ namespace InGameTime
     /// 1 week = 42 sec.
     /// 1 month = 168 sec.
     /// 1 year = 2016 sec.
+    ///
+    /// To use it, you have to call BeginTimer().
+    /// It can be terminated with EndTimer().
     /// </summary>
     public class TimeManager : MonoBehaviour
     {
         public static TimeManager Instance;
-        
+
         // fixed time intervals for one second
         [SerializeField] private float timeInterval = 0.5f;
-        
+
         public static Action OnDayChanged;
         public static Action OnWeekChanged;
         public static Action OnMonthChanged;
@@ -154,13 +184,15 @@ namespace InGameTime
         // private float _weekToRealTime = 42.0f; // 42s are one week
         // private float _monthToRealTime = 168.0f; // 168s are one month
         // private float _yearsToRealTime = 2016.0f; // 2016s are one year
-        
+
         private float _timer;
 
         // private float timeScale = 1.0f;
         private float _lastTimeScale;
 
         private InGameDate _inGameDate;
+
+        private bool _timerGoing;
 
         private void Awake()
         {
@@ -188,20 +220,20 @@ namespace InGameTime
 
             // UnityEngine.Time.timeScale = 2f;
             _lastTimeScale = UnityEngine.Time.timeScale;
-            StartCoroutine(Countdown());
+            _timerGoing = false;
         }
 
         /** 
          * The countdown that manages the InGame time.
          */
-        private IEnumerator Countdown()
+        private IEnumerator UpdateTime()
         {
             _timer *= 1 / timeInterval;
             // Debug.Log("Timer Value at Start of coroutine: " + _timer);
 
-            while (true)
+            while (_timerGoing)
             {
-                yield return new WaitForSeconds(timeInterval);
+                // yield return new WaitForSeconds(timeInterval);
                 _timer--;
                 // Debug.Log("Timer Value: " + _timer);
 
@@ -237,22 +269,52 @@ namespace InGameTime
                 }
 
                 // Debug.Log(_inGameDate.ToString(":"));
+                yield return null;
             }
         }
 
+        /// <summary>
+        /// Start The InGame Timer.
+        /// </summary>
+        public void BeginTimer()
+        {
+            _timerGoing = true;
+            StartCoroutine(UpdateTime());
+        }
+
+        /// <summary>
+        /// Stop the InGame Timer.
+        /// </summary>
+        public void EndTimer()
+        {
+            _timerGoing = false;
+        }
+
+        /// <summary>
+        /// Pause the Game.
+        /// </summary>
         public void Stop()
         {
             // Debug.Log("Pause Game");
+            EndTimer();
             _lastTimeScale = UnityEngine.Time.timeScale;
             UnityEngine.Time.timeScale = 0.0f;
         }
 
+        /// <summary>
+        /// Resume the Game.
+        /// </summary>
         public void Resume()
         {
             // Debug.Log("Resume Game");
+            BeginTimer();
             UnityEngine.Time.timeScale = _lastTimeScale;
         }
 
+        /// <summary>
+        /// Set the time scale.
+        /// </summary>
+        /// <param name="timeScale"></param>
         public void SetTimeScale(float timeScale)
         {
             _lastTimeScale = UnityEngine.Time.timeScale;
@@ -260,17 +322,19 @@ namespace InGameTime
             // Debug.Log("timeScale: " + UnityEngine.Time.timeScale);
         }
 
-        /** 
-         * <returns> The current InGameDate </returns>
-         */
+        /// <summary>
+        /// Get the current InGame date.
+        /// </summary>
+        /// <returns>The current InGameDate</returns>
         public InGameDate GetCurrentDate()
         {
             return _inGameDate;
         }
-
-        /** 
-         * <returns> The time an InGame day references in real life in seconds </returns>
-         */
+        
+        /// <summary>
+        /// The time an InGame day references in real life in seconds.
+        /// </summary>
+        /// <returns>The time in seconds</returns>
         public float GetDaysToRealtime()
         {
             return _daysToRealTime;

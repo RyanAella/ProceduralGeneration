@@ -1,11 +1,32 @@
 ﻿# Changelog World Generation
 
 
+## [0.9.0] - 2023-04-20
+## Changed
+- Assets are no longer underwater
+- New Carrot Prefab
+
+
+## [0.8.0] - 2023-04-14
+## Added
+- Grass Mesh (From Daniel Ilet - https://github.com/daniel-ilett/shaders-6grass)
+- Random Spawner for Grass
+
+
+## [0.8.0] - 2023-04-19
+## Added
+- Random Spawner for Grass
+
+## Changed
+- Wrong calculation for InGameDates
+- Code Refactoring
+
+
 ## [0.7.0] - 2023-04-13
-# Added
+## Added
 - Random Spawner for carrots
 
-# Changed
+## Changed
 - OpenSimplexNoise instead of Perlin Noise
 
 
