@@ -4,7 +4,7 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
-// using _Scripts.Time;
+using System;
 
 public class AgentRabbit : CustomAgent
 {
@@ -19,15 +19,4 @@ public class AgentRabbit : CustomAgent
     {
 
     }
-
-    public override void Breed()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public override void Eat()
-    {
-        throw new System.NotImplementedException();
-    }
-
 }
