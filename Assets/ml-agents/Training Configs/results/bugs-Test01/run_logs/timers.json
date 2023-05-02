@@ -1,0 +1,42 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1681316318",
+        "python_version": "3.9.0 (tags/v3.9.0:9cf6752, Oct  5 2020, 15:34:40) [MSC v.1927 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\Users\\Alex\\python-envs\\mlAgent-env\\Scripts\\mlagents-learn Rabbit.yaml --run-id=bugs-Test01",
+        "mlagents_version": "0.30.0",
+        "mlagents_envs_version": "0.30.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "1.7.1+cu110",
+        "numpy_version": "1.21.2",
+        "end_time_seconds": "1681316386"
+    },
+    "total": 67.9479092,
+    "count": 1,
+    "self": 0.010544699999996965,
+    "children": {
+        "run_training.setup": {
+            "total": 0.13455600000000079,
+            "count": 1,
+            "self": 0.13455600000000079
+        },
+        "TrainerController.start_learning": {
+            "total": 67.8028085,
+            "count": 1,
+            "self": 0.00019759999999280353,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 67.8025915,
+                    "count": 1,
+                    "self": 67.8025915
+                },
+                "TrainerController._save_models": {
+                    "total": 1.9399999999336615e-05,
+                    "count": 1,
+                    "self": 1.9399999999336615e-05
+                }
+            }
+        }
+    }
+}
