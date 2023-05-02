@@ -12,6 +12,10 @@ namespace WorldGeneration._Scripts.TerrainGeneration
 
         public NoiseGenerator(NoiseSettings noiseSettings)
         {
+            // Check if a random seed is wanted
+            if (noiseSettings.useRandomSeed)
+                noiseSettings.seed = UnityEngine.Time.realtimeSinceStartupAsDouble.ToString();
+            
             _simplexNoise = new OpenSimplexNoise(noiseSettings.seed.GetHashCode());
         }
 
@@ -24,10 +28,6 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         /// <returns>A float value</returns>
         public float GenerateNoiseValue(NoiseSettings noiseSettings, float x, float y)
         {
-            // Check if a random seed is wanted
-            // if (noiseSettings.useRandomSeed)
-            //     noiseSettings.seed = UnityEngine.Time.realtimeSinceStartupAsDouble.ToString();
-
             // var seedOffset = noiseSettings.seed.GetHashCode() / noiseSettings.seedScale;
 
             // Get the coordinates
@@ -47,10 +47,6 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         /// <returns>A float value</returns>
         public float GenerateNoiseValueWithFbm(NoiseSettings noiseSettings, float x, float y)
         {
-            // Check if a random seed is wanted
-            // if (noiseSettings.useRandomSeed)
-            //     noiseSettings.seed = UnityEngine.Time.realtimeSinceStartupAsDouble.ToString();
-
             // var seedOffset = noiseSettings.seed.GetHashCode() / noiseSettings.seedScale;
 
             var value = 0.0f;
