@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using InGameTime;
 using UnityEngine;
 
@@ -8,7 +9,11 @@ namespace WorldGeneration._Scripts.ScriptableObjects
     [Serializable]
     public class BurrowSettings : ScriptableObject
     {
+        public GameObject assetPrefab;
+        public Transform parent;
         public InGameDate lifespan;
-        [HideInInspector] public bool isOccupied;
+        public int maxNumber;
+
+        [HideInInspector] public List<GameObject> assets;
     }
 }

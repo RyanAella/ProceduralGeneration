@@ -360,14 +360,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.2164396, y: 0, z: 0, w: 0.97629607}
+  m_LocalPosition: {x: 0, y: 350, z: -900}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 25, y: 0, z: 0}
 --- !u!114 &963194229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -453,7 +453,12 @@ MonoBehaviour:
   groundGenerator: {fileID: 6045032558767503097, guid: 1b6bf5a46ef613f46bd9d7537ab8f4aa, type: 3}
   waterGenerator: {fileID: 8391093040582111047, guid: bbad8adef54a3f94c96f956ec681e2e3, type: 3}
   wallPrefab: {fileID: 1192836021279129591, guid: fa2f5d8d18b72a54ebdb765f32d7eb91, type: 3}
-  assets:
+  plants:
   - {fileID: 11400000, guid: 928989c489e8f804896e3f8a5546e47e, type: 2}
   - {fileID: 11400000, guid: 94b641b019911974baa8d924540ec642, type: 2}
+  - {fileID: 11400000, guid: 13941cb6dcc48534a9e9f4df72972a4f, type: 2}
+  - {fileID: 11400000, guid: 2d22553777a790b48b297ba78d172057, type: 2}
+  burrows:
+  - {fileID: 11400000, guid: 9a76cdc35957e6447b404ab0abef1b73, type: 2}
+  - {fileID: 11400000, guid: 07e60a0ac02333f4dac8c9d4b1cfb439, type: 2}
   instance: {fileID: 0}

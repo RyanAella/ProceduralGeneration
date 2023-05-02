@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using InGameTime;
 using UnityEngine;
-using UnityEngine.Serialization;
 using WorldGeneration._Scripts.Helper;
 using WorldGeneration._Scripts.ScriptableObjects;
 using WorldGeneration._Scripts.Spawning;
 using WorldGeneration._Scripts.TerrainGeneration;
+using WorldGeneration._Scripts.Spawning.TerrainAssets;
 
 namespace WorldGeneration._Scripts
 {
@@ -28,34 +28,34 @@ namespace WorldGeneration._Scripts
         [SerializeField] private WaterGenerator waterGenerator;
         [SerializeField] private GameObject wallPrefab;
 
-        [Tooltip("A list of assets to generate.")] [SerializeField]
-        private List<AssetSettings> assets;
+        [Tooltip("A list of plants to generate.")] [SerializeField]
+        private List<AssetSettings> plants;
+
+        [Tooltip("A list of burrows to generate.")] [SerializeField]
+        private List<BurrowSettings> burrows;
 
         // private
         public WorldManager instance;
-        private TimeManager _timer;
         private AssetManager _assetManager;
-        private NoiseWithClamp _noiseWithClamp;
+        private bool plantsGenerated;
+        private bool _burrowsGenerated;
 
         private Vector2[] _corners;
         private float[,] _map;
+        private NoiseWithClamp _noiseWithClamp;
         private Transform _parent;
-        private Dictionary<AssetSettings, Transform> _parents;
+        private Dictionary<AssetSettings, Transform> _plantParents;
+        private Dictionary<BurrowSettings, Transform> _burrowParents;
 
         private bool _running;
         private bool _terrainGenerated;
-        private bool _assetsGenerated;
+        private TimeManager _timer;
 
         private void Awake()
         {
             if (instance == null)
-            {
                 instance = this;
-            }
-            else if (instance != this)
-            {
-                Destroy(gameObject);
-            }
+            else if (instance != this) Destroy(gameObject);
         }
 
         // Start is called before the first frame update
@@ -71,19 +71,32 @@ namespace WorldGeneration._Scripts
             _terrainGenerated = GenerateTerrain(resolution, maxTerrainHeight, waterLevel, generalSettings,
                 noiseSettings, wallPrefab, _noiseWithClamp, out _map);
 
-            if (assets.Count != 0 && _terrainGenerated)
+            if (plants.Count != 0 && _terrainGenerated)
             {
-                _parents = new Dictionary<AssetSettings, Transform>();
-                foreach (var assetSetting in assets)
+                _plantParents = new Dictionary<AssetSettings, Transform>();
+                foreach (var assetSetting in plants)
                 {
-                    // _parent = Instantiate(assetSetting.parent, transform);
-                    _parents.Add(assetSetting, Instantiate(assetSetting.parent, transform));
+                    _plantParents.Add(assetSetting, Instantiate(assetSetting.parent, transform));
                     assetSetting.assets = new List<GameObject>();
-                    _assetManager.InitialSpawnAssets(resolution, maxTerrainHeight, waterLevel, generalSettings, _map, assetSetting,
-                        _parents[assetSetting]);
+                    _assetManager.InitialSpawnPlants(resolution, maxTerrainHeight, waterLevel, generalSettings, _map,
+                        assetSetting, _plantParents[assetSetting]);
                 }
 
-                _assetsGenerated = true;
+                plantsGenerated = true;
+            }
+
+            if (burrows.Count != 0 && _terrainGenerated)
+            {
+                _burrowParents = new Dictionary<BurrowSettings, Transform>();
+
+                var burrowSetting = burrows[0];
+                _burrowParents.Add(burrowSetting, Instantiate(burrowSetting.parent, transform));
+                burrowSetting.assets = new List<GameObject>();
+                _assetManager.InitialSpawnBurrows(resolution, maxTerrainHeight, waterLevel, generalSettings, _map,
+                    burrowSetting, _burrowParents[burrowSetting]);
+
+
+                _burrowsGenerated = true;
             }
 
             _running = true;
@@ -92,8 +105,6 @@ namespace WorldGeneration._Scripts
         // Update is called once per frame
         private void Update()
         {
-            // Debug.Log(_timer.GetCurrentDate().ToString("/"));
-
             // Only for Debugging
             if (Input.GetKeyDown(KeyCode.P) && _running)
             {
@@ -123,44 +134,70 @@ namespace WorldGeneration._Scripts
                 _terrainGenerated = GenerateTerrain(resolution, maxTerrainHeight, waterLevel, generalSettings,
                     noiseSettings, wallPrefab, _noiseWithClamp, out _map);
 
-                if (assets.Count != 0 && _terrainGenerated)
+                if (plants.Count != 0 && _terrainGenerated)
                 {
-                    foreach (var parent in _parents)
+                    if (plantsGenerated)
                     {
-                        Destroy(parent.Value.gameObject);
+                        foreach (var parent in _plantParents) Destroy(parent.Value.gameObject);
                     }
-                    
-                    _parents = new Dictionary<AssetSettings, Transform>();
-                    foreach (var assetSetting in assets)
+
+                    _plantParents = new Dictionary<AssetSettings, Transform>();
+                    foreach (var assetSetting in plants)
                     {
                         // Destroy(_parents[assetSetting]);
                         _parent = Instantiate(assetSetting.parent, transform);
-                        _parents.Add(assetSetting, _parent);
+                        _plantParents.Add(assetSetting, _parent);
                         assetSetting.assets = new List<GameObject>();
-                        _assetManager.InitialSpawnAssets(resolution, maxTerrainHeight, waterLevel, generalSettings, _map,
-                            assetSetting,
-                            _parent);
+                        _assetManager.InitialSpawnPlants(resolution, maxTerrainHeight, waterLevel, generalSettings,
+                            _map, assetSetting, _parent);
                     }
 
-                    _assetsGenerated = true;
+                    plantsGenerated = true;
+                }
+
+                if (burrows.Count != 0 && _terrainGenerated)
+                {
+                    if (_burrowsGenerated)
+                    {
+                        foreach (var parent in _burrowParents)
+                        {
+                            // for (int i = 0; i < parent.Key.assetPrefab.GetComponent<RabbitBurrow>().inhabitants.Count; i++)
+                            // {
+                            //     var rabbit = parent.Key.assetPrefab.GetComponent<RabbitBurrow>().inhabitants[i];
+                            //     DestroyImmediate(rabbit, true);
+                            // }
+
+                            if (parent.Key.assetPrefab.GetComponent<RabbitBurrow>().inhabitants.Count == 0)
+                            {
+                                Destroy(parent.Value.gameObject);
+                            }
+                        }
+                    }
+
+
+                    _burrowParents = new Dictionary<BurrowSettings, Transform>();
+
+                    var burrowSetting = burrows[0];
+                    _parent = Instantiate(burrowSetting.parent, transform);
+                    _burrowParents.Add(burrowSetting, _parent);
+                    burrowSetting.assets = new List<GameObject>();
+                    _assetManager.InitialSpawnBurrows(resolution, maxTerrainHeight, waterLevel, generalSettings, _map,
+                        burrowSetting, _burrowParents[burrowSetting]);
+
+                    _burrowsGenerated = true;
                 }
             }
 
-            if (_terrainGenerated && _assetsGenerated)
-            {
-                foreach (var assetSetting in assets)
-                {
-                    CheckAssets(resolution, maxTerrainHeight, generalSettings, _map, assetSetting, _parents[assetSetting]);
-
+            if (_terrainGenerated && plantsGenerated)
+                foreach (var assetSetting in plants)
                     if (assetSetting.assets.Count < assetSetting.maxNumber)
                     {
                         var count = assetSetting.maxNumber - assetSetting.assets.Count;
                         // _parent = _parents[assetSetting];
-                        _assetManager.SpawnAssets(resolution, maxTerrainHeight, waterLevel, generalSettings, _map, assetSetting,
-                            _parents[assetSetting], count);
+                        _assetManager.SpawnPlants(resolution, maxTerrainHeight, waterLevel, generalSettings, _map,
+                            assetSetting,
+                            _plantParents[assetSetting], count);
                     }
-                }
-            }
         }
 
         /// <summary>
@@ -188,23 +225,6 @@ namespace WorldGeneration._Scripts
             waterGen.GenerateWater(resolution, maxTerrainHeight, waterLevel, generalSettings);
 
             return true;
-        }
-
-        private void CheckAssets(Vector2Int resolution, float maxTerrainHeight, GeneralSettings generalSettings,
-            float[,] map, AssetSettings settings, Transform parent)
-        {
-            foreach (var assetSetting in assets)
-            {
-                // Debug.Log(assetSetting.assets.Count + " - " + assetSetting.maxNumber);
-                //
-                // if (assetSetting.assets.Count < assetSetting.maxNumber)
-                // {
-                //     var count = assetSetting.maxNumber - assetSetting.assets.Count;
-                //     // _parent = _parents[assetSetting];
-                //     _assetManager.SpawnAssets(resolution, maxTerrainHeight, generalSettings, map, assetSetting,
-                //         parent, count);
-                // }
-            }
         }
     }
 }
