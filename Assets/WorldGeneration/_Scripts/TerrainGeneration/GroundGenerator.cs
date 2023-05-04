@@ -65,6 +65,7 @@ namespace WorldGeneration._Scripts.TerrainGeneration
             gameObject.layer = LayerMask.NameToLayer("Ground");
 
             GetComponent<MeshFilter>().sharedMesh = _mesh;
+            GetComponent<MeshCollider>().sharedMesh = _mesh;
 
             // noiseWithClamp.ValueClamp = new ValueClamp();
             map = new float[resolution.x, resolution.y];

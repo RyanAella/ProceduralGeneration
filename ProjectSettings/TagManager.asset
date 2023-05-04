@@ -6,6 +6,10 @@ TagManager:
   tags:
   - Water
   - Ground
+  - Rabbit
+  - Carrot
+  - Burrow
+  - Fox
   layers:
   - Default
   - TransparentFX
@@ -13,7 +17,7 @@ TagManager:
   - Ground
   - Water
   - UI
-  - 
+  - Interactable
   - 
   - 
   - 

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace InGameTime
 {
     /// <summary>
-    /// Struct <c>InGameDate</c> is representation of the inGame time in dd:ww:mm:yyyy
+    ///     Struct <c>InGameDate</c> is representation of the inGame time in dd:ww:mm:yyyy
     /// </summary>
     [Serializable]
     public struct InGameDate
@@ -27,7 +27,7 @@ namespace InGameTime
         /// </summary>
         /// <param name="format">Possible formats are: " ", ":", ";", "," and "/" as default.</param>
         /// <returns>a string representation of the InGameDate</returns>
-        public String ToString(String format)
+        public string PrintToString(string format)
         {
             switch (format)
             {
@@ -50,7 +50,7 @@ namespace InGameTime
         }
 
         /// <summary>
-        /// Add a date to the current InGame time.
+        ///     Add a date to the current InGame time.
         /// </summary>
         /// <param name="date">InGameDate that has to be added to the current date.</param>
         /// <returns>A new InGameDate</returns>
@@ -61,12 +61,12 @@ namespace InGameTime
                 day = day + date.day,
                 week = week + date.week,
                 month = month + date.month,
-                year = year + date.year,
+                year = year + date.year
             };
         }
 
         /// <summary>
-        /// Subtract a date from the current InGame time.
+        ///     Subtract a date from the current InGame time.
         /// </summary>
         /// <param name="date">InGameDate that has to be subtracted from the current date.</param>
         /// <returns>A new InGameDate</returns>
@@ -77,12 +77,12 @@ namespace InGameTime
                 day = day - date.day,
                 week = week - date.week,
                 month = month - date.month,
-                year = year - date.year,
+                year = year - date.year
             };
         }
-        
+
         /// <summary>
-        /// Calculates the correct date.
+        ///     Calculates the correct date.
         /// </summary>
         /// <param name="date">InGameDate that has to be calculated.</param>
         /// <returns>date - The correct date</returns>
@@ -93,11 +93,13 @@ namespace InGameTime
                 date.week += date.day / 7;
                 date.day %= 7;
             }
+
             if (date.week >= 4)
             {
                 date.month += date.week / 4;
                 date.week %= 4;
             }
+
             if (date.month >= 12)
             {
                 date.year += date.month / 12;
@@ -159,38 +161,37 @@ namespace InGameTime
     }
 
     /// <summary>
-    /// Class <c>TimeManager</c> (Singleton) manages the InGame time.
-    /// 1 day = 6 sec.
-    /// 1 week = 42 sec.
-    /// 1 month = 168 sec.
-    /// 1 year = 2016 sec.
-    ///
-    /// To use it, you have to call BeginTimer().
-    /// It can be terminated with EndTimer().
+    ///     Class <c>TimeManager</c> (Singleton) manages the InGame time.
+    ///     1 day = 6 sec.
+    ///     1 week = 42 sec.
+    ///     1 month = 168 sec.
+    ///     1 year = 2016 sec.
+    ///     To use it, you have to call BeginTimer().
+    ///     It can be terminated with EndTimer().
     /// </summary>
     public class TimeManager : MonoBehaviour
     {
         public static TimeManager Instance;
-
-        // fixed time intervals for one second
-        [SerializeField] private float timeInterval = 0.5f;
 
         public static Action OnDayChanged;
         public static Action OnWeekChanged;
         public static Action OnMonthChanged;
         public static Action OnYearChanged;
 
-        private float _daysToRealTime = 6.0f; // 6s are one day
+        // fixed time intervals for one second
+        [SerializeField] private float timeInterval = 0.5f;
+
+        private readonly float _daysToRealTime = 6.0f; // 6s are one day
+
+        private InGameDate _inGameDate;
+
+        // private float timeScale = 1.0f;
+        private float _lastTimeScale;
         // private float _weekToRealTime = 42.0f; // 42s are one week
         // private float _monthToRealTime = 168.0f; // 168s are one month
         // private float _yearsToRealTime = 2016.0f; // 2016s are one year
 
         private float _timer;
-
-        // private float timeScale = 1.0f;
-        private float _lastTimeScale;
-
-        private InGameDate _inGameDate;
 
         private bool _timerGoing;
 
@@ -214,12 +215,12 @@ namespace InGameTime
                 day = 0,
                 week = 0,
                 month = 0,
-                year = 0,
+                year = 0
             };
             _timer = _daysToRealTime;
 
             // UnityEngine.Time.timeScale = 2f;
-            _lastTimeScale = UnityEngine.Time.timeScale;
+            _lastTimeScale = Time.timeScale;
             _timerGoing = false;
         }
 
@@ -274,7 +275,7 @@ namespace InGameTime
         }
 
         /// <summary>
-        /// Start The InGame Timer.
+        ///     Start The InGame Timer.
         /// </summary>
         public void BeginTimer()
         {
@@ -283,7 +284,7 @@ namespace InGameTime
         }
 
         /// <summary>
-        /// Stop the InGame Timer.
+        ///     Stop the InGame Timer.
         /// </summary>
         public void EndTimer()
         {
@@ -291,48 +292,48 @@ namespace InGameTime
         }
 
         /// <summary>
-        /// Pause the Game.
+        ///     Pause the Game.
         /// </summary>
         public void Stop()
         {
             // Debug.Log("Pause Game");
             EndTimer();
-            _lastTimeScale = UnityEngine.Time.timeScale;
-            UnityEngine.Time.timeScale = 0.0f;
+            _lastTimeScale = Time.timeScale;
+            Time.timeScale = 0.0f;
         }
 
         /// <summary>
-        /// Resume the Game.
+        ///     Resume the Game.
         /// </summary>
         public void Resume()
         {
             // Debug.Log("Resume Game");
             BeginTimer();
-            UnityEngine.Time.timeScale = _lastTimeScale;
+            Time.timeScale = _lastTimeScale;
         }
 
         /// <summary>
-        /// Set the time scale.
+        ///     Set the time scale.
         /// </summary>
         /// <param name="timeScale"></param>
         public void SetTimeScale(float timeScale)
         {
-            _lastTimeScale = UnityEngine.Time.timeScale;
-            UnityEngine.Time.timeScale = timeScale;
+            _lastTimeScale = Time.timeScale;
+            Time.timeScale = timeScale;
             // Debug.Log("timeScale: " + UnityEngine.Time.timeScale);
         }
 
         /// <summary>
-        /// Get the current InGame date.
+        ///     Get the current InGame date.
         /// </summary>
         /// <returns>The current InGameDate</returns>
         public InGameDate GetCurrentDate()
         {
             return _inGameDate;
         }
-        
+
         /// <summary>
-        /// The time an InGame day references in real life in seconds.
+        ///     The time an InGame day references in real life in seconds.
         /// </summary>
         /// <returns>The time in seconds</returns>
         public float GetDaysToRealtime()

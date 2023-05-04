@@ -13,3 +13,6 @@ mlagents-learn Mouse.yaml --run-id=jerry4
 
 
 mlagents-learn Joined.yaml --initialize-from=15Mio --run-id=finalMaze
+
+
+mlagents-learn Rabbit.yaml --run-id=bugs-Test01

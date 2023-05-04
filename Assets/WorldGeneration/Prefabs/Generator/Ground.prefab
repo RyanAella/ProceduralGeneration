@@ -50,20 +50,20 @@ MonoBehaviour:
   gradient:
     serializedVersion: 2
     key0: {r: 0.6623015, g: 0.6886792, b: 0.40606087, a: 1}
-    key1: {r: 0.770984, g: 0.8018868, b: 0.5182004, a: 1}
-    key2: {r: 0.7988608, g: 0.8301887, b: 0.54432184, a: 1}
+    key1: {r: 0.764151, g: 0.6228983, b: 0.29196337, a: 1}
+    key2: {r: 0.46566656, g: 0.6226415, b: 0.26726595, a: 1}
     key3: {r: 0.19090424, g: 0.735849, b: 0.3413741, a: 1}
     key4: {r: 0.18925084, g: 0.6596497, b: 0.31798002, a: 1}
-    key5: {r: 0.18783373, g: 0.5943396, b: 0.29792905, a: 1}
-    key6: {r: 0.5660378, g: 0.5633678, b: 0.5633678, a: 0}
+    key5: {r: 0.11992703, g: 0.5188679, b: 0.22733422, a: 1}
+    key6: {r: 1, g: 1, b: 1, a: 0}
     key7: {r: 1, g: 1, b: 1, a: 0}
     ctime0: 0
-    ctime1: 13551
-    ctime2: 19698
-    ctime3: 34952
-    ctime4: 41617
-    ctime5: 51243
-    ctime6: 59019
+    ctime1: 4221
+    ctime2: 11552
+    ctime3: 29768
+    ctime4: 45763
+    ctime5: 65535
+    ctime6: 65535
     ctime7: 65535
     atime0: 0
     atime1: 65535
@@ -74,7 +74,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_NumColorKeys: 8
+    m_NumColorKeys: 6
     m_NumAlphaKeys: 2
 --- !u!23 &6045032558767503098
 MeshRenderer:

@@ -1,20 +1,19 @@
-using System;
 using InGameTime;
 using UnityEngine;
 using WorldGeneration._Scripts.ScriptableObjects;
 
 namespace WorldGeneration._Scripts.Spawning.TerrainAssets
 {
-    public class Carrot : MonoBehaviour, Interactables
+    public class Carrot : MonoBehaviour
     {
         // [SerializeField]
         public AssetSettings settings;
-        
+
         // private
         private InGameDate _birthDate;
         private InGameDate _dayOfDeath;
-        private TimeManager _timer;
         private bool _getsEaten;
+        private TimeManager _timer;
 
         private void Start()
         {
@@ -26,32 +25,30 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
 
         private void Update()
         {
-            if (_dayOfDeath.Equals(_timer.GetCurrentDate()))
-            {
-                Debug.Log("Carrot dies");
-                settings.assets.Remove(gameObject);
-                Destroy(gameObject);
-            }
+            if (_dayOfDeath.Equals(_timer.GetCurrentDate())) Dying();
         }
 
-        public bool Interact(GameObject interactingObject)
+        private void Dying()
         {
-            if (interactingObject.GetComponent<CustomAgent>().type == AgentType.FOX)
-            {
-                _getsEaten = false;
-            }
-            else if (interactingObject.GetComponent<CustomAgent>().type == AgentType.RABBIT)
+            // Debug.Log("Carrot dies");
+            settings.assets.Remove(gameObject);
+            Destroy(gameObject);
+        }
+
+        public void Eat(GameObject interactingObject)
+        {
+            if (interactingObject.GetComponent<CustomAgent>().type == AgentType.RABBIT)
             {
                 interactingObject.GetComponent<CustomAgent>().canMove = false;
-                
-                Debug.Log("Carrot dies");
+
+                // Debug.Log("Carrot dies");
+
+                // Move the object upward in world space 1 unit/second.
+                transform.Translate(Vector3.up * Time.deltaTime, Space.Self);
+
                 settings.assets.Remove(gameObject);
                 Destroy(gameObject, 2f);
-
-                _getsEaten = true;
             }
-
-            return _getsEaten;
         }
     }
 }

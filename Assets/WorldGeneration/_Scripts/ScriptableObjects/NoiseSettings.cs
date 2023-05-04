@@ -8,7 +8,7 @@ namespace WorldGeneration._Scripts.ScriptableObjects
         // Seed
         [Header("Seed")] public bool useRandomSeed;
         public string seed = "Hello World!";
-        [Range(10000.0f, 1000000.0f)] public float seedScale = 100000.0f;
+        // [Range(10000.0f, 1000000.0f)] public float seedScale = 100000.0f;
 
         // Gradient noise settings
         [Header("Gradient Noise")] [Range(0.0f, 0.1f)]

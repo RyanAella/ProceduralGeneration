@@ -1,6 +1,20 @@
 ﻿# Changelog World Generation
 
 
+## [0.10.0] - 2023-05-02
+## Added
+- Reed around water (https://assetstore.unity.com/packages/3d/vegetation/lowpoly-vegetation-season-pack-lite-96083)
+- different types of trees (https://assetstore.unity.com/packages/3d/vegetation/lowpoly-vegetation-season-pack-lite-96083)
+- RabbitBurrow Placeholder
+- InitialSpawn for RabbitBurrow
+
+## Changed
+- Carrot
+  - Interact() to Eat()
+- RabbitBurrow
+  - Interact() to Enter() and Leave()
+
+
 ## [0.9.0] - 2023-04-20
 ## Changed
 - Assets are no longer underwater
@@ -9,8 +23,7 @@
 
 ## [0.8.0] - 2023-04-14
 ## Added
-- Grass Mesh (From Daniel Ilet - https://github.com/daniel-ilett/shaders-6grass)
-- Random Spawner for Grass
+- Grass (From Daniel Ilet - https://github.com/daniel-ilett/shaders-6grass)
 
 
 ## [0.8.0] - 2023-04-19
