@@ -16,19 +16,25 @@ public abstract class CustomAgent : Agent
     [Header("Status")]
     public bool canMove = true;
     public bool isAdult = false;
+    public int healthRecoveryAmount = 3;
+    public int stamineRecoveryAmount = 5;
 
     [Space(3)]
     public bool isInDen = false;
 
     [Space(3)]
-    [Range(0, 100)] public int health = 100;
-    [Range(0, 100)] public int stamina = 100;
+    [Range(0, 100)] public float health = 100;
+    [Range(0, 100)] public float stamina = 100;
     [Range(0, 100)] public int thirst = 0;
     [Range(0, 100)] public int hunger = 0;
 
     [Space(5)]
     public bool isEating = false;
     public bool isDrinking = false;
+
+    [Space(10)]
+    [Header("Penalties")]
+    public int thresholdHungerThirstForRecovery = 50;
 
     [Space(10)]
     [Header("Properties")]
@@ -40,11 +46,9 @@ public abstract class CustomAgent : Agent
     public Den homeLocation;
     public Den nearestDenLocation;
 
-
     [Space(10)]
     [Header("Rewards")]
     public float eatReward;
-
 
     [Space(10)]
     [Header("Penalties")]
@@ -79,7 +83,6 @@ public abstract class CustomAgent : Agent
         sensor.AddObservation(isDrinking);
         sensor.AddObservation(drowningHandler.isDrowning);
 
-        sensor.AddObservation(interaction.canBreed);
         sensor.AddObservation(hasBreeded);
 
         sensor.AddObservation(hasDen);
@@ -111,6 +114,8 @@ public abstract class CustomAgent : Agent
         {
             HandleBlockTimer();
         }
+
+        Recover();
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -176,19 +181,49 @@ public abstract class CustomAgent : Agent
         movement.headRotationY = headRotationY;
     }
 
-    public override void OnEpisodeBegin()
-    {
-        //setRandomPosition();
-    }
-
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var discreteActions = actionsOut.DiscreteActions; 
-        
-
         var continuousActionsOut = actionsOut.ContinuousActions;
         //continuousActionsOut[0] = Input.GetAxis("Vertical");
         //continuousActionsOut[1] = Input.GetAxis("Horizontal");
+    }
+
+    private void Recover()
+    {
+        if (isHungryOrThirsty())
+        {
+            if (health + (healthRecoveryAmount * Time.deltaTime) > 100)
+            {
+                health = 100;
+            } else
+            {
+                health += healthRecoveryAmount * Time.deltaTime;
+            }
+
+            if(isCloseToNotMoving())
+            {
+                if (stamina + (stamineRecoveryAmount * Time.deltaTime) > 100)
+                {
+                    stamina = 100;
+                }
+                else
+                {
+                    stamina += stamineRecoveryAmount * Time.deltaTime;
+                }
+            }
+        }
+    }
+
+    private bool isHungryOrThirsty()
+    {
+        return hunger >= thresholdHungerThirstForRecovery || thirst >= thresholdHungerThirstForRecovery;
+    }
+
+    private bool isCloseToNotMoving()
+    {
+        return movement.walkSpeed <= 0.1f && Mathf.Abs(movement.rotation) <= 0.1f &&
+            Mathf.Abs(movement.headRotationX) <= 0.1f && Mathf.Abs(movement.headRotationY) <= 0.1f;
     }
 
     public void Kill()
@@ -227,6 +262,20 @@ public abstract class CustomAgent : Agent
             isDrinking = false;
             
             canMove = true;
+        }
+    }
+
+    public void ReduceStamina(float reduction)
+    {
+        //if stamina < 0 reduction will take place in health
+        if (stamina - reduction < 0.0f)
+        {
+            reduction -= stamina;
+            stamina = 0;
+            health -= reduction;
+        } else
+        {
+            stamina -= reduction;
         }
     }
 }

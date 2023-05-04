@@ -13,6 +13,9 @@ public class AgentTimeHandler : MonoBehaviour
     public int ageInMonths = 0;
     public int ageWhenAdult = 4;
 
+    [Header("Reduction Per Month")]
+    public int healthReductionPerMonth = 20; // 4 carrots per month / 3min
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,7 +28,6 @@ public class AgentTimeHandler : MonoBehaviour
 
     void WeekOver()
     {
-        agent.health -= 2;
         CheckHealthCondition();
     }
 
@@ -37,6 +39,7 @@ public class AgentTimeHandler : MonoBehaviour
         {
             CheckAgeRestrictions();
         }
+        agent.health -= healthReductionPerMonth;
     }
 
     void CheckHealthCondition()
@@ -50,6 +53,11 @@ public class AgentTimeHandler : MonoBehaviour
             {
                 agent.AddReward(-(100 - agent.health) / agent.lowHealthPenaltyDivider);
             }
+        }
+
+        if (agent.hunger >= 100 ||agent.thirst >= 100)
+        {
+            agent.Kill();
         }
     }
 

@@ -24,6 +24,12 @@ public class Movement : MonoBehaviour
     float pointToLookAtYOffset;
 
     [Space(10)]
+    [Header("Stamina")]
+    public float staminaReductionMovement = 1.66f;
+    private float staminaReductionHeadRotation;
+    private float staminaReductionRotation;
+
+    [Space(10)]
     [Header("Multiplier")]
     [Range(1, 100)] public float rotationMultiplier = 180;
     [Range(0.1f, 10)] public float walkSpeedMultiplier = 1;
@@ -32,18 +38,23 @@ public class Movement : MonoBehaviour
     [Space(3)]
     [Range(0.01f, 1)] public float maxRotationHeadX = 0.01f;
     [Range(0.01f, 1)] public float maxRotationHeadY = 0.01f;
-
+    [Range(0.1f, 2)] public float staminaReductionMultiplier = 1f;
 
     Vector3 velocity;
     bool isGrounded;
-
+    CustomAgent agent;
 
     CharacterController controller;
     // Start is called before the first frame update
     void Start()
     {
+        agent = gameObject.GetComponent<CustomAgent>();
+
         controller = gameObject.GetComponent<CharacterController>();
         pointToLookAtYOffset = pointToLookAt.localPosition.y;
+
+        staminaReductionRotation = staminaReductionMovement / 2;
+        staminaReductionHeadRotation = staminaReductionRotation * 1.5f;
     }
 
     // Update is called once per frame
@@ -88,7 +99,10 @@ public class Movement : MonoBehaviour
     {
         Vector3 move = transform.forward * walkSpeed;
         controller.Move(move * walkSpeedMultiplier * Time.deltaTime);
+        agent.ReduceStamina(walkSpeed * staminaReductionMovement);
+
         transform.Rotate(Vector3.up * rotation * 10 * rotationMultiplier * Time.deltaTime);
+        agent.ReduceStamina(rotation * staminaReductionRotation);
     }
 
     private void handleHeadRotation()
@@ -98,6 +112,7 @@ public class Movement : MonoBehaviour
         if (CheckInBoundRotationY(moveY))
         {
             pointToLookAt.Translate(0, moveY, 0);
+            agent.ReduceStamina(moveY * staminaReductionHeadRotation);
         }
 
         float moveX = headRotationX * headRotationMultiplier * Time.deltaTime;
@@ -105,6 +120,7 @@ public class Movement : MonoBehaviour
         if (CheckInBoundRotationX(moveX))
         {
             pointToLookAt.Translate(moveX, 0, 0);
+            agent.ReduceStamina(moveX * staminaReductionHeadRotation);
         }
 
         head.transform.LookAt(pointToLookAt);

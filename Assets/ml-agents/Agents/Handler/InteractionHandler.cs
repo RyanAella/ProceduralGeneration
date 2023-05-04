@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using WorldGeneration._Scripts.Spawning.TerrainAssets;
 
 public class InteractionHandler : MonoBehaviour
 {
-    //PROBLEM: Water is l
     public Transform mouth;
     [Range(0.1f, 1)] public float interactionRange = 0.5f;
     public LayerMask interactableLayer;
@@ -21,10 +18,14 @@ public class InteractionHandler : MonoBehaviour
 
     [Space(10)]
     [Header("Den")]
-    public bool canBreed = false;
     public bool canBuildDen;
     public bool isDenBuildableHere;
     public bool isStandingBeforeDen = false;
+
+    [Space(10)]
+    [Header("Rewards")]
+    public float rewardForBreeding = 1f;
+    public float penaltyForTryingToDoSomethingWithoutCorrectConditions = 0.01f;
 
     CustomAgent agent;
 
@@ -53,24 +54,17 @@ public class InteractionHandler : MonoBehaviour
             {
                 canDrink = false;
             }
-
-            //here check if location sit possible
-            // isDenBuildableHere = ???
         }
-    }
 
-    //later replaced because food is setting the time for BlockMovementForSeconds
+        //here check if location sit possible
+        // isDenBuildableHere = ???
+    }
     public void Eat()
     {
         if (canEat)
         {
             agent.isEating = true;
-            agent.BlockMovementForSeconds(4);
-
-            if (agent.hunger > 0)
-            {
-                agent.thirst -= 5;
-            }
+            //gameobject.getComponent<Carrot>().Eat(this.gameobject);
         }
     }
 
@@ -94,14 +88,14 @@ public class InteractionHandler : MonoBehaviour
             return;
 
         agent.hasBreeded = true;
-
-        //breed
+        //gameObject.transform.parent.GetComponent<RabbitBurrow>.Breed();
     }
+
     public void EnterBurrow()
     {
         if(checkAllConditionsForEnteringBurrow())
         {
-            //enterBurrow
+            gameObject.transform.parent.GetComponent<RabbitBurrow>().Enter(this.gameObject);
         }
     }
 
@@ -109,7 +103,7 @@ public class InteractionHandler : MonoBehaviour
     {
         if (agent.isInDen)
         {
-            //leavBurrow
+            gameObject.transform.parent.GetComponent<RabbitBurrow>().Leave(this.gameObject);
         }
     }
 
@@ -119,31 +113,36 @@ public class InteractionHandler : MonoBehaviour
         if (!canBuildDen)
             return;
 
-        //build
+        //AssetManager.BuildBurrow(this.gameobject.transform);
     }
 
     private bool checkAllConditionsForBuildingDen()
     {
-        return isDenBuildableHere && canBreed && !agent.isInDen && !agent.hasDen;
-    }
-
-    private bool checkAllConditionsForBreeding()
-    {
-        if (agent.isInDen && agent.isInDen && agent.isAdult && !agent.hasBreeded)
-        {
-            //TODO: check if other rabbit partner is in burrow and if it can also breed
-            bool hasPartner = false;
-            return hasPartner;
-        }
-        return false;
+        return isDenBuildableHere && !agent.isInDen && !agent.hasDen;
     }
 
     private bool checkAllConditionsForEnteringBurrow()
     {
         if (isStandingBeforeDen)
         {
-            //return canEnterBurrow / is empty?
-            return true;
+            return gameObject.transform.parent.GetComponent<RabbitBurrow>().inhabitants.Count < 2;
+        }
+        return false;
+    }
+
+    private bool checkAllConditionsForBreeding()
+    {
+        if (agent.isInDen && agent.isAdult && !agent.hasBreeded)
+        {
+            if (gameObject.transform.parent.GetComponent<RabbitBurrow>().inhabitants.Count == 2)
+            {
+                foreach (GameObject agentGameObject in gameObject.transform.parent.GetComponent<RabbitBurrow>().inhabitants)
+                {
+                    if(agentGameObject != this.gameObject) {
+                       return agentGameObject.GetComponent<InteractionHandler>().CanIBreed();
+                    }
+                }
+            }
         }
         return false;
     }
