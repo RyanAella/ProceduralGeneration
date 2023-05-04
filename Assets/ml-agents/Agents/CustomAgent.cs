@@ -223,6 +223,12 @@ public abstract class CustomAgent : Agent
         Destroy(this);
     }
 
+    public void DestroyAgent()
+    {
+        EndEpisode();
+        Destroy(this);
+    }
+
     public void Death()
     {
         AddReward(deathPenalty);
