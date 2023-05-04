@@ -58,9 +58,6 @@ public class AgentTimeHandler : MonoBehaviour
         if (ageInMonths >= ageWhenAdult)
         {
             agent.isAdult = true;
-            
-            agent.canBreedWithCurrentAge = true;
-            agent.canBuildDenWithCurrentAge = true;
         }
     }
 }

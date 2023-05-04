@@ -641,7 +641,7 @@ MonoBehaviour:
     NumStackedVectorObservations: 10
     m_ActionSpec:
       m_NumContinuousActions: 4
-      BranchSizes: 0200000002000000020000000200000002000000
+      BranchSizes: 020000000200000002000000020000000200000002000000
     VectorActionSize: 
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
@@ -683,8 +683,6 @@ MonoBehaviour:
   isDrinking: 0
   hasBreeded: 0
   hasDen: 0
-  canBreedWithCurrentAge: 0
-  canBuildDenWithCurrentAge: 0
   homeLocation: {fileID: 0}
   nearestDenLocation: {fileID: 0}
   eatReward: 0
@@ -724,17 +722,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouth: {fileID: 7301227706767648380}
   interactionRange: 0.4
-  interactableLayers:
+  interactableLayer:
     serializedVersion: 2
-    m_Bits: 0
-  eatableLayer:
-    serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   canEat: 0
+  foodTag: Carrot
   canDrink: 0
   canBreed: 0
   canBuildDen: 0
   isDenBuildableHere: 0
+  isStandingBeforeDen: 0
 --- !u!114 &1331169522489158173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -749,7 +746,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   layerMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 128
   detectionRange: 2.5
   protectionLevel: 0
 --- !u!114 &4925448978813901163
@@ -770,7 +767,7 @@ MonoBehaviour:
   soundRangeMultiplier: 4
   layerMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 128
 --- !u!114 &2323728592481274974
 MonoBehaviour:
   m_ObjectHideFlags: 0

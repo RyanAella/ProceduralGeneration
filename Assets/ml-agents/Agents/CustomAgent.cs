@@ -34,8 +34,6 @@ public abstract class CustomAgent : Agent
     [Header("Properties")]
     public bool hasBreeded = false;
     public bool hasDen = false;
-    public bool canBreedWithCurrentAge = false;
-    public bool canBuildDenWithCurrentAge = false;
 
     [Space(10)]
     [Header("Locations")]
@@ -52,11 +50,6 @@ public abstract class CustomAgent : Agent
     [Header("Penalties")]
     public float deathPenalty = 5;
     [Range(10, 60)] public int lowHealthPenaltyDivider = 30;
-
-    [Space(10)]
-    [Header("Sound")]
-
-
 
     [Space(10)]
     [Header("External Data")]
@@ -126,10 +119,11 @@ public abstract class CustomAgent : Agent
         {
             Interact(
                 actionBuffers.DiscreteActions[0],
-                actionBuffers.DiscreteActions[0],
-                actionBuffers.DiscreteActions[0],
-                actionBuffers.DiscreteActions[0],
-                actionBuffers.DiscreteActions[0]);
+                actionBuffers.DiscreteActions[1],
+                actionBuffers.DiscreteActions[2],
+                actionBuffers.DiscreteActions[3],
+                actionBuffers.DiscreteActions[4],
+                actionBuffers.DiscreteActions[5]);
 
             Move(
                 Mathf.Clamp(actionBuffers.ContinuousActions[0], 0, 1),
@@ -139,35 +133,39 @@ public abstract class CustomAgent : Agent
         }
     }
 
-    private void Interact(int v1, int v2, int v3, int v4, int v5)
+    private void Interact(int v0, int v1, int v2, int v3, int v4, int v5)
     {
         Debug.Log("I----------------");
+        Debug.Log(v0);
         Debug.Log(v1);
         Debug.Log(v2);
         Debug.Log(v3);
         Debug.Log(v4);
         Debug.Log(v5);
-        bool wantToEat = v1 != 0;
-        bool wantToDrink = v2 != 0;
-        bool wantToEnterDen = v3 != 0;
+        bool wantToEat = v0 != 0;
+        bool wantToDrink = v1 != 0;
+        bool wantToEnterDen = v2 != 0;
+        bool wantToLeaveDen = v3 != 0;
         bool wantToBuildDen = v4 != 0;
         bool wantToBreed = v5 != 0;
 
-        //check drinking
-        if(wantToDrink && interaction.canDrink)
-        {
-            Drink();
-        }
+        if(wantToDrink)
+            interaction.Drink();
 
-        //check eating
-        if (wantToEat& interaction.canEat)
-        {
-            Eat();
-        }
+        if (wantToEat)
+            interaction.Eat();
 
-        //check EnterDen
-        //check BuildDen
-        //check Breed
+        if(wantToBuildDen)
+            interaction.BuildBurrow();
+
+        if (wantToBreed)
+            interaction.Breed();
+
+        if (wantToEnterDen)
+            interaction.EnterBurrow();
+
+        if (wantToLeaveDen)
+            interaction.LeaveBurrow();
     }
 
     private void Move(float walkspeed, float rotation, float headRotationX, float headRotationY)
@@ -191,29 +189,6 @@ public abstract class CustomAgent : Agent
         var continuousActionsOut = actionsOut.ContinuousActions;
         //continuousActionsOut[0] = Input.GetAxis("Vertical");
         //continuousActionsOut[1] = Input.GetAxis("Horizontal");
-    }
-
-    //later replaced because food is setting the time for BlockMovementForSeconds
-    public void Eat()
-    {
-        isEating = true;
-        BlockMovementForSeconds(4);
-
-        if (hunger > 0)
-        {
-            thirst -= 5;
-        }
-    }
-
-    public void Drink()
-    {
-        isDrinking = true;
-        BlockMovementForSeconds(0.5f);
-
-        if (thirst > 0)
-        {
-            thirst--;
-        }
     }
 
     public void Kill()
