@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6160130918909897401}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: pointToLookAt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 8613761737876772246}
   - component: {fileID: 3207612738582529877}
   - component: {fileID: 1138555533489079346}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Nose
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,7 +137,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7301227706767648380}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: mouth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -171,7 +171,7 @@ GameObject:
   - component: {fileID: 905289761491732255}
   - component: {fileID: 8591256154786662668}
   - component: {fileID: 8070779128485389754}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -272,7 +272,7 @@ GameObject:
   - component: {fileID: 3085773435672613173}
   - component: {fileID: 6427993555124493826}
   - component: {fileID: 5055088500671164412}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Body
   m_TagString: Rabbit
   m_Icon: {fileID: 0}
@@ -367,7 +367,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7879398431939153910}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: noseCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -398,7 +398,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3383953082254226567}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -432,7 +432,7 @@ GameObject:
   - component: {fileID: 1851308479288498629}
   - component: {fileID: 2252087862103229550}
   - component: {fileID: 4779735105601969534}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Tail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -536,7 +536,7 @@ GameObject:
   - component: {fileID: 1331169522489158173}
   - component: {fileID: 4925448978813901163}
   - component: {fileID: 2323728592481274974}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: rabbit-agent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -799,7 +799,7 @@ GameObject:
   - component: {fileID: 1184728290768885539}
   - component: {fileID: 5716551893453036847}
   - component: {fileID: 575501971285165591}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: eyes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
