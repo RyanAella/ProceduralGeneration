@@ -99,10 +99,10 @@ public class Movement : MonoBehaviour
     {
         Vector3 move = transform.forward * walkSpeed;
         controller.Move(move * walkSpeedMultiplier * Time.deltaTime);
-        agent.ReduceStamina(walkSpeed * staminaReductionMovement);
+        agent.ReduceStamina(walkSpeed * staminaReductionMovement * Time.deltaTime);
 
         transform.Rotate(Vector3.up * rotation * 10 * rotationMultiplier * Time.deltaTime);
-        agent.ReduceStamina(rotation * staminaReductionRotation);
+        agent.ReduceStamina(Mathf.Abs(rotation) * staminaReductionRotation * Time.deltaTime);
     }
 
     private void handleHeadRotation()
@@ -112,7 +112,7 @@ public class Movement : MonoBehaviour
         if (CheckInBoundRotationY(moveY))
         {
             pointToLookAt.Translate(0, moveY, 0);
-            agent.ReduceStamina(moveY * staminaReductionHeadRotation);
+            agent.ReduceStamina(Mathf.Abs(moveY) * staminaReductionHeadRotation * Time.deltaTime);
         }
 
         float moveX = headRotationX * headRotationMultiplier * Time.deltaTime;
@@ -120,7 +120,7 @@ public class Movement : MonoBehaviour
         if (CheckInBoundRotationX(moveX))
         {
             pointToLookAt.Translate(moveX, 0, 0);
-            agent.ReduceStamina(moveX * staminaReductionHeadRotation);
+            agent.ReduceStamina(Mathf.Abs(moveX) * staminaReductionHeadRotation * Time.deltaTime);
         }
 
         head.transform.LookAt(pointToLookAt);
