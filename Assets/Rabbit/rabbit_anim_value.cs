@@ -12,8 +12,11 @@ public class rabbit_anim_value : MonoBehaviour
     private float look_LR, look_UD;
 
     [SerializeField]
-    private Animator animator;
+    private bool bool_trigger;
 
+    [SerializeField]
+    private Animator animator;    
+    
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +30,12 @@ public class rabbit_anim_value : MonoBehaviour
         animator.SetFloat("speed", speed);
         animator.SetFloat("left_right", look_LR);
         animator.SetFloat("up_down", look_UD);
-        
+
+        noseScratch(bool_trigger);
+    }
+
+    void noseScratch(bool trigger)
+    {
+        if (trigger) animator.SetTrigger("noseScratch");
     }
 }
