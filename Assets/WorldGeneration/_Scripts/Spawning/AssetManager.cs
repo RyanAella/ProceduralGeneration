@@ -1,5 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using ml_agents.Agents;
+using ml_agents.Agents.Handler;
+using Unity.VisualScripting;
 using UnityEngine;
 using WorldGeneration._Scripts.Helper;
 using WorldGeneration._Scripts.ScriptableObjects;
@@ -13,13 +17,22 @@ namespace WorldGeneration._Scripts.Spawning
     public class AssetManager
     {
         public static AssetManager Instance;
-
-        private Random _prng = new();
-        private List<GameObject> assetPrefabs;
-        private List<BurrowSettings> burrows;
+        public LayerMask layerMask;
 
         // private
-        private List<AssetSettings> plants;
+        private Vector2Int _resolution;
+        private float _terrainHeight;
+        private float _waterLevel;
+        private GeneralSettings _settings;
+        private float[,] _map;
+
+        private Plants _plants;
+        private Burrows _burrows;
+
+        private Random _prng = new();
+
+        private List<GameObject> _plantPrefabs;
+        private GameObject _burrowPrefab;
 
         public static AssetManager GetInstance()
         {
@@ -34,161 +47,145 @@ namespace WorldGeneration._Scripts.Spawning
 
         /// <summary>
         /// </summary>
-        /// <param name="resolution"></param>
+        /// <param name="res"></param>
         /// <param name="maxTerrainHeight"></param>
         /// <param name="waterLevel"></param>
         /// <param name="generalSettings"></param>
         /// <param name="map"></param>
         /// <param name="settings"></param>
         /// <param name="parent"></param>
-        public void InitialSpawnPlants(Vector2Int resolution, float maxTerrainHeight, float waterLevel,
-            GeneralSettings generalSettings, float[,] map, AssetSettings settings, Transform parent)
+        /// <param name="world"></param>
+        /// <param name="plants"></param>
+        public bool InitialSpawnPlants(Vector2Int res, float maxTerrainHeight, float waterLevel,
+            GeneralSettings generalSettings, float[,] map, GameObject world, Plants plants)
         {
-            plants = new List<AssetSettings>();
+            _resolution = res;
+            _terrainHeight = maxTerrainHeight;
+            _waterLevel = waterLevel;
+            _settings = generalSettings;
+            _map = map;
 
-            assetPrefabs = settings.assetPrefab;
+            _plants = plants;
 
-            for (var i = 0; i < settings.maxNumber; i++)
+            if (_plants.PlantsList.Count != 0)
             {
-                var posFound = false;
-                float xPos, zPos;
-                Vector3 pos;
-
-                var prngPrefab = _prng.Next(assetPrefabs.Count);
-
-                while (!posFound)
+                _plants.PlantParents = new Dictionary<AssetSettings, Transform>();
+                foreach (var settings in _plants.PlantsList)
                 {
-                    xPos = UnityEngine.Random.Range(-generalSettings.squareSize * (resolution.x - 1) / 2,
-                        generalSettings.squareSize * (resolution.x - 1) / 2);
-                    zPos = UnityEngine.Random.Range(-generalSettings.squareSize * (resolution.y - 1) / 2,
-                        generalSettings.squareSize * (resolution.y - 1) / 2);
+                    _plantPrefabs = settings.assetPrefab;
 
-                    // zPos = Random.Range(0.0f, 1.0f) * (resolution.y - 1);
-                    // Debug.Log("xPos: " + xPos);
-                    // Debug.Log("zPos: "+ zPos);
+                    _plants.PlantParents.Add(settings, Object.Instantiate(settings.parent, world.transform));
+                    settings.assets = new List<GameObject>();
 
-                    pos = GeneratorFunctions.GetSurfacePointFromWorldCoordinate(xPos, zPos, resolution,
-                        maxTerrainHeight, map, generalSettings);
-
-                    if (settings.nearWater)
+                    for (var i = 0; i < settings.maxNumber; i++)
                     {
-                        var max = maxTerrainHeight * waterLevel;
-                        var min = maxTerrainHeight * waterLevel - 5f;
-                        if (min < pos.y && pos.y < max)
+                        var posFound = false;
+
+                        var prngPrefab = _prng.Next(_plantPrefabs.Count);
+
+                        while (!posFound)
                         {
-                            var asset = Object.Instantiate(settings.assetPrefab[prngPrefab], pos,
-                                Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
-                            asset.transform.SetParent(parent);
+                            var xPos = UnityEngine.Random.Range(-_settings.squareSize * (_resolution.x - 1) / 2,
+                                _settings.squareSize * (_resolution.x - 1) / 2);
+                            var zPos = UnityEngine.Random.Range(-_settings.squareSize * (_resolution.y - 1) / 2,
+                                _settings.squareSize * (_resolution.y - 1) / 2);
 
-                            settings.assets.Add(asset);
+                            var pos = GeneratorFunctions.GetSurfacePointFromWorldCoordinate(xPos, zPos, _resolution,
+                                _terrainHeight, map, _settings);
 
-                            posFound = true;
-                        }
-                    }
-                    else
-                    {
-                        if (pos.y > maxTerrainHeight * waterLevel /*&& pos.y < maxTerrainHeight * 0.8f*/)
-                        {
-                            var asset = Object.Instantiate(settings.assetPrefab[prngPrefab], pos,
-                                Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
-                            asset.transform.SetParent(parent);
+                            if (settings.nearWater)
+                            {
+                                var max = _terrainHeight * _waterLevel;
+                                var min = _terrainHeight * _waterLevel - 5f;
+                                if (min < pos.y && pos.y < max)
+                                {
+                                    var asset = Object.Instantiate(settings.assetPrefab[prngPrefab], pos,
+                                        Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
+                                    asset.transform.SetParent(_plants.PlantParents[settings]);
 
-                            settings.assets.Add(asset);
+                                    settings.assets.Add(asset);
 
-                            posFound = true;
+                                    posFound = true;
+                                }
+                            }
+                            else
+                            {
+                                if (pos.y > _terrainHeight * _waterLevel)
+                                {
+                                    var asset = Object.Instantiate(settings.assetPrefab[prngPrefab], pos,
+                                        Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
+                                    asset.transform.SetParent(_plants.PlantParents[settings]);
+
+                                    settings.assets.Add(asset);
+
+                                    posFound = true;
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            // for (var i = 0; i < grassSettings.maxNumber; i++)
-            // {
-            //     // var posFound = false;
-            //     float xPos, zPos;
-            //     Vector3 pos;
-            //
-            //     xPos = Random.Range(-generalSettings.squareSize * (resolution.x - 1) / 2,
-            //         generalSettings.squareSize * (resolution.x - 1) / 2);
-            //     zPos = Random.Range(-generalSettings.squareSize * (resolution.y - 1) / 2,
-            //         generalSettings.squareSize * (resolution.y - 1) / 2);
-            //
-            //     // xPos = Random.Range(
-            //     //     -generalSettings.squareSize * resolution.x / 2 /* + generalSettings.squareSize / 2*/,
-            //     //     -generalSettings.squareSize * resolution.x / 2 + generalSettings.squareSize * resolution.x /*+
-            //     //     generalSettings.squareSize / 2*/);
-            //     // zPos = Random.Range(
-            //     //     -generalSettings.squareSize * resolution.y / 2 /* + generalSettings.squareSize / 2*/,
-            //     //     -generalSettings.squareSize * resolution.y / 2 + generalSettings.squareSize * resolution.y /*+
-            //     //     generalSettings.squareSize / 2*/);
-            //
-            //     pos = GeneratorFunctions.GetSurfacePointFromWorldCoordinate(xPos, zPos, resolution, maxTerrainHeight,
-            //         map, generalSettings);
-            //
-            //     var plant = _assetSpawner.Spawn(grassSettings.plantPrefab, pos);
-            //     plant.transform.SetParent(grassSettings.parent);
-            // }
+            return true;
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="resolution"></param>
-        /// <param name="maxTerrainHeight"></param>
-        /// <param name="waterLevel"></param>
-        /// <param name="generalSettings"></param>
-        /// <param name="map"></param>
-        /// <param name="settings"></param>
-        /// <param name="parent"></param>
-        /// <param name="count"></param>
-        public void SpawnPlants(Vector2Int resolution, float maxTerrainHeight, float waterLevel,
-            GeneralSettings generalSettings,
-            float[,] map, AssetSettings settings, Transform parent, int count)
+        public void SpawnPlants()
         {
-            assetPrefabs = settings.assetPrefab;
+            _plants.PlantParents = new Dictionary<AssetSettings, Transform>();
 
-            for (var i = 0; i < count; i++)
+            foreach (var plant in _plants.PlantsList.Where(plant => plant.assets.Count < plant.maxNumber))
             {
-                var posFound = false;
-                float xPos, zPos;
-                Vector3 pos;
+                _plantPrefabs = plant.assetPrefab;
 
-                var prngPrefab = _prng.Next(assetPrefabs.Count);
+                var count = plant.maxNumber - plant.assets.Count;
 
-                while (!posFound)
+                for (var i = 0; i < count; i++)
                 {
-                    xPos = UnityEngine.Random.Range(-generalSettings.squareSize * (resolution.x - 1) / 2,
-                        generalSettings.squareSize * (resolution.x - 1) / 2);
-                    zPos = UnityEngine.Random.Range(-generalSettings.squareSize * (resolution.y - 1) / 2,
-                        generalSettings.squareSize * (resolution.y - 1) / 2);
+                    var posFound = false;
 
-                    pos = GeneratorFunctions.GetSurfacePointFromWorldCoordinate(xPos, zPos, resolution,
-                        maxTerrainHeight, map, generalSettings);
+                    var prngPrefab = _prng.Next(_plantPrefabs.Count);
 
-                    if (settings.nearWater)
+                    while (!posFound)
                     {
-                        var max = maxTerrainHeight * waterLevel;
-                        var min = maxTerrainHeight * waterLevel - 5f;
-                        if (min < pos.y && pos.y < max)
+                        var xPos = UnityEngine.Random.Range(-_settings.squareSize * (_resolution.x - 1) / 2,
+                            _settings.squareSize * (_resolution.x - 1) / 2);
+                        var zPos = UnityEngine.Random.Range(-_settings.squareSize * (_resolution.y - 1) / 2,
+                            _settings.squareSize * (_resolution.y - 1) / 2);
+
+                        var pos = GeneratorFunctions.GetSurfacePointFromWorldCoordinate(xPos, zPos, _resolution,
+                            _terrainHeight, _map, _settings);
+
+                        if (plant.nearWater)
                         {
-                            var asset = Object.Instantiate(settings.assetPrefab[prngPrefab], pos,
-                                Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
-                            asset.transform.SetParent(parent);
+                            var max = _terrainHeight * _waterLevel;
+                            var min = _terrainHeight * _waterLevel - 5f;
+                            if (min < pos.y && pos.y < max)
+                            {
+                                var asset = Object.Instantiate(plant.assetPrefab[prngPrefab], pos,
+                                    Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
+                                asset.transform.SetParent(_plants.PlantParents[plant]);
 
-                            settings.assets.Add(asset);
+                                plant.assets.Add(asset);
 
-                            posFound = true;
+                                posFound = true;
+                            }
                         }
-                    }
-                    else
-                    {
-                        if (pos.y > maxTerrainHeight * waterLevel /*&& pos.y < maxTerrainHeight * 0.8f*/)
+                        else
                         {
-                            var asset = Object.Instantiate(settings.assetPrefab[prngPrefab], pos,
-                                Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
-                            asset.transform.SetParent(parent);
+                            if (pos.y > _terrainHeight * _waterLevel)
+                            {
+                                var asset = Object.Instantiate(plant.assetPrefab[prngPrefab], pos,
+                                    Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
 
-                            settings.assets.Add(asset);
+                                if (_plants.PlantParents.TryGetValue(plant, out var parent))
+                                {
+                                    asset.transform.SetParent(parent);
+                                }
 
-                            posFound = true;
+                                plant.assets.Add(asset);
+
+                                posFound = true;
+                            }
                         }
                     }
                 }
@@ -198,100 +195,114 @@ namespace WorldGeneration._Scripts.Spawning
 
         /// <summary>
         /// </summary>
-        /// <param name="resolution"></param>
+        /// <param name="res"></param>
         /// <param name="maxTerrainHeight"></param>
         /// <param name="waterLevel"></param>
         /// <param name="generalSettings"></param>
         /// <param name="map"></param>
-        /// <param name="settings"></param>
-        /// <param name="parent"></param>
-        public void InitialSpawnBurrows(Vector2Int resolution, float maxTerrainHeight, float waterLevel,
-            GeneralSettings generalSettings, float[,] map, BurrowSettings settings, Transform parent)
+        /// <param name="world"></param>
+        /// <param name="burrows"></param>
+        public bool InitialSpawnBurrows(Vector2Int res, float maxTerrainHeight, float waterLevel,
+            GeneralSettings generalSettings, float[,] map, GameObject world, Burrows burrows)
         {
-            burrows = new List<BurrowSettings>();
+            _resolution = res;
+            _terrainHeight = maxTerrainHeight;
+            _waterLevel = waterLevel;
+            _settings = generalSettings;
+            _map = map;
 
-            for (var i = 0; i < 1; i++)
+            _burrows = burrows;
+
+            if (_burrows.BurrowsList.Count != 0)
             {
-                var posFound = false;
-                float xPos, zPos;
-                Vector3 pos;
+                _burrows.BurrowParents = new Dictionary<BurrowSettings, Transform>();
 
-                while (!posFound)
+                foreach (var burrow in burrows.BurrowsList)
                 {
-                    xPos = UnityEngine.Random.Range(-generalSettings.squareSize * (resolution.x - 1) / 2,
-                        generalSettings.squareSize * (resolution.x - 1) / 2);
-                    zPos = UnityEngine.Random.Range(-generalSettings.squareSize * (resolution.y - 1) / 2,
-                        generalSettings.squareSize * (resolution.y - 1) / 2);
+                    _burrows.BurrowParents.Add(burrow, Object.Instantiate(burrow.parent[0], world.transform));
+                    burrow.assets = new List<GameObject>();
 
-                    pos = GeneratorFunctions.GetSurfacePointFromWorldCoordinate(xPos, zPos, resolution,
-                        maxTerrainHeight, map, generalSettings);
-
-
-                    if (pos.y > maxTerrainHeight * waterLevel /*&& pos.y < maxTerrainHeight * 0.8f*/)
+                    for (var i = 0; i < burrow.maxNumber; i++)
                     {
-                        var asset = Object.Instantiate(settings.assetPrefab, pos,
-                            Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
-                        asset.transform.SetParent(parent);
+                        var posFound = false;
 
-                        settings.assets.Add(asset);
-                        
-                        var rabbits = settings.assetPrefab.GetComponent<RabbitBurrow>().inhabitants;
-                        foreach (var rabbit in rabbits)
+                        while (!posFound)
                         {
-                            var rabbitPos = new Vector3(pos.x, pos.y + rabbit.transform.localScale.y / 2, pos.z);
-                            Object.Instantiate(rabbit, rabbitPos,
-                                Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
-                        }
+                            var xPos = UnityEngine.Random.Range(-_settings.squareSize * (_resolution.x - 1) / 2,
+                                _settings.squareSize * (_resolution.x - 1) / 2);
+                            var zPos = UnityEngine.Random.Range(-_settings.squareSize * (_resolution.y - 1) / 2,
+                                _settings.squareSize * (_resolution.y - 1) / 2);
 
-                        posFound = true;
+                            var pos = GeneratorFunctions.GetSurfacePointFromWorldCoordinate(xPos, zPos, _resolution,
+                                _terrainHeight, _map, _settings);
+
+
+                            if (pos.y > (_terrainHeight * _waterLevel + 2f))
+                            {
+                                var asset = Object.Instantiate(burrow.assetPrefab, pos,
+                                    Quaternion.Euler(new Vector3(0, 0, 0)));
+
+                                // var checkPos = asset.transform.GetChild(0).transform.GetChild(0).position.y;
+                                // if (checkPos <= pos.y)
+                                // {
+                                //     Debug.Log(pos.y - checkPos);
+                                //     asset.transform.Translate(0,pos.y - checkPos ,0);
+                                // }
+
+                                asset.transform.SetParent(_burrows.BurrowParents[burrow]);
+
+                                burrow.assets.Add(asset);
+
+                                var rabbits = burrow.assetPrefab.GetComponent<Burrow>().inhabitants;
+
+                                foreach (var rabbit in rabbits)
+                                {
+                                    var rabbitPos = asset.transform.GetChild(1).position;
+                                    Object.Instantiate(rabbit, rabbitPos,
+                                        Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)),
+                                        asset.transform).GetComponent<CustomAgent>().isInDen = true;
+                                }
+
+                                posFound = true;
+                            }
+                        }
                     }
                 }
             }
+
+            return true;
+        }
+
+        public bool CheckLocation(GameObject interactingObject)
+        {
+            var position = interactingObject.transform.position;
+
+            var radius = _burrows.BurrowsList[2].assetPrefab.transform.localScale.x;
+            return Physics.CheckSphere(position, radius, layerMask);
         }
 
         /// <summary>
         /// </summary>
-        /// <param name="resolution"></param>
-        /// <param name="maxTerrainHeight"></param>
-        /// <param name="waterLevel"></param>
-        /// <param name="generalSettings"></param>
-        /// <param name="map"></param>
-        /// <param name="settings"></param>
-        /// <param name="parent"></param>
-        /// <param name="count"></param>
-        public void SpawnBurrows(Vector2Int resolution, float maxTerrainHeight, float waterLevel,
-            GeneralSettings generalSettings,
-            float[,] map, BurrowSettings settings, Transform parent, int count)
+        /// <param name="interactingObject"></param>
+        public void BuildBurrow(GameObject interactingObject)
         {
-            for (var i = 0; i < count; i++)
+            // Transform vom Hasen
+            // wenn pos frei, dann Burrow spawnen
+            // wenn Burrow gespawnt, Hasen in Bau teleportieren
+
+            if (interactingObject.GetComponent<InteractionHandler>().isDenBuildableHere)
             {
-                var posFound = false;
-                float xPos, zPos;
-                Vector3 pos;
+                var settings = _burrows.BurrowsList[2].assetPrefab;
 
-                while (!posFound)
-                {
-                    xPos = UnityEngine.Random.Range(-generalSettings.squareSize * (resolution.x - 1) / 2,
-                        generalSettings.squareSize * (resolution.x - 1) / 2);
-                    zPos = UnityEngine.Random.Range(-generalSettings.squareSize * (resolution.y - 1) / 2,
-                        generalSettings.squareSize * (resolution.y - 1) / 2);
+                var asset = Object.Instantiate(settings, interactingObject.transform.position, Quaternion.identity);
 
-                    pos = GeneratorFunctions.GetSurfacePointFromWorldCoordinate(xPos, zPos, resolution,
-                        maxTerrainHeight, map, generalSettings);
-
-
-                    if (pos.y > maxTerrainHeight * waterLevel /*&& pos.y < maxTerrainHeight * 0.8f*/)
-                    {
-                        var asset = Object.Instantiate(settings.assetPrefab, pos,
-                            Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
-                        asset.transform.SetParent(parent);
-
-                        settings.assets.Add(asset);
-
-                        posFound = true;
-                    }
-                }
+                asset.GetComponent<Burrow>().type = interactingObject.GetComponent<CustomAgent>().type;
+                
+                asset.transform.SetParent(_burrows.BurrowParents[_burrows.BurrowsList[2]]);
+                
+                _burrows.BurrowsList[2].assets.Add(asset);
             }
+
         }
     }
 }

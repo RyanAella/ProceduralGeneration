@@ -1,28 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Den : MonoBehaviour
+namespace ml_agents
 {
-    public Vector3 position;
-    public bool occupied;
-    public int monthsUntilDissapear;
-
-    public Den (Vector3 position, bool occupied)
+    public class Den : MonoBehaviour
     {
-        this.position = position;
-        this.occupied = occupied;
-    }
+        public Vector3 position;
+        public bool occupied;
+        public int monthsUntilDissapear;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+        public Den (Vector3 position, bool occupied)
+        {
+            this.position = position;
+            this.occupied = occupied;
+        }
+
+        // Start is called before the first frame update
+        void Start()
+        {
         
-    }
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
+        // Update is called once per frame
+        void Update()
+        {
         
+        }
     }
 }

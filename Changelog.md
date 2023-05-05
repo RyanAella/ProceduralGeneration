@@ -1,6 +1,22 @@
 ﻿# Changelog World Generation
 
 
+## [0.11.0] - 2023-05-05
+## Added
+- GameManager
+- Missing Collider to Carrot
+- Carrot changes hunger of rabbit
+- Breed() to Burrow
+- BuildBurrow() for rabbits
+
+## Changed
+- Wall Prefab now belongs to GroundGenerator
+- Minor changes in AssetManager
+- ReloadWorld() now also kills all rabbits in the scene
+- Burrow now has the right graphic, no longer placeholder
+- Respawning of plants only checked once per month
+
+
 ## [0.10.0] - 2023-05-02
 ## Added
 - Reed around water (https://assetstore.unity.com/packages/3d/vegetation/lowpoly-vegetation-season-pack-lite-96083)

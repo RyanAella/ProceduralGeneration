@@ -266,10 +266,8 @@ namespace InGameTime
 
                     // reset day timer
                     _timer = _daysToRealTime * (1 / timeInterval);
-                    // Debug.Log("Timer Value after increment of days: " + _timer);
                 }
 
-                // Debug.Log(_inGameDate.ToString(":"));
                 yield return null;
             }
         }

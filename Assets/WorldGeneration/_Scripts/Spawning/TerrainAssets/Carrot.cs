@@ -1,4 +1,5 @@
 using InGameTime;
+using ml_agents.Agents;
 using UnityEngine;
 using WorldGeneration._Scripts.ScriptableObjects;
 
@@ -8,6 +9,8 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
     {
         // [SerializeField]
         public AssetSettings settings;
+        public float timeNeededForEating = 2f;
+        public int nutritionValue = 5;
 
         // private
         private InGameDate _birthDate;
@@ -37,18 +40,20 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
 
         public void Eat(GameObject interactingObject)
         {
-            if (interactingObject.GetComponent<CustomAgent>().type == AgentType.RABBIT)
+            interactingObject.GetComponent<CustomAgent>().BlockMovementForSeconds(timeNeededForEating);
+
+            // Move the object upward in world space 1 unit/second.
+            transform.Translate(Vector3.up * Time.deltaTime, Space.Self);
+
+            if (interactingObject.GetComponent<CustomAgent>().hunger > 0)
             {
-                interactingObject.GetComponent<CustomAgent>().canMove = false;
-
-                // Debug.Log("Carrot dies");
-
-                // Move the object upward in world space 1 unit/second.
-                transform.Translate(Vector3.up * Time.deltaTime, Space.Self);
-
-                settings.assets.Remove(gameObject);
-                Destroy(gameObject, 2f);
+                interactingObject.GetComponent<CustomAgent>().hunger -= nutritionValue;
             }
+
+            // Debug.Log("Carrot dies");
+
+            settings.assets.Remove(gameObject);
+            Destroy(gameObject, 2f);
         }
     }
 }

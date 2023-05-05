@@ -10,7 +10,7 @@ namespace WorldGeneration._Scripts.ScriptableObjects
     public class BurrowSettings : ScriptableObject
     {
         public GameObject assetPrefab;
-        public Transform parent;
+        public List<Transform> parent;
         public InGameDate lifespan;
         public int maxNumber;
 

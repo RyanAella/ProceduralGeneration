@@ -1,4 +1,5 @@
 using UnityEngine;
+using WorldGeneration._Scripts.Helper;
 using WorldGeneration._Scripts.ScriptableObjects;
 
 namespace WorldGeneration._Scripts.TerrainGeneration
@@ -13,6 +14,7 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         public static GroundGenerator Instance;
 
         // [SerializeField]
+        [SerializeField] private GameObject wallPrefab;
         [SerializeField] private Gradient gradient;
 
         // private
@@ -97,7 +99,7 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         /// <param name="maxTerrainHeight"></param>
         /// <param name="generalSettings"></param>
         /// <param name="resolution"></param>
-        public void GenerateWall(GameObject wallPrefab, Vector2Int resolution, float maxTerrainHeight,
+        public void GenerateWall(Vector2Int resolution, float maxTerrainHeight,
             GeneralSettings generalSettings)
         {
             Destroy(_leftWall);

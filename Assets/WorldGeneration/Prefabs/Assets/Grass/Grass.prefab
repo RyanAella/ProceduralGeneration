@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 4005364039951709632}
   - component: {fileID: 4352343268273601994}
   - component: {fileID: 1604796890256788153}
-  m_Layer: 0
-  m_Name: Mesh Grass
-  m_TagString: Untagged
+  - component: {fileID: 8162813221588722349}
+  m_Layer: 8
+  m_Name: Grass
+  m_TagString: Grass
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -83,6 +84,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &8162813221588722349
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2376833284274107823}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 7482515421123071202, guid: ecf028aaa35e7924eb700387ccc34e75, type: 3}
 --- !u!1 &4734273263559938036
 GameObject:
   m_ObjectHideFlags: 0
@@ -92,10 +107,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 982621446338194372}
-  - component: {fileID: 5906912807735903}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Grass
-  m_TagString: Untagged
+  m_TagString: Grass
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -116,16 +130,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &5906912807735903
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4734273263559938036}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1.024199, z: 1}
-  m_Center: {x: 0, y: 0.4, z: 0}

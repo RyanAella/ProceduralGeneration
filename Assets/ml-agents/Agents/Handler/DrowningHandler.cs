@@ -1,52 +1,51 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class DrowningHandler : MonoBehaviour
+namespace ml_agents.Agents.Handler
 {
-    public Transform nose;
-    public bool isDrowning = false;
-    [Range(1, 10)] public float decreaseHealtVerySeconds = 3;
-    [Range(1, 10)] public int healthDecreaseForDrowning = 4;
-
-    CustomAgent agent;
-
-    float timerSeconds;
-
-    // Start is called before the first frame update
-    void Start()
+    public class DrowningHandler : MonoBehaviour
     {
-        agent = gameObject.GetComponent<CustomAgent>();
-    }
+        public Transform nose;
+        public bool isDrowning = false;
+        [Range(1, 10)] public float decreaseHealtVerySeconds = 3;
+        [Range(1, 10)] public int healthDecreaseForDrowning = 4;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if(!isDrowning && nose.position.y < 0)
+        CustomAgent _agent;
+
+        float _timerSeconds;
+
+        // Start is called before the first frame update
+        void Start()
         {
-            isDrowning = true;
-            timerSeconds = decreaseHealtVerySeconds;
+            _agent = gameObject.GetComponent<CustomAgent>();
         }
 
-        if (isDrowning)
+        // Update is called once per frame
+        void Update()
         {
-            if(nose.position.y >= 0)
+            if(!isDrowning && nose.position.y < 0)
             {
-                isDrowning = false;
+                isDrowning = true;
+                _timerSeconds = decreaseHealtVerySeconds;
             }
-            HandleBlockTimer();
-        }
-    }
 
-    private void HandleBlockTimer()
-    {
-        timerSeconds -= Time.deltaTime;
-        if (decreaseHealtVerySeconds <= 0.0f)
+            if (isDrowning)
+            {
+                if(nose.position.y >= 0)
+                {
+                    isDrowning = false;
+                }
+                HandleBlockTimer();
+            }
+        }
+
+        private void HandleBlockTimer()
         {
-            timerSeconds = decreaseHealtVerySeconds;
-            agent.health -= healthDecreaseForDrowning;
+            _timerSeconds -= Time.deltaTime;
+            if (decreaseHealtVerySeconds <= 0.0f)
+            {
+                _timerSeconds = decreaseHealtVerySeconds;
+                _agent.health -= healthDecreaseForDrowning;
+            }
         }
     }
 }

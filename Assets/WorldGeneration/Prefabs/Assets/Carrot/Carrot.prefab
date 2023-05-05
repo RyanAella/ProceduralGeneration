@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 1209393357379290980}
   - component: {fileID: 2839373658881804481}
   - component: {fileID: 37027177070377995}
-  m_Layer: 0
+  - component: {fileID: 5045054482760825562}
+  m_Layer: 6
   m_Name: carrot
-  m_TagString: Untagged
+  m_TagString: Carrot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -84,6 +85,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &5045054482760825562
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1982551910111976926}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: 8db2bac5be37f2847a162ea154ba376a, type: 2}
 --- !u!1 &3408820267349212646
 GameObject:
   m_ObjectHideFlags: 0
@@ -93,8 +108,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8433224686380606813}
+  - component: {fileID: 1244962605838370143}
   - component: {fileID: 9063357720037748674}
-  - component: {fileID: 6198047261450394641}
   m_Layer: 6
   m_Name: Carrot
   m_TagString: Carrot
@@ -118,6 +133,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1244962605838370143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3408820267349212646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbfb51d2aafd7784da66c69d8c0458c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  settings: {fileID: 11400000, guid: 928989c489e8f804896e3f8a5546e47e, type: 2}
+  timeNeededForEating: 2
+  nutritionValue: 5
 --- !u!65 &9063357720037748674
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -131,16 +161,3 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.25, y: 0.25, z: 0.25}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!65 &6198047261450394641
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3408820267349212646}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.75, y: 2.2, z: 0.75}
-  m_Center: {x: 0, y: -0.45, z: 0}

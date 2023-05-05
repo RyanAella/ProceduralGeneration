@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public class TagSelectorAttribute : PropertyAttribute
+namespace ml_agents.Custom_Attributes_for_editor
 {
-    public bool UseDefaultTagFieldDrawer = false;
+    public class TagSelectorAttribute : PropertyAttribute
+    {
+        public bool UseDefaultTagFieldDrawer = false;
+    }
 }
