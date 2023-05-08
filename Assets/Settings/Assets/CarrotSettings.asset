@@ -15,31 +15,14 @@ MonoBehaviour:
   assetPrefab:
   - {fileID: 3408820267349212646, guid: 59b337d6ca414244ebad1988ded5f9f1, type: 3}
   parent: {fileID: 6574853312113808479, guid: ccb15d0787a121e468daec9e0d527868, type: 3}
+  minNumber: 20
+  radius: 2.5
+  nearWater: 0
   lifespan:
     day: 5
     week: 0
     month: 5
     year: 0
-  maxNumber: 20
-  nearWater: 0
-  assets:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  percentageAge: 75
+  reproductionChance: 15
+  assets: []

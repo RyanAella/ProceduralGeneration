@@ -1,6 +1,12 @@
 ﻿# Changelog World Generation
 
 
+## [0.12.0] - 2023-05-08
+## Added
+- Reproduction for Carrots
+- Position Check
+
+
 ## [0.11.0] - 2023-05-05
 ## Added
 - GameManager

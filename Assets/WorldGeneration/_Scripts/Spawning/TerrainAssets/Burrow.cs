@@ -23,13 +23,23 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
 
         private bool canDie = false;
 
+        private void Awake()
+        {
+            var size = gameObject.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size;
+            settings.radius = size.x >= size.z ? size.x + 1f : size.z + 1f;
+            
+            // settings.radius = transform.localScale.x >= transform.localScale.z
+            //     ? transform.localScale.x + 1f
+            //     : transform.localScale.z + 1f;
+        }
+
         private void Start()
         {
             _timer = TimeManager.Instance;
             _birthDate = _timer.GetCurrentDate();
             settings.lifespan = new InGameDate().CalcDate(settings.lifespan);
             _dayOfDeath = new InGameDate().CalcDate(_birthDate.AddDates(settings.lifespan));
-            
+
             canDie = false;
 
             if (inhabitants.Count < 2)
@@ -39,10 +49,7 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
             else
             {
                 isOccupied = false;
-
             }
-
-            
         }
 
         private void Update()
@@ -59,7 +66,6 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
         {
             if (!isOccupied)
             {
-                // Debug.Log("Burrow dies");
                 settings.assets.Remove(gameObject);
                 Destroy(gameObject);
             }
@@ -76,11 +82,11 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
                     rabbit.GetComponent<CustomAgent>().transform.position = new Vector3(
                         transform.GetChild(1).position.x, transform.GetChild(1).position.y,
                         transform.GetChild(1).position.z);
-                    
+
                     rabbit.transform.SetParent(transform);
 
                     inhabitants.Add(rabbit);
-                    
+
                     rabbit.GetComponent<CustomAgent>().isInDen = true;
                 }
         }
@@ -92,11 +98,11 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
                 rabbit.GetComponent<CustomAgent>().transform.position = new Vector3(
                     transform.GetChild(0).position.x, transform.GetChild(0).position.y,
                     transform.GetChild(0).position.z);
-                
+
                 // rabbit.transform.parent = null;
 
                 inhabitants.Remove(rabbit);
-                
+
                 // rabbit.GetComponent<CustomAgent>().isInDen = false;
             }
         }
@@ -106,14 +112,20 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
             var pos = new Vector3(
                 transform.GetChild(1).position.x, transform.GetChild(1).position.y,
                 transform.GetChild(1).position.z);
-            
+
             var newRabbit = Instantiate(rabbitPrefab, pos, Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0)));
-            
+
             newRabbit.transform.SetParent(transform);
-            
+
             inhabitants.Add(rabbit);
-            
+
             rabbit.GetComponent<CustomAgent>().isInDen = true;
         }
+        
+        // private void OnDrawGizmos()
+        // {
+        //     Gizmos.color = Color.gray;
+        //     Gizmos.DrawWireSphere(transform.position, settings.radius);
+        // }
     }
 }

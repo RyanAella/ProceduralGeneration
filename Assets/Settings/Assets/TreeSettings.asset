@@ -16,54 +16,17 @@ MonoBehaviour:
   - {fileID: 188242, guid: 7572b8494dca61844ae502ca4d47915f, type: 3}
   - {fileID: 170736, guid: c8f241d1151c5a14dbac88fd4bea1d93, type: 3}
   parent: {fileID: 2748929397329019754, guid: 31cc07dbcb0289047bf5d1d2a7d7699c, type: 3}
+  minNumber: 90
+  radius: 32.491222
+  nearWater: 0
   lifespan:
     day: 0
     week: 0
     month: 0
-    year: 10
-  maxNumber: 90
-  nearWater: 0
+    year: 300
+  percentageAge: 15
+  reproductionChance: 15
   assets:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using InGameTime;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace WorldGeneration._Scripts.ScriptableObjects
 {
@@ -12,7 +13,9 @@ namespace WorldGeneration._Scripts.ScriptableObjects
         public GameObject assetPrefab;
         public List<Transform> parent;
         public InGameDate lifespan;
-        public int maxNumber;
+        public int minNumber;
+
+        public float radius;
 
         [HideInInspector] public List<GameObject> assets;
     }

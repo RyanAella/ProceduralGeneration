@@ -28,13 +28,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GroundGenerator groundGenerator;
     [SerializeField] private WaterGenerator waterGenerator;
 
+    [Tooltip("A list of food to generate.")] [SerializeField]
+    private List<PlantSettings> foodList;
+
     [Tooltip("A list of plants to generate.")] [SerializeField]
-    private List<AssetSettings> plantsList;
+    private List<PlantSettings> plantsList;
 
     [Tooltip("A list of burrows to generate.")] [SerializeField]
     private List<BurrowSettings> initialBurrowsList;
-    
-    [Tooltip("A list of burrows to generate.")] [SerializeField]
+
+    [Tooltip("The burrow to generate.")] [SerializeField]
     private BurrowSettings burrow;
 
     // public
@@ -49,6 +52,7 @@ public class GameManager : MonoBehaviour
 
     private float[,] _map;
 
+    private Food _food;
     private Plants _plants;
     private Burrows _burrows;
 
@@ -57,7 +61,8 @@ public class GameManager : MonoBehaviour
     private bool _burrowsGenerated;
 
     private Transform _parent;
-    private Dictionary<AssetSettings, Transform> _plantParents;
+    private Dictionary<PlantSettings, Transform> _foodParents;
+    private Dictionary<PlantSettings, Transform> _plantParents;
     private Dictionary<BurrowSettings, Transform> _burrowParents;
 
     private bool _running;
@@ -110,11 +115,14 @@ public class GameManager : MonoBehaviour
             ReloadWorld();
         }
 
-        TimeManager.OnMonthChanged += RespawnPlants;
+        // TimeManager.OnMonthChanged += RespawnPlants;
     }
 
     private void GenerateInitialWorld()
     {
+        _food.FoodList = foodList;
+        _food.FoodParents = _foodParents;
+
         _plants.PlantsList = plantsList;
         _plants.PlantParents = _plantParents;
 
@@ -123,10 +131,10 @@ public class GameManager : MonoBehaviour
         _burrows.BurrowParents = _burrowParents;
 
         _running = _worldManager.GenerateInitialWorld(resolution, maxTerrainHeight, waterLevel, generalSettings,
-            noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator, _assetManager, _plants, _burrows,
+            noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator, _assetManager, _food, _plants, _burrows,
             out _map);
     }
-    
+
     private void ReloadWorld()
     {
         if (_running)
@@ -139,14 +147,13 @@ public class GameManager : MonoBehaviour
             _burrows.BurrowParents = _burrowParents;
 
             _running = _worldManager.GenerateInitialWorld(resolution, maxTerrainHeight, waterLevel, generalSettings,
-                noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator, _assetManager, _plants, _burrows,
-                out _map);
+                noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator, _assetManager, _food, _plants,
+                _burrows, out _map);
         }
-        
     }
 
     private void RespawnPlants()
     {
-            _assetManager.SpawnPlants();
+        _assetManager.SpawnPlants();
     }
 }

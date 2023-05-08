@@ -202,7 +202,7 @@ GameObject:
   - component: {fileID: 5544714122484588092}
   - component: {fileID: 2272115700899247505}
   - component: {fileID: 5813348537029395227}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Burrow_wall4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -299,7 +299,7 @@ GameObject:
   - component: {fileID: 2684155561267935491}
   - component: {fileID: 1349972513603895679}
   - component: {fileID: 8815926869909694793}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Burrow_floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -396,7 +396,7 @@ GameObject:
   - component: {fileID: 5226180590001944783}
   - component: {fileID: 7337952934261027702}
   - component: {fileID: 1003801020017622335}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Burrow_wall1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -493,7 +493,7 @@ GameObject:
   - component: {fileID: 7244016305291130680}
   - component: {fileID: 6660237910927025152}
   - component: {fileID: 1791063739631623748}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Burrow_wall2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -590,7 +590,7 @@ GameObject:
   - component: {fileID: 6704271430944946690}
   - component: {fileID: 630213010309262403}
   - component: {fileID: 4698691812329095959}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Burrow_wall3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -687,7 +687,7 @@ GameObject:
   - component: {fileID: 1808937722418815094}
   - component: {fileID: 2095528629412223051}
   - component: {fileID: 3450761586045137204}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Burrow_roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}

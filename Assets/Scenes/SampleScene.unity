@@ -166,7 +166,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &484512867
 GameObject:
@@ -281,7 +281,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &963194225
 GameObject:
@@ -366,7 +366,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &963194229
 MonoBehaviour:
@@ -401,67 +401,6 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
---- !u!1 &3287358190545767016
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3287358190545767018}
-  - component: {fileID: 3287358190545767021}
-  m_Layer: 0
-  m_Name: WorldManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3287358190545767018
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3287358190545767016}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3287358190545767021
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3287358190545767016}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c964d0900c1b50449c5e5c803ccf399, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  resolution: {x: 16, y: 16}
-  maxTerrainHeight: 150
-  waterLevel: 0.15
-  generalSettings: {fileID: 11400000, guid: 22871bac2f6726641b0f5d842a4349ec, type: 2}
-  noiseSettings: {fileID: 11400000, guid: fb78098282b2a5342bad8ffa96571dbd, type: 2}
-  groundGenerator: {fileID: 6045032558767503097, guid: 1b6bf5a46ef613f46bd9d7537ab8f4aa, type: 3}
-  waterGenerator: {fileID: 8391093040582111047, guid: bbad8adef54a3f94c96f956ec681e2e3, type: 3}
-  wallPrefab: {fileID: 1192836021279129591, guid: fa2f5d8d18b72a54ebdb765f32d7eb91, type: 3}
-  plants:
-  - {fileID: 11400000, guid: 928989c489e8f804896e3f8a5546e47e, type: 2}
-  - {fileID: 11400000, guid: 94b641b019911974baa8d924540ec642, type: 2}
-  - {fileID: 11400000, guid: 13941cb6dcc48534a9e9f4df72972a4f, type: 2}
-  - {fileID: 11400000, guid: 2d22553777a790b48b297ba78d172057, type: 2}
-  burrows:
-  - {fileID: 11400000, guid: 9a76cdc35957e6447b404ab0abef1b73, type: 2}
-  - {fileID: 11400000, guid: 07e60a0ac02333f4dac8c9d4b1cfb439, type: 2}
-  instance: {fileID: 0}
 --- !u!114 &8561576484011689076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -481,10 +420,11 @@ MonoBehaviour:
   noiseSettings: {fileID: 11400000, guid: fb78098282b2a5342bad8ffa96571dbd, type: 2}
   groundGenerator: {fileID: 6045032558767503097, guid: 1b6bf5a46ef613f46bd9d7537ab8f4aa, type: 3}
   waterGenerator: {fileID: 8391093040582111047, guid: bbad8adef54a3f94c96f956ec681e2e3, type: 3}
-  plantsList:
+  foodList:
   - {fileID: 11400000, guid: 928989c489e8f804896e3f8a5546e47e, type: 2}
-  - {fileID: 11400000, guid: 94b641b019911974baa8d924540ec642, type: 2}
+  plantsList:
   - {fileID: 11400000, guid: 13941cb6dcc48534a9e9f4df72972a4f, type: 2}
+  - {fileID: 11400000, guid: 94b641b019911974baa8d924540ec642, type: 2}
   - {fileID: 11400000, guid: 2d22553777a790b48b297ba78d172057, type: 2}
   initialBurrowsList:
   - {fileID: 11400000, guid: 9a76cdc35957e6447b404ab0abef1b73, type: 2}
@@ -494,7 +434,7 @@ MonoBehaviour:
   _assetManager:
     layerMask:
       serializedVersion: 2
-      m_Bits: 320
+      m_Bits: 832
 --- !u!4 &8561576484011689077
 Transform:
   m_ObjectHideFlags: 0

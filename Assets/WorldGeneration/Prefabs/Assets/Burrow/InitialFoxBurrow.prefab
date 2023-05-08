@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8175aace81f7645409317128bc899b22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  settings: {fileID: 11400000, guid: 07e60a0ac02333f4dac8c9d4b1cfb439, type: 2}
+  settings: {fileID: 11400000, guid: 9f28e48a9b7a6364985a7cbfc16038fc, type: 2}
   type: 1
   inhabitants: []
   isOccupied: 0
@@ -64,7 +64,7 @@ GameObject:
   - component: {fileID: 1863375608302189591}
   - component: {fileID: 3323678126560494699}
   - component: {fileID: 5099330125291383901}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Burrow_floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -192,7 +192,7 @@ GameObject:
   - component: {fileID: 8101636404732238632}
   - component: {fileID: 2527696202734432389}
   - component: {fileID: 7796059491683108367}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Burrow_wall4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -493,7 +493,7 @@ GameObject:
   - component: {fileID: 2704024801498555746}
   - component: {fileID: 2416413554937683295}
   - component: {fileID: 1405002265981465632}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Burrow_roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -590,7 +590,7 @@ GameObject:
   - component: {fileID: 7031904783048703766}
   - component: {fileID: 3756833423447632215}
   - component: {fileID: 9054795129877988867}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Burrow_wall3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -687,7 +687,7 @@ GameObject:
   - component: {fileID: 6348924353576104492}
   - component: {fileID: 6985620045180969236}
   - component: {fileID: 2614094974872607568}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Burrow_wall2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -815,7 +815,7 @@ GameObject:
   - component: {fileID: 8366312560082976219}
   - component: {fileID: 6433856250744731234}
   - component: {fileID: 3562968294571522091}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Burrow_wall1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

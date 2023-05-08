@@ -9,10 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 480706}
+  - component: {fileID: 3417573201517368671}
   - component: {fileID: 3380558}
   - component: {fileID: 2371580}
   - component: {fileID: 1680506914313058450}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: Reed
   m_TagString: Reed
   m_Icon: {fileID: 0}
@@ -34,6 +35,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3417573201517368671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 190654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e782548e32a32424aad9e670fca06b9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  settings: {fileID: 11400000, guid: 13941cb6dcc48534a9e9f4df72972a4f, type: 2}
 --- !u!33 &3380558
 MeshFilter:
   m_ObjectHideFlags: 0

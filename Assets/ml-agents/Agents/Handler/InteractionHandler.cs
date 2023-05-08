@@ -12,24 +12,16 @@ namespace ml_agents.Agents.Handler
         [Range(0.1f, 1)] public float interactionRange = 0.5f;
         public LayerMask interactableLayer;
 
-        [Space(10)]
-        [Header("Eating")]
-        public bool canEat = false;
+        [Space(10)] [Header("Eating")] public bool canEat = false;
         [TagSelector] public string foodTag;
-   
-        [Space(10)]
-        [Header("Drinking")]
-        public bool canDrink = false;
 
-        [Space(10)]
-        [Header("Den")]
-        public bool canBuildDen;
+        [Space(10)] [Header("Drinking")] public bool canDrink = false;
+
+        [Space(10)] [Header("Den")] public bool canBuildDen;
         public bool isDenBuildableHere;
         public bool isStandingBeforeDen = false;
 
-        [Space(10)]
-        [Header("Rewards")]
-        public float rewardForBreeding = 1f;
+        [Space(10)] [Header("Rewards")] public float rewardForBreeding = 1f;
         public float penaltyForTryingToDoSomethingWithoutCorrectConditions = 0.01f;
 
         CustomAgent _agent;
@@ -52,24 +44,26 @@ namespace ml_agents.Agents.Handler
                     isStandingBeforeDen = hits[0].collider.gameObject.CompareTag("Burrow");
                     canEat = hits[0].collider.gameObject.CompareTag(foodTag);
                 }
-                else if (hits[0].collider.gameObject.layer == LayerMask.NameToLayer("Water") )
+                else if (hits[0].collider.gameObject.layer == LayerMask.NameToLayer("Water"))
                 {
                     canDrink = true;
-                } else
+                }
+                else
                 {
                     canDrink = false;
                 }
             }
 
             //here check if location sit possible
-            // isDenBuildableHere = AssetManager.GetInstance().CheckLocation(gameObject);
+            isDenBuildableHere = AssetManager.GetInstance().CheckLocation(transform.position);
         }
+
         public void Eat()
         {
             if (canEat)
             {
                 _agent.isEating = true;
-                //gameobject.getComponent<Carrot>().Eat(this.gameobject);
+                gameObject.GetComponent<Carrot>().Eat(gameObject);
             }
         }
 
@@ -98,7 +92,7 @@ namespace ml_agents.Agents.Handler
 
         public void EnterBurrow()
         {
-            if(CheckAllConditionsForEnteringBurrow())
+            if (CheckAllConditionsForEnteringBurrow())
             {
                 gameObject.transform.parent.GetComponent<Burrow>().Enter(gameObject);
             }
@@ -118,7 +112,7 @@ namespace ml_agents.Agents.Handler
             if (!canBuildDen)
                 return;
 
-            //AssetManager.BuildBurrow(this.gameobject.transform);
+            AssetManager.GetInstance().BuildBurrow(gameObject);
         }
 
         private bool CheckAllConditionsForBuildingDen()
@@ -132,6 +126,7 @@ namespace ml_agents.Agents.Handler
             {
                 return gameObject.transform.parent.GetComponent<Burrow>().inhabitants.Count < 2;
             }
+
             return false;
         }
 
@@ -141,14 +136,17 @@ namespace ml_agents.Agents.Handler
             {
                 if (gameObject.transform.parent.GetComponent<Burrow>().inhabitants.Count == 2)
                 {
-                    foreach (GameObject agentGameObject in gameObject.transform.parent.GetComponent<Burrow>().inhabitants)
+                    foreach (GameObject agentGameObject in gameObject.transform.parent.GetComponent<Burrow>()
+                                 .inhabitants)
                     {
-                        if(agentGameObject != this.gameObject) {
+                        if (agentGameObject != this.gameObject)
+                        {
                             return agentGameObject.GetComponent<InteractionHandler>().CanIBreed();
                         }
                     }
                 }
             }
+
             return false;
         }
 
@@ -159,7 +157,9 @@ namespace ml_agents.Agents.Handler
                 //instant block so other agent can not ask
                 _agent.hasBreeded = true;
                 return true;
-            };
+            }
+
+            ;
             return false;
         }
 

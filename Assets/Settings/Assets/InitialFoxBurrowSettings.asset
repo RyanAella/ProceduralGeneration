@@ -20,6 +20,7 @@ MonoBehaviour:
     week: 0
     month: 0
     year: 1
-  maxNumber: 1
+  minNumber: 1
+  radius: 5
   assets:
   - {fileID: 0}

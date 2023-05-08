@@ -1,12 +1,8 @@
-using System.Collections.Generic;
-using InGameTime;
-using ml_agents.Agents;
 using UnityEngine;
 using WorldGeneration._Scripts.Helper;
 using WorldGeneration._Scripts.ScriptableObjects;
 using WorldGeneration._Scripts.Spawning;
 using WorldGeneration._Scripts.TerrainGeneration;
-using WorldGeneration._Scripts.Spawning.TerrainAssets;
 
 namespace WorldGeneration._Scripts
 {
@@ -20,6 +16,7 @@ namespace WorldGeneration._Scripts
         private Transform _parent;
 
         private bool _terrainGenerated;
+        private bool _foodGenerated;
         private bool _plantsGenerated;
         private bool _burrowsGenerated;
 
@@ -46,13 +43,14 @@ namespace WorldGeneration._Scripts
         /// <param name="ground"></param>
         /// <param name="water"></param>
         /// <param name="assetManager"></param>
+        /// <param name="food"></param>
         /// <param name="plants"></param>
         /// <param name="burrows"></param>
         /// <param name="map"></param>
         /// <returns></returns>
         public bool GenerateInitialWorld(Vector2Int resolution, float maxTerrainHeight, float waterLevel,
             GeneralSettings generalSettings, NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp,
-            GroundGenerator ground, WaterGenerator water, AssetManager assetManager, Plants plants, Burrows burrows,
+            GroundGenerator ground, WaterGenerator water, AssetManager assetManager, Food food, Plants plants, Burrows burrows,
             out float[,] map)
         {
             _world = new GameObject("World");
@@ -62,8 +60,9 @@ namespace WorldGeneration._Scripts
 
             if (_terrainGenerated)
             {
-                _plantsGenerated = assetManager.InitialSpawnPlants(resolution, maxTerrainHeight, waterLevel, generalSettings, map, _world, plants);
+                _foodGenerated = assetManager.InitialSpawnFood(resolution, maxTerrainHeight, waterLevel, generalSettings, map, _world, food);
                 _burrowsGenerated = assetManager.InitialSpawnBurrows(resolution, maxTerrainHeight, waterLevel, generalSettings, map, _world, burrows);
+                _plantsGenerated = assetManager.InitialSpawnPlants(resolution, maxTerrainHeight, waterLevel, generalSettings, map, _world, plants);
             }
 
             return true;
@@ -108,7 +107,7 @@ namespace WorldGeneration._Scripts
         {
             foreach (var plant in plants.PlantsList) 
             {
-                if (plant.assets.Count < plant.maxNumber)
+                if (plant.assets.Count < plant.minNumber)
                 {
                 }
             }

@@ -11,10 +11,16 @@ namespace WorldGeneration._Scripts.Helper
         public ValueClamp ValueClamp;
     }
 
+    public struct Food
+    {
+        public Dictionary<PlantSettings, Transform> FoodParents;
+        public List<PlantSettings> FoodList;
+    }
+    
     public struct Plants
     {
-        public Dictionary<AssetSettings, Transform> PlantParents;
-        public List<AssetSettings> PlantsList;
+        public Dictionary<PlantSettings, Transform> PlantParents;
+        public List<PlantSettings> PlantsList;
     }
     
     public struct Burrows

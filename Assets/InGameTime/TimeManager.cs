@@ -108,6 +108,27 @@ namespace InGameTime
 
             return date;
         }
+        
+        public InGameDate CalcDays(InGameDate date)
+        {
+            if (date.year > 0)
+            {
+                date.month += date.year * 12;
+                date.year = 0;
+            }
+            if (date.month > 0)
+            {
+                date.week += date.month * 4;
+                date.month = 0;
+            }
+            if (date.week > 0)
+            {
+                date.day += date.week * 7;
+                date.week = 0;
+            }
+
+            return date;
+        }
 
         // /// <summary>
         // /// If days >= 7 the date needs to be recalculated.
@@ -230,13 +251,11 @@ namespace InGameTime
         private IEnumerator UpdateTime()
         {
             _timer *= 1 / timeInterval;
-            // Debug.Log("Timer Value at Start of coroutine: " + _timer);
 
             while (_timerGoing)
             {
                 // yield return new WaitForSeconds(timeInterval);
                 _timer--;
-                // Debug.Log("Timer Value: " + _timer);
 
                 if (_timer <= 0)
                 {

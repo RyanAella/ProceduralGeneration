@@ -437,11 +437,12 @@ MonoBehaviour:
   noiseSettings: {fileID: 11400000, guid: fb78098282b2a5342bad8ffa96571dbd, type: 2}
   groundGenerator: {fileID: 6045032558767503097, guid: 1b6bf5a46ef613f46bd9d7537ab8f4aa, type: 3}
   waterGenerator: {fileID: 8391093040582111047, guid: bbad8adef54a3f94c96f956ec681e2e3, type: 3}
-  plantsList:
+  foodList:
   - {fileID: 11400000, guid: 928989c489e8f804896e3f8a5546e47e, type: 2}
-  - {fileID: 11400000, guid: 94b641b019911974baa8d924540ec642, type: 2}
+  plantsList:
   - {fileID: 11400000, guid: 13941cb6dcc48534a9e9f4df72972a4f, type: 2}
   - {fileID: 11400000, guid: 2d22553777a790b48b297ba78d172057, type: 2}
+  - {fileID: 11400000, guid: 94b641b019911974baa8d924540ec642, type: 2}
   initialBurrowsList:
   - {fileID: 11400000, guid: 9a76cdc35957e6447b404ab0abef1b73, type: 2}
   - {fileID: 11400000, guid: 9f28e48a9b7a6364985a7cbfc16038fc, type: 2}
@@ -450,7 +451,7 @@ MonoBehaviour:
   _assetManager:
     layerMask:
       serializedVersion: 2
-      m_Bits: 320
+      m_Bits: 7744
 --- !u!4 &1108285843
 Transform:
   m_ObjectHideFlags: 0
