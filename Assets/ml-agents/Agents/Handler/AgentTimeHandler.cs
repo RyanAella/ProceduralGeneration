@@ -1,72 +1,66 @@
-using InGameTime;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using InGameTime;
+using ml_agents.Agents.Handler;
 
-namespace ml_agents.Agents.Handler
+public class AgentTimeHandler : MonoBehaviour
 {
-    public class AgentTimeHandler : MonoBehaviour
+    CustomAgent agent;
+    InteractionHandler interaction;
+
+    [Space(5)]
+    [Header("Age")]
+    public int ageInMonths = 0;
+    public int ageWhenAdult = 4;
+
+    [Header("Reduction Per Month")]
+    public int healthReductionPerMonth = 20; // 4 carrots per month / 3min
+
+    // Start is called before the first frame update
+    void Start()
     {
-        CustomAgent _agent;
-        InteractionHandler _interaction;
+        agent = gameObject.GetComponent<CustomAgent>();
+        interaction = gameObject.GetComponent<InteractionHandler>();
 
-        [Space(5)]
-        [Header("Age")]
-        public int ageInMonths = 0;
-        public int ageWhenAdult = 4;
+        TimeManager.OnWeekChanged += WeekOver;
+        TimeManager.OnMonthChanged += MonthOver;
+    }
 
-        [Header("Reduction Per Month")]
-        public int healthReductionPerMonth = 20; // 4 carrots per month / 3min
+    void WeekOver()
+    {
+        CheckHealthCondition();
+    }
 
-        // Start is called before the first frame update
-        void Start()
+    void MonthOver()
+    {
+        ageInMonths += 1;
+
+        if (!agent.isAdult)
         {
-            _agent = gameObject.GetComponent<CustomAgent>();
-            _interaction = gameObject.GetComponent<InteractionHandler>();
+            CheckAgeRestrictions();
+        }
+        agent.health -= healthReductionPerMonth;
+    }
 
-            TimeManager.OnWeekChanged += WeekOver;
-            TimeManager.OnMonthChanged += MonthOver;
+    void CheckHealthCondition()
+    {
+        if (agent.health < agent.unhealthyThreshhold)
+        {
+            agent.AddReward(-(100 - agent.health) / agent.lowHealthPenaltyDivider);
         }
 
-        void WeekOver()
+        if (agent.hunger >= 100 ||agent.thirst >= 100)
         {
-            CheckHealthCondition();
+            agent.Kill();
         }
+    }
 
-        void MonthOver()
+    void CheckAgeRestrictions()
+    {
+        if (ageInMonths >= ageWhenAdult)
         {
-            ageInMonths += 1;
-
-            if (!_agent.isAdult)
-            {
-                CheckAgeRestrictions();
-            }
-            _agent.health -= healthReductionPerMonth;
-        }
-
-        void CheckHealthCondition()
-        {
-            if (_agent.health < 50)
-            {
-                if (_agent.health <= 0)
-                {
-                    _agent.Death();
-                } else 
-                {
-                    _agent.AddReward(-(100 - _agent.health) / _agent.lowHealthPenaltyDivider);
-                }
-            }
-
-            if (_agent.hunger >= 100 ||_agent.thirst >= 100)
-            {
-                _agent.Kill();
-            }
-        }
-
-        void CheckAgeRestrictions()
-        {
-            if (ageInMonths >= ageWhenAdult)
-            {
-                _agent.isAdult = true;
-            }
+            agent.isAdult = true;
         }
     }
 }

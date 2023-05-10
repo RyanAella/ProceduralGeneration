@@ -87,7 +87,7 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
 
                     inhabitants.Add(rabbit);
 
-                    rabbit.GetComponent<CustomAgent>().isInDen = true;
+                    rabbit.GetComponent<CustomAgent>().isInBurrow = true;
                 }
         }
 
@@ -119,7 +119,7 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
 
             inhabitants.Add(rabbit);
 
-            rabbit.GetComponent<CustomAgent>().isInDen = true;
+            rabbit.GetComponent<CustomAgent>().isInBurrow = true;
         }
         
         // private void OnDrawGizmos()

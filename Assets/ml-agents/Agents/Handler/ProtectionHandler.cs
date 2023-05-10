@@ -34,7 +34,7 @@ namespace ml_agents.Agents.Handler
         // Update is called once per frame
         void Update()
         {
-            protectionLevel = GetGroupProtectionLevel() + Convert.ToInt16(_agent.isInDen);
+            protectionLevel = GetGroupProtectionLevel() + Convert.ToInt16(_agent.isInBurrow);
         }
 
         private int GetGroupProtectionLevel()

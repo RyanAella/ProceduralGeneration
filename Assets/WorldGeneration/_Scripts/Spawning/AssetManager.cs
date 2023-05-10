@@ -414,7 +414,7 @@ namespace WorldGeneration._Scripts.Spawning
                                         var rabbitPos = asset.transform.GetChild(1).position;
                                         Object.Instantiate(rabbit, rabbitPos,
                                             Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)),
-                                            asset.transform).GetComponent<CustomAgent>().isInDen = true;
+                                            asset.transform).GetComponent<CustomAgent>().isInBurrow = true;
                                     }
 
                                     posFound = true;
@@ -458,7 +458,7 @@ namespace WorldGeneration._Scripts.Spawning
             // wenn pos frei, dann Burrow spawnen
             // wenn Burrow gespawnt, Hasen in Bau teleportieren
 
-            if (interactingObject.GetComponent<InteractionHandler>().isDenBuildableHere)
+            if (interactingObject.GetComponent<InteractionHandler>().isBurrowBuildableHere)
             {
                 var settings = _burrows.BurrowsList[2].assetPrefab;
 

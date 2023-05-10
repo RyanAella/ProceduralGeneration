@@ -17,9 +17,9 @@ namespace ml_agents.Agents.Handler
 
         [Space(10)] [Header("Drinking")] public bool canDrink = false;
 
-        [Space(10)] [Header("Den")] public bool canBuildDen;
-        public bool isDenBuildableHere;
-        public bool isStandingBeforeDen = false;
+        [Space(10)] [Header("Burrow")] public bool canBuildBurrow;
+        public bool isBurrowBuildableHere;
+        public bool isStandingBeforeBurrow = false;
 
         [Space(10)] [Header("Rewards")] public float rewardForBreeding = 1f;
         public float penaltyForTryingToDoSomethingWithoutCorrectConditions = 0.01f;
@@ -41,7 +41,7 @@ namespace ml_agents.Agents.Handler
             {
                 if (hits[0].collider.gameObject.layer == interactableLayer)
                 {
-                    isStandingBeforeDen = hits[0].collider.gameObject.CompareTag("Burrow");
+                    isStandingBeforeBurrow = hits[0].collider.gameObject.CompareTag("Burrow");
                     canEat = hits[0].collider.gameObject.CompareTag(foodTag);
                 }
                 else if (hits[0].collider.gameObject.layer == LayerMask.NameToLayer("Water"))
@@ -55,7 +55,7 @@ namespace ml_agents.Agents.Handler
             }
 
             //here check if location sit possible
-            isDenBuildableHere = AssetManager.GetInstance().CheckLocation(transform.position);
+            isBurrowBuildableHere = AssetManager.GetInstance().CheckLocation(transform.position);
         }
 
         public void Eat()
@@ -100,7 +100,7 @@ namespace ml_agents.Agents.Handler
 
         public void LeaveBurrow()
         {
-            if (_agent.isInDen)
+            if (_agent.isInBurrow)
             {
                 gameObject.transform.parent.GetComponent<Burrow>().Leave(gameObject);
             }
@@ -108,21 +108,21 @@ namespace ml_agents.Agents.Handler
 
         public void BuildBurrow()
         {
-            canBuildDen = CheckAllConditionsForBuildingDen();
-            if (!canBuildDen)
+            canBuildBurrow = CheckAllConditionsForBuildingBurrow();
+            if (!canBuildBurrow)
                 return;
 
             AssetManager.GetInstance().BuildBurrow(gameObject);
         }
 
-        private bool CheckAllConditionsForBuildingDen()
+        private bool CheckAllConditionsForBuildingBurrow()
         {
-            return isDenBuildableHere && !_agent.isInDen && !_agent.hasDen;
+            return isBurrowBuildableHere && !_agent.isInBurrow && !_agent.hasBurrow;
         }
 
         private bool CheckAllConditionsForEnteringBurrow()
         {
-            if (isStandingBeforeDen)
+            if (isStandingBeforeBurrow)
             {
                 return gameObject.transform.parent.GetComponent<Burrow>().inhabitants.Count < 2;
             }
@@ -132,7 +132,7 @@ namespace ml_agents.Agents.Handler
 
         private bool CheckAllConditionsForBreeding()
         {
-            if (_agent.isInDen && _agent.isAdult && !_agent.hasBreeded)
+            if (_agent.isInBurrow && _agent.isAdult && !_agent.hasBreeded)
             {
                 if (gameObject.transform.parent.GetComponent<Burrow>().inhabitants.Count == 2)
                 {
