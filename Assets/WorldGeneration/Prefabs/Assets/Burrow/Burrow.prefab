@@ -51,7 +51,7 @@ MonoBehaviour:
   inhabitants: []
   isOccupied: 0
   rabbitPrefab: {fileID: 6726708987975217167, guid: 86fce287c6f187b4083857ed3769996b, type: 3}
-  foxPrefab: {fileID: 0}
+  foxPrefab: {fileID: 6726708987975217167, guid: 7fd02625dafba324eaf3c34de5222fc1, type: 3}
 --- !u!1 &357063465037675495
 GameObject:
   m_ObjectHideFlags: 0
@@ -79,7 +79,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 357063465037675495}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalPosition: {x: -0, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 0.6, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

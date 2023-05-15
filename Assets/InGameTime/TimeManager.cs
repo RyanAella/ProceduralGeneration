@@ -250,11 +250,13 @@ namespace InGameTime
          */
         private IEnumerator UpdateTime()
         {
+            // multiply timer with 1 / timeInterval
             _timer *= 1 / timeInterval;
 
             while (_timerGoing)
             {
-                // yield return new WaitForSeconds(timeInterval);
+                // wait for timeInterval -> two ticks per second
+                yield return new WaitForSeconds(timeInterval);
                 _timer--;
 
                 if (_timer <= 0)
@@ -320,13 +322,34 @@ namespace InGameTime
         }
 
         /// <summary>
-        ///     Resume the Game.
+        ///     Resume the InGameTimer.
         /// </summary>
         public void Resume()
         {
             // Debug.Log("Resume Game");
             BeginTimer();
             Time.timeScale = _lastTimeScale;
+        }
+        
+        /// <summary>
+        ///     Restart the InGameTimer.
+        /// </summary>
+        public void RestartTimer()
+        {
+            // Debug.Log("Restart Timer");
+            _inGameDate = new InGameDate
+            {
+                day = 0,
+                week = 0,
+                month = 0,
+                year = 0
+            };
+            _timer = _daysToRealTime;
+
+            // UnityEngine.Time.timeScale = 2f;
+            _lastTimeScale = Time.timeScale;
+            
+            BeginTimer();
         }
 
         /// <summary>

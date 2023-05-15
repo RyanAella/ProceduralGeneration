@@ -20,6 +20,7 @@ MonoBehaviour:
     day: 0
     week: 0
     month: 0
-    year: 1
-  maxNumber: 0
+    year: 2
+  minNumber: 0
+  radius: 0
   assets: []

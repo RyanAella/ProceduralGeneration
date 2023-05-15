@@ -4,6 +4,7 @@ using System.Linq;
 using InGameTime;
 using ml_agents.Agents.Handler;
 using UnityEngine;
+using UnityEngine.Serialization;
 using WorldGeneration._Scripts;
 using WorldGeneration._Scripts.Helper;
 using WorldGeneration._Scripts.ScriptableObjects;
@@ -27,9 +28,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private NoiseSettings noiseSettings;
     [SerializeField] private GroundGenerator groundGenerator;
     [SerializeField] private WaterGenerator waterGenerator;
-
-    [Tooltip("A list of food to generate.")] [SerializeField]
-    private List<PlantSettings> foodList;
+    
+    /*[SerializeField]*/ private AssetManager assetManager;
 
     [Tooltip("A list of plants to generate.")] [SerializeField]
     private List<PlantSettings> plantsList;
@@ -46,13 +46,9 @@ public class GameManager : MonoBehaviour
     // private
     private TimeManager _timer;
     private WorldManager _worldManager;
-    [SerializeField] private AssetManager _assetManager;
 
     private NoiseWithClamp _noiseWithClamp;
 
-    private float[,] _map;
-
-    private Food _food;
     private Plants _plants;
     private Burrows _burrows;
 
@@ -78,10 +74,9 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         _timer = TimeManager.Instance;
-        _timer.BeginTimer();
 
         _worldManager = WorldManager.GetInstance();
-        _assetManager = AssetManager.GetInstance();
+        assetManager = AssetManager.GetInstance();
 
         _noiseWithClamp.NoiseGenerator = new NoiseGenerator(noiseSettings);
         _noiseWithClamp.ValueClamp = new ValueClamp();
@@ -115,45 +110,78 @@ public class GameManager : MonoBehaviour
             ReloadWorld();
         }
 
-        // TimeManager.OnMonthChanged += RespawnPlants;
+        // TimeManager.OnDayChanged += print;
+
+        TimeManager.OnMonthChanged += RespawnPlants;
+    }
+
+    private void print()
+    {
+        Debug.Log(_timer.GetCurrentDate().PrintToString("/"));
     }
 
     private void GenerateInitialWorld()
     {
-        _food.FoodList = foodList;
-        _food.FoodParents = _foodParents;
+        _plants = new Plants
+        {
+            PlantsList = plantsList,
+            PlantParents = _plantParents
+        };
 
-        _plants.PlantsList = plantsList;
-        _plants.PlantParents = _plantParents;
-
-        _burrows.BurrowsList = initialBurrowsList;
-        _burrows.Burrow = burrow;
-        _burrows.BurrowParents = _burrowParents;
+        _burrows = new Burrows
+        {
+            BurrowsList = initialBurrowsList,
+            Burrow = burrow,
+            BurrowParents = _burrowParents
+        };
 
         _running = _worldManager.GenerateInitialWorld(resolution, maxTerrainHeight, waterLevel, generalSettings,
-            noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator, _assetManager, _food, _plants, _burrows,
-            out _map);
+            noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator, assetManager, _plants, _burrows);
+
+        if (_running)
+        {
+            _timer.BeginTimer();
+        }
+        else
+        {
+            Debug.Log("Error while generating world");
+        }
     }
 
     private void ReloadWorld()
     {
         if (_running)
         {
-            _plants.PlantsList = plantsList;
-            _plants.PlantParents = _plantParents;
+            _plants = new Plants
+            {
+                PlantsList = plantsList,
+                PlantParents = _plantParents
+            };
 
-            _burrows.BurrowsList = initialBurrowsList;
-            _burrows.Burrow = burrow;
-            _burrows.BurrowParents = _burrowParents;
+            _burrows = new Burrows
+            {
+                BurrowsList = initialBurrowsList,
+                Burrow = burrow,
+                BurrowParents = _burrowParents
+            };
 
-            _running = _worldManager.GenerateInitialWorld(resolution, maxTerrainHeight, waterLevel, generalSettings,
-                noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator, _assetManager, _food, _plants,
-                _burrows, out _map);
+            _running = _worldManager.ReloadWorld(resolution, maxTerrainHeight, waterLevel, generalSettings,
+                noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator, assetManager, _plants,
+                _burrows);
+            
+            if (_running)
+            {
+                _timer.RestartTimer();
+            }
+            else
+            {
+                Debug.Log("Error while generating world");
+            }
         }
     }
 
     private void RespawnPlants()
     {
-        _assetManager.SpawnPlants();
+        assetManager.SpawnPlants();
     }
 }

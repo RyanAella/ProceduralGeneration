@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: NoiseSettings
   m_EditorClassIdentifier: 
   useRandomSeed: 0
-  seed: Hello World!
+  seed: 3,83168269999999
   noiseScale: 0.0768
   octaves: 8
   persistence: 0.5

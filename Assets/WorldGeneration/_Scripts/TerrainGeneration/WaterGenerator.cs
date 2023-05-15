@@ -36,7 +36,7 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         /// <param name="maxTerrainHeight"></param>
         /// <param name="waterLevel"></param>
         /// <param name="generalSettings"></param>
-        public void GenerateWater(Vector2Int resolution, float maxTerrainHeight, float waterLevel, GeneralSettings generalSettings)
+        public bool GenerateWater(Vector2Int resolution, float maxTerrainHeight, float waterLevel, GeneralSettings generalSettings)
         {
             _meshRenderer = GetComponent<MeshRenderer>();
             _meshRenderer.enabled = true;
@@ -70,6 +70,8 @@ namespace WorldGeneration._Scripts.TerrainGeneration
             GetComponent<MeshFilter>().sharedMesh = _mesh;
 
             transform.position = new Vector3(transform.position.x, maxTerrainHeight * waterLevel, transform.position.z);
+            
+            return true;
         }
     }
 }

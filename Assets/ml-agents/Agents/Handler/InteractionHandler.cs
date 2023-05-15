@@ -1,5 +1,4 @@
 using ml_agents.Custom_Attributes_for_editor;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using WorldGeneration._Scripts.Spawning;
 using WorldGeneration._Scripts.Spawning.TerrainAssets;
@@ -12,14 +11,15 @@ namespace ml_agents.Agents.Handler
         [Range(0.1f, 1)] public float interactionRange = 0.5f;
         public LayerMask interactableLayer;
 
-        [Space(10)] [Header("Eating")] public bool canEat = false;
+        [Space(10)] [Header("Eating")] public bool canEat;
         [TagSelector] public string foodTag;
 
-        [Space(10)] [Header("Drinking")] public bool canDrink = false;
+        [Space(10)] [Header("Drinking")] public bool canDrink;
 
         [Space(10)] [Header("Burrow")] public bool canBuildBurrow;
         public bool isBurrowBuildableHere;
-        public bool isStandingBeforeBurrow = false;
+        public bool isStandingBeforeBurrow;
+        public GameObject detectedBurrow;
 
         [Space(10)] [Header("Rewards")] public float rewardForBreeding = 1f;
         public float penaltyForTryingToDoSomethingWithoutCorrectConditions = 0.01f;
@@ -37,12 +37,20 @@ namespace ml_agents.Agents.Handler
         {
             Ray ray = new Ray(mouth.position, mouth.TransformDirection(Vector3.forward));
             RaycastHit[] hits = Physics.RaycastAll(ray);
+
             if (hits.Length > 0 && hits[0].distance < interactionRange)
             {
                 if (hits[0].collider.gameObject.layer == interactableLayer)
                 {
-                    isStandingBeforeBurrow = hits[0].collider.gameObject.CompareTag("Burrow");
-                    canEat = hits[0].collider.gameObject.CompareTag(foodTag);
+                    if (hits[0].collider.gameObject.CompareTag("Burrow"))
+                    {
+                        isStandingBeforeBurrow = true;
+                        detectedBurrow = hits[0].collider.gameObject;
+                    }
+                    else if (hits[0].collider.gameObject.CompareTag(foodTag))
+                    {
+                        canEat = true;
+                    }
                 }
                 else if (hits[0].collider.gameObject.layer == LayerMask.NameToLayer("Water"))
                 {
@@ -94,7 +102,7 @@ namespace ml_agents.Agents.Handler
         {
             if (CheckAllConditionsForEnteringBurrow())
             {
-                gameObject.transform.parent.GetComponent<Burrow>().Enter(gameObject);
+                detectedBurrow.GetComponent<Burrow>().Enter(gameObject);
             }
         }
 
@@ -102,7 +110,7 @@ namespace ml_agents.Agents.Handler
         {
             if (_agent.isInBurrow)
             {
-                gameObject.transform.parent.GetComponent<Burrow>().Leave(gameObject);
+                transform.parent.GetComponent<Burrow>().Leave(gameObject);
             }
         }
 
@@ -124,7 +132,7 @@ namespace ml_agents.Agents.Handler
         {
             if (isStandingBeforeBurrow)
             {
-                return gameObject.transform.parent.GetComponent<Burrow>().inhabitants.Count < 2;
+                return detectedBurrow.GetComponent<Burrow>().inhabitants.Count < 2;
             }
 
             return false;
@@ -139,7 +147,7 @@ namespace ml_agents.Agents.Handler
                     foreach (GameObject agentGameObject in gameObject.transform.parent.GetComponent<Burrow>()
                                  .inhabitants)
                     {
-                        if (agentGameObject != this.gameObject)
+                        if (agentGameObject != gameObject)
                         {
                             return agentGameObject.GetComponent<InteractionHandler>().CanIBreed();
                         }
@@ -159,7 +167,6 @@ namespace ml_agents.Agents.Handler
                 return true;
             }
 
-            ;
             return false;
         }
 

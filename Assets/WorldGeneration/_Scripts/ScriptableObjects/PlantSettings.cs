@@ -10,20 +10,18 @@ namespace WorldGeneration._Scripts.ScriptableObjects
     {
         public List<GameObject> assetPrefab;
         public Transform parent;
-        public int minNumber;
-        
-        public float radius = 0;
 
-        public bool nearWater;
+        [Header("General Settings")] public int minNumber;
+        public float radius = 0;
         
-        [Header("Age and Fertility")]
+        public bool nearWater;
+
+        [Header("Age and Reproduction")] 
         public InGameDate lifespan;
         public float percentageAge;
         public float reproductionChance;
 
-
-
-
-        /*[HideInInspector] */public List<GameObject> assets;
+        [HideInInspector] 
+        public List<GameObject> assets;
     }
 }

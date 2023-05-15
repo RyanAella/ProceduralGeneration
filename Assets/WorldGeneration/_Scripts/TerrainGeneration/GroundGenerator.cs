@@ -20,7 +20,7 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         // private
         private Vector2[] _boundaries;
 
-        private float[,] _map;
+        // private float[,] _map;
 
         private Mesh _mesh;
         private MeshRenderer _meshRenderer;
@@ -51,62 +51,81 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         /// <param name="noiseWithClamp"></param>
         /// <param name="noiseSettings"></param>
         /// <param name="resolution"></param>
-        /// <param name="map"></param>
-        public void GenerateGround(Vector2Int resolution, float maxTerrainHeight, GeneralSettings generalSettings,
-            NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp, out float[,] map)
+        public bool GenerateGround(Vector2Int resolution, float maxTerrainHeight, GeneralSettings generalSettings,
+            NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp)
         {
-            _meshRenderer = GetComponent<MeshRenderer>();
-            _meshRenderer.enabled = true;
-
-            _mesh = new Mesh
+            try
             {
-                name = "Ground Mesh"
-            };
+                _meshRenderer = GetComponent<MeshRenderer>();
+                _meshRenderer.enabled = true;
 
-            gameObject.tag = "Ground";
-            gameObject.layer = LayerMask.NameToLayer("Ground");
+                _mesh = new Mesh
+                {
+                    name = "Ground Mesh"
+                };
 
-            GetComponent<MeshFilter>().sharedMesh = _mesh;
-            GetComponent<MeshCollider>().sharedMesh = _mesh;
+                gameObject.tag = "Ground";
+                gameObject.layer = LayerMask.NameToLayer("Ground");
 
-            // noiseWithClamp.ValueClamp = new ValueClamp();
-            map = new float[resolution.x, resolution.y];
+                GetComponent<MeshFilter>().sharedMesh = _mesh;
+                GetComponent<MeshCollider>().sharedMesh = _mesh;
 
-            for (var x = 0; x < resolution.x; x++)
-            for (var y = 0; y < resolution.y; y++)
-            {
-                var sampleX = x - (float)resolution.x / 2;
-                var sampleY = y - (float)resolution.y / 2;
+                // noiseWithClamp.ValueClamp = new ValueClamp();
+                var worldManager = WorldManager.GetInstance();
+                worldManager.Map = new float[resolution.x, resolution.y];
 
-                map[x, y] = noiseWithClamp.NoiseGenerator.GenerateNoiseValueWithFbm(noiseSettings, sampleX, sampleY);
+                for (var x = 0; x < resolution.x; x++)
+                {
+                    for (var y = 0; y < resolution.y; y++)
+                    {
+                        var sampleX = x - (float)resolution.x / 2;
+                        var sampleY = y - (float)resolution.y / 2;
 
-                noiseWithClamp.ValueClamp.Compare(map[x, y]);
+                        worldManager.Map[x, y] = noiseWithClamp.NoiseGenerator.GenerateNoiseValueWithFbm(noiseSettings, sampleX,
+                            sampleY);
+
+                        noiseWithClamp.ValueClamp.Compare(worldManager.Map[x, y]);
+                    }
+                }
+
+                // Get each point back into bounds
+                for (var x = 0; x < resolution.x; x++)
+                {
+                    for (var y = 0; y < resolution.y; y++)
+                    {
+                        worldManager.Map[x, y] = noiseWithClamp.ValueClamp.ClampValue(worldManager.Map[x, y]);
+                    }
+                }
+
+                MeshGenerator.GenerateMesh(_mesh, worldManager.Map, maxTerrainHeight, generalSettings);
+                ColorGenerator.AssignColor(gradient, _mesh, maxTerrainHeight);
+
+                return true;
             }
-
-            // Get each point back into bounds
-            for (var x = 0; x < resolution.x; x++)
-            for (var y = 0; y < resolution.y; y++)
-                map[x, y] = noiseWithClamp.ValueClamp.ClampValue(map[x, y]);
-
-            MeshGenerator.GenerateMesh(_mesh, map, maxTerrainHeight, generalSettings);
-            ColorGenerator.AssignColor(gradient, _mesh, maxTerrainHeight);
+            catch
+            {
+                return false;
+            }
+   
         }
 
 
         /// <summary>
         /// </summary>
-        /// <param name="wallPrefab"></param>
         /// <param name="maxTerrainHeight"></param>
         /// <param name="generalSettings"></param>
         /// <param name="resolution"></param>
-        public void GenerateWall(Vector2Int resolution, float maxTerrainHeight,
+        public bool GenerateWall(Vector2Int resolution, float maxTerrainHeight,
             GeneralSettings generalSettings)
         {
-            Destroy(_leftWall);
-            Destroy(_rightWall);
-            Destroy(_upperWall);
-            Destroy(_lowerWall);
-            
+            if (WorldManager.GetInstance().WallGenerated)
+            {
+                Destroy(_leftWall);
+                Destroy(_rightWall);
+                Destroy(_upperWall);
+                Destroy(_lowerWall);
+            }
+
             // Generate the left wall
             var tempTransform = transform;
             var tempTransformPos = tempTransform.position;
@@ -149,6 +168,8 @@ namespace WorldGeneration._Scripts.TerrainGeneration
             _lowerWall.name = "lower_wall";
             objScale = _lowerWall.transform.localScale;
             _lowerWall.transform.localScale = new Vector3((resolution.x - 1) * squareSize, yScale, objScale.y);
+
+            return true;
         }
     }
 }

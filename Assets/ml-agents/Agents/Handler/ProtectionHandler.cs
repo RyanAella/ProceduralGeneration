@@ -22,10 +22,10 @@ namespace ml_agents.Agents.Handler
 
             switch(_agent.type)
             {
-                case AgentType.RABBIT:
+                case AgentType.Rabbit:
                     _toSearchForTag = "Rabbit";
                     break;
-                case AgentType.FOX:
+                case AgentType.Fox:
                     _toSearchForTag = "Fox";
                     break;
             }

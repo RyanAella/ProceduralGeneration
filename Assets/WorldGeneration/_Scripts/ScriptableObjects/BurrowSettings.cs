@@ -12,10 +12,12 @@ namespace WorldGeneration._Scripts.ScriptableObjects
     {
         public GameObject assetPrefab;
         public List<Transform> parent;
-        public InGameDate lifespan;
-        public int minNumber;
 
-        public float radius;
+        [Header("General Settings")] 
+        public int minNumber;
+        public float radius = 0;
+
+        public InGameDate lifespan;
 
         [HideInInspector] public List<GameObject> assets;
     }

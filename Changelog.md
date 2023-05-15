@@ -1,6 +1,18 @@
 ﻿# Changelog World Generation
 
 
+## [1.0.0] - 2023-05-15
+## Added
+- Spawn Point for baby rabbit
+
+## Changed
+- Bugfix in TimeManager
+
+## Function Test
+- LeaveBurrow()
+- EnterBurrow()
+
+
 ## [0.12.0] - 2023-05-08
 ## Added
 - Reproduction for Carrots

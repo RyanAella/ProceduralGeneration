@@ -10,12 +10,6 @@ namespace WorldGeneration._Scripts.Helper
         public NoiseGenerator NoiseGenerator;
         public ValueClamp ValueClamp;
     }
-
-    public struct Food
-    {
-        public Dictionary<PlantSettings, Transform> FoodParents;
-        public List<PlantSettings> FoodList;
-    }
     
     public struct Plants
     {

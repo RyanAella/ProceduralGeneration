@@ -19,8 +19,8 @@ MonoBehaviour:
     day: 0
     week: 0
     month: 0
-    year: 1
+    year: 2
   minNumber: 1
-  radius: 5
+  radius: 9.967045
   assets:
   - {fileID: 0}

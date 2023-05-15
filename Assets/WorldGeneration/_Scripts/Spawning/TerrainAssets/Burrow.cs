@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using InGameTime;
 using ml_agents.Agents;
+using ml_agents.Agents.rabbit;
 using UnityEngine;
 using WorldGeneration._Scripts.ScriptableObjects;
 
@@ -27,10 +28,7 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
         {
             var size = gameObject.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size;
             settings.radius = size.x >= size.z ? size.x + 1f : size.z + 1f;
-            
-            // settings.radius = transform.localScale.x >= transform.localScale.z
-            //     ? transform.localScale.x + 1f
-            //     : transform.localScale.z + 1f;
+            inhabitants.Clear();
         }
 
         private void Start()
@@ -59,13 +57,21 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
                 Dying();
             }
 
-            if (inhabitants.Count >= 2) isOccupied = true;
+            if (inhabitants.Count >= 2)
+            {
+                isOccupied = true;
+            }
+            else if (inhabitants.Count < 2)
+            {
+                isOccupied = false;
+            }
         }
 
         private void Dying()
         {
             if (!isOccupied)
             {
+                Debug.Log("Burrow dies");
                 settings.assets.Remove(gameObject);
                 Destroy(gameObject);
             }
@@ -76,34 +82,51 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
 
         public void Enter(GameObject rabbit)
         {
-            if (rabbit.GetComponent<CustomAgent>().type == AgentType.RABBIT)
-                if (!isOccupied /*_inhabitants.Count < 2*/)
+            if (rabbit.GetComponent<CustomAgent>().type == AgentType.Rabbit)
+            {
+                Debug.Log("Enter Burrow");
+                if (!isOccupied)
                 {
+                    rabbit.transform.SetParent(transform);
+
+                    rabbit.GetComponent<CharacterController>().enabled = false;
+
                     rabbit.GetComponent<CustomAgent>().transform.position = new Vector3(
                         transform.GetChild(1).position.x, transform.GetChild(1).position.y,
                         transform.GetChild(1).position.z);
 
-                    rabbit.transform.SetParent(transform);
-
-                    inhabitants.Add(rabbit);
+                    rabbit.GetComponent<CharacterController>().enabled = true;
 
                     rabbit.GetComponent<CustomAgent>().isInBurrow = true;
+
+                    inhabitants.Add(rabbit);
                 }
+            }
         }
 
         public void Leave(GameObject rabbit)
         {
-            if (rabbit.GetComponent<CustomAgent>().type == AgentType.RABBIT)
+            if (rabbit.GetComponent<CustomAgent>().type == AgentType.Rabbit)
             {
-                rabbit.GetComponent<CustomAgent>().transform.position = new Vector3(
-                    transform.GetChild(0).position.x, transform.GetChild(0).position.y,
-                    transform.GetChild(0).position.z);
-
-                // rabbit.transform.parent = null;
-
                 inhabitants.Remove(rabbit);
 
-                // rabbit.GetComponent<CustomAgent>().isInDen = false;
+                rabbit.GetComponent<CustomAgent>().isInBurrow = false;
+
+                var pos = rabbit.transform.position;
+
+                rabbit.GetComponent<CharacterController>().enabled = false;
+
+                rabbit.transform.position = new Vector3(pos.x - 5, transform.position.y + 5, pos.z - 5);
+
+                rabbit.GetComponent<CharacterController>().enabled = true;
+
+                rabbit.transform.parent = null;
+                
+                if (inhabitants.Count < 2)
+                {
+                    
+                    isOccupied = false;
+                }
             }
         }
 
@@ -121,7 +144,7 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
 
             rabbit.GetComponent<CustomAgent>().isInBurrow = true;
         }
-        
+
         // private void OnDrawGizmos()
         // {
         //     Gizmos.color = Color.gray;
