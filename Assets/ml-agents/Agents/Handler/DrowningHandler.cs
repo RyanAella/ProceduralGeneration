@@ -44,7 +44,7 @@ namespace ml_agents.Agents.Handler
             timerSeconds -= Time.deltaTime;
             if (timerSeconds <= 0.0f)
             {
-                agent.removeHealth(healthDecreaseForDrowning);
+                agent.RemoveHealth(healthDecreaseForDrowning);
                 timerSeconds = decreaseHealtVerySeconds;
             }
         }
