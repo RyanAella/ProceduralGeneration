@@ -6,31 +6,32 @@ namespace ml_agents.Agents.Handler
     {
         public Transform nose;
         public bool isDrowning = false;
+        public float drowningHeight = 0;
         [Range(1, 10)] public float decreaseHealtVerySeconds = 3;
         [Range(1, 10)] public int healthDecreaseForDrowning = 4;
 
-        CustomAgent _agent;
+        CustomAgent agent;
 
-        float _timerSeconds;
+        float timerSeconds;
 
         // Start is called before the first frame update
         void Start()
         {
-            _agent = gameObject.GetComponent<CustomAgent>();
+            agent = gameObject.GetComponent<CustomAgent>();
         }
 
         // Update is called once per frame
         void Update()
         {
-            if(!isDrowning && nose.position.y < 0)
+            if(!isDrowning && nose.position.y < drowningHeight)
             {
                 isDrowning = true;
-                _timerSeconds = decreaseHealtVerySeconds;
+                timerSeconds = decreaseHealtVerySeconds;
             }
 
             if (isDrowning)
             {
-                if(nose.position.y >= 0)
+                if (nose.position.y >= drowningHeight)
                 {
                     isDrowning = false;
                 }
@@ -40,11 +41,11 @@ namespace ml_agents.Agents.Handler
 
         private void HandleBlockTimer()
         {
-            _timerSeconds -= Time.deltaTime;
-            if (decreaseHealtVerySeconds <= 0.0f)
+            timerSeconds -= Time.deltaTime;
+            if (timerSeconds <= 0.0f)
             {
-                _timerSeconds = decreaseHealtVerySeconds;
-                _agent.health -= healthDecreaseForDrowning;
+                agent.removeHealth(healthDecreaseForDrowning);
+                timerSeconds = decreaseHealtVerySeconds;
             }
         }
     }

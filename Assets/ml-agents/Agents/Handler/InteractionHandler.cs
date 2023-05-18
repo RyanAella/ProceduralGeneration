@@ -1,4 +1,5 @@
 using ml_agents.Custom_Attributes_for_editor;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using WorldGeneration._Scripts.Spawning;
 using WorldGeneration._Scripts.Spawning.TerrainAssets;
@@ -11,25 +12,29 @@ namespace ml_agents.Agents.Handler
         [Range(0.1f, 1)] public float interactionRange = 0.5f;
         public LayerMask interactableLayer;
 
-        [Space(10)] [Header("Eating")] public bool canEat;
+        [Space(10)] [Header("Eating")] 
+        public bool canEat = false;
         [TagSelector] public string foodTag;
 
-        [Space(10)] [Header("Drinking")] public bool canDrink;
+        [Space(10)] [Header("Drinking")] 
+        public bool canDrink = false;
+        public int thirstDecreasePerDrink = 1;
 
-        [Space(10)] [Header("Burrow")] public bool canBuildBurrow;
+        [Space(10)] [Header("Burrow")] 
+        public bool canBuildBurrow;
         public bool isBurrowBuildableHere;
-        public bool isStandingBeforeBurrow;
-        public GameObject detectedBurrow;
+        public bool isStandingBeforeBurrow = false;
 
-        [Space(10)] [Header("Rewards")] public float rewardForBreeding = 1f;
-        public float penaltyForTryingToDoSomethingWithoutCorrectConditions = 0.01f;
+        [Space(10)] [Header("Rewards")] 
+        public float rewardForBreeding = 1f;
+        public float penaltyForTryingToDoSomethingWithoutCorrectConditions = -0.01f;
 
-        CustomAgent _agent;
+        CustomAgent agent;
 
         // Start is called before the first frame update
         void Start()
         {
-            _agent = gameObject.GetComponent<CustomAgent>();
+            agent = gameObject.GetComponent<CustomAgent>();
         }
 
         // Update is called once per frame
@@ -37,20 +42,12 @@ namespace ml_agents.Agents.Handler
         {
             Ray ray = new Ray(mouth.position, mouth.TransformDirection(Vector3.forward));
             RaycastHit[] hits = Physics.RaycastAll(ray);
-
             if (hits.Length > 0 && hits[0].distance < interactionRange)
             {
                 if (hits[0].collider.gameObject.layer == interactableLayer)
                 {
-                    if (hits[0].collider.gameObject.CompareTag("Burrow"))
-                    {
-                        isStandingBeforeBurrow = true;
-                        detectedBurrow = hits[0].collider.gameObject;
-                    }
-                    else if (hits[0].collider.gameObject.CompareTag(foodTag))
-                    {
-                        canEat = true;
-                    }
+                    isStandingBeforeBurrow = hits[0].collider.gameObject.CompareTag("Burrow");
+                    canEat = hits[0].collider.gameObject.CompareTag(foodTag);
                 }
                 else if (hits[0].collider.gameObject.layer == LayerMask.NameToLayer("Water"))
                 {
@@ -70,8 +67,11 @@ namespace ml_agents.Agents.Handler
         {
             if (canEat)
             {
-                _agent.isEating = true;
+                agent.isEating = true;
                 gameObject.GetComponent<Carrot>().Eat(gameObject);
+            } else
+            {
+                agent.AddReward(penaltyForTryingToDoSomethingWithoutCorrectConditions);
             }
         }
 
@@ -79,60 +79,77 @@ namespace ml_agents.Agents.Handler
         {
             if (canDrink)
             {
-                _agent.isDrinking = true;
-                _agent.BlockMovementForSeconds(0.5f);
+                agent.isDrinking = true;
+                agent.BlockMovementForSeconds(0.5f);
 
-                if (_agent.thirst > 0)
+                if (agent.thirst > 0)
                 {
-                    _agent.thirst--;
+                    agent.thirst -= thirstDecreasePerDrink;
                 }
+            }
+            else
+            {
+                agent.AddReward(penaltyForTryingToDoSomethingWithoutCorrectConditions);
             }
         }
 
         public void Breed()
         {
-            if (!CheckAllConditionsForBreeding())
-                return;
-
-            _agent.hasBreeded = true;
-            transform.parent.GetComponent<Burrow>().Breed(gameObject);
+            if(CheckAllConditionsForBreeding())
+            {
+                agent.hasBreeded = true;
+                agent.AddReward(rewardForBreeding);
+                transform.parent.GetComponent<Burrow>().Breed(gameObject);
+            } else
+            {
+                agent.AddReward(penaltyForTryingToDoSomethingWithoutCorrectConditions);
+            }
         }
 
         public void EnterBurrow()
         {
             if (CheckAllConditionsForEnteringBurrow())
             {
-                detectedBurrow.GetComponent<Burrow>().Enter(gameObject);
+                gameObject.transform.parent.GetComponent<Burrow>().Enter(gameObject);
+            } else
+            {
+                agent.AddReward(penaltyForTryingToDoSomethingWithoutCorrectConditions);
             }
         }
 
         public void LeaveBurrow()
         {
-            if (_agent.isInBurrow)
+            if (agent.isInBurrow)
             {
-                transform.parent.GetComponent<Burrow>().Leave(gameObject);
+                gameObject.transform.parent.GetComponent<Burrow>().Leave(gameObject);
+            } else
+            {
+                agent.AddReward(penaltyForTryingToDoSomethingWithoutCorrectConditions);
             }
         }
 
         public void BuildBurrow()
         {
             canBuildBurrow = CheckAllConditionsForBuildingBurrow();
-            if (!canBuildBurrow)
-                return;
-
-            AssetManager.GetInstance().BuildBurrow(gameObject);
+            if (CheckAllConditionsForBuildingBurrow())
+            {
+                AssetManager.GetInstance().BuildBurrow(gameObject);
+            } else
+            {
+                agent.AddReward(penaltyForTryingToDoSomethingWithoutCorrectConditions);
+            }
         }
 
         private bool CheckAllConditionsForBuildingBurrow()
         {
-            return isBurrowBuildableHere && !_agent.isInBurrow && !_agent.hasBurrow;
+            return isBurrowBuildableHere && !agent.isInBurrow && !agent.hasBurrowBuild;
         }
 
         private bool CheckAllConditionsForEnteringBurrow()
         {
             if (isStandingBeforeBurrow)
             {
-                return detectedBurrow.GetComponent<Burrow>().inhabitants.Count < 2;
+                return gameObject.transform.parent.GetComponent<Burrow>().inhabitants.Count < 2;
             }
 
             return false;
@@ -140,14 +157,14 @@ namespace ml_agents.Agents.Handler
 
         private bool CheckAllConditionsForBreeding()
         {
-            if (_agent.isInBurrow && _agent.isAdult && !_agent.hasBreeded)
+            if (agent.isInBurrow && agent.isAdult && !agent.hasBreeded)
             {
                 if (gameObject.transform.parent.GetComponent<Burrow>().inhabitants.Count == 2)
                 {
                     foreach (GameObject agentGameObject in gameObject.transform.parent.GetComponent<Burrow>()
                                  .inhabitants)
                     {
-                        if (agentGameObject != gameObject)
+                        if (agentGameObject != this.gameObject)
                         {
                             return agentGameObject.GetComponent<InteractionHandler>().CanIBreed();
                         }
@@ -160,13 +177,14 @@ namespace ml_agents.Agents.Handler
 
         public bool CanIBreed()
         {
-            if (_agent.isAdult && !_agent.hasBreeded)
+            if (agent.isAdult && !agent.hasBreeded)
             {
                 //instant block so other agent can not ask
-                _agent.hasBreeded = true;
+                agent.hasBreeded = true;
                 return true;
             }
 
+            ;
             return false;
         }
 
