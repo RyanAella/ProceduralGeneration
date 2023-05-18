@@ -1,10 +1,11 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Reflection.Emit;
 using InGameTime;
 using ml_agents.Agents;
-using ml_agents.Agents.rabbit;
 using UnityEngine;
 using WorldGeneration._Scripts.ScriptableObjects;
+using Random = System.Random;
 
 namespace WorldGeneration._Scripts.Spawning.TerrainAssets
 {
@@ -12,17 +13,22 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
     {
         [SerializeField] private BurrowSettings settings;
         public AgentType type;
+        public LayerMask layerMask;
 
         public List<GameObject> inhabitants;
         public bool isOccupied;
         public GameObject rabbitPrefab;
         public GameObject foxPrefab;
 
+        public List<GameObject> spawnPoints;
+
         private InGameDate _birthDate;
         private InGameDate _dayOfDeath;
         private TimeManager _timer;
 
-        private bool canDie = false;
+        private bool canDie;
+        private int lastSpawnPoint;
+        private System.Random _prng = new System.Random();
 
         private void Awake()
         {
@@ -41,37 +47,26 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
             canDie = false;
 
             if (inhabitants.Count < 2)
-            {
                 isOccupied = false;
-            }
             else
-            {
                 isOccupied = false;
-            }
+
+            Check();
         }
 
         private void Update()
         {
-            if (_dayOfDeath.Equals(_timer.GetCurrentDate()) || canDie)
-            {
-                Dying();
-            }
+            if (_dayOfDeath.Equals(_timer.GetCurrentDate()) || canDie) Dying();
 
             if (inhabitants.Count >= 2)
-            {
                 isOccupied = true;
-            }
-            else if (inhabitants.Count < 2)
-            {
-                isOccupied = false;
-            }
+            else if (inhabitants.Count < 2) isOccupied = false;
         }
 
         private void Dying()
         {
             if (!isOccupied)
             {
-                Debug.Log("Burrow dies");
                 settings.assets.Remove(gameObject);
                 Destroy(gameObject);
             }
@@ -79,70 +74,97 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
             canDie = true;
         }
 
-
-        public void Enter(GameObject rabbit)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="customAgent"></param>
+        /// <param name="controller"></param>
+        public void Enter(GameObject obj, CustomAgent customAgent, CharacterController controller)
         {
-            if (rabbit.GetComponent<CustomAgent>().type == AgentType.Rabbit)
+            if (customAgent.type == AgentType.Rabbit)
             {
-                Debug.Log("Enter Burrow");
                 if (!isOccupied)
                 {
-                    rabbit.transform.SetParent(transform);
+                    obj.transform.SetParent(transform);
 
-                    rabbit.GetComponent<CharacterController>().enabled = false;
-
-                    rabbit.GetComponent<CustomAgent>().transform.position = new Vector3(
+                    Teleport(obj, controller, new Vector3(
                         transform.GetChild(1).position.x, transform.GetChild(1).position.y,
-                        transform.GetChild(1).position.z);
+                        transform.GetChild(1).position.z));
 
-                    rabbit.GetComponent<CharacterController>().enabled = true;
+                    customAgent.isInBurrow = true;
 
-                    rabbit.GetComponent<CustomAgent>().isInBurrow = true;
+                    inhabitants.Add(obj);
 
-                    inhabitants.Add(rabbit);
+                    // Debug.Log("Enter Burrow");
                 }
             }
         }
 
-        public void Leave(GameObject rabbit)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="customAgent"></param>
+        /// <param name="controller"></param>
+        public void Leave(GameObject obj, CustomAgent customAgent, CharacterController controller)
         {
-            if (rabbit.GetComponent<CustomAgent>().type == AgentType.Rabbit)
+            var prngSpawnPoints = (lastSpawnPoint + 1) % spawnPoints.Count;
+
+            if (customAgent.type == AgentType.Rabbit)
             {
-                inhabitants.Remove(rabbit);
+                inhabitants.Remove(obj);
 
-                rabbit.GetComponent<CustomAgent>().isInBurrow = false;
+                customAgent.isInBurrow = false;
 
-                var pos = rabbit.transform.position;
-
-                rabbit.GetComponent<CharacterController>().enabled = false;
-
-                rabbit.transform.position = new Vector3(pos.x - 5, transform.position.y + 5, pos.z - 5);
-
-                rabbit.GetComponent<CharacterController>().enabled = true;
-
-                rabbit.transform.parent = null;
+                // var posFound = false;
+                // while (!posFound)
+                // {
+                // var prngSpawnPoints = _prng.Next(spawnPoints.Count);
+                // if (prngSpawnPoints != lastSpawnPoint)
+                // {
                 
-                if (inhabitants.Count < 2)
-                {
-                    
-                    isOccupied = false;
-                }
+                var pos = spawnPoints[prngSpawnPoints].transform.position;
+                pos.y -= 1;
+
+                Teleport(obj, controller, pos);
+
+                obj.transform.parent = null;
+
+                if (inhabitants.Count < 2) isOccupied = false;
+
+                lastSpawnPoint = prngSpawnPoints;
+                
+                //         posFound = true;
+                //     }
+                // }
             }
         }
 
-        public void Breed(GameObject rabbit)
+        private void Teleport(GameObject obj, CharacterController controller, Vector3 pos)
+        {
+            controller.enabled = false;
+            // yield return new WaitForSeconds(1f);
+            obj.transform.position = pos;
+            // yield return new WaitForSeconds(1f);
+            controller.enabled = true;
+        }
+
+        public void Breed()
         {
             var pos = new Vector3(
                 transform.GetChild(1).position.x, transform.GetChild(1).position.y,
                 transform.GetChild(1).position.z);
 
-            var newRabbit = Instantiate(rabbitPrefab, pos, Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0)));
+            var newRabbit = Instantiate(rabbitPrefab, pos,
+                Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
 
             newRabbit.transform.SetParent(transform);
 
-            inhabitants.Add(rabbit);
+            inhabitants.Add(newRabbit);
 
-            rabbit.GetComponent<CustomAgent>().isInBurrow = true;
+            newRabbit.TryGetComponent<CustomAgent>(out CustomAgent agent);
+            agent.isInBurrow = true;
         }
 
         // private void OnDrawGizmos()
@@ -150,5 +172,50 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
         //     Gizmos.color = Color.gray;
         //     Gizmos.DrawWireSphere(transform.position, settings.radius);
         // }
+
+        private void Check()
+        {
+            var child0 = transform.GetChild(0).GetChild(0).transform.position;
+            var child1 = transform.GetChild(0).GetChild(1).transform.position;
+            var child2 = transform.GetChild(0).GetChild(2).transform.position;
+            var child3 = transform.GetChild(0).GetChild(3).transform.position;
+            Ray ray0 = new Ray(child0, -transform.GetChild(0).transform.up);
+            Ray ray1 = new Ray(child1, -transform.GetChild(1).transform.up);
+            Ray ray2 = new Ray(child2, -transform.GetChild(2).transform.up);
+            Ray ray3 = new Ray(child3, -transform.GetChild(3).transform.up);
+
+            RaycastHit hit0;
+            RaycastHit hit1;
+            RaycastHit hit2;
+            RaycastHit hit3;
+            Vector3 newVector;
+            if (Physics.Raycast(ray0, out hit0, 10f, layerMask))
+            {
+                newVector = (hit0.normal).normalized;
+                transform.GetChild(0).up = newVector;
+            }
+
+            if (Physics.Raycast(ray1, out hit1, 10f, layerMask))
+            {
+                newVector = (hit1.normal).normalized;
+                transform.GetChild(0).up = newVector;
+            }
+
+            if (Physics.Raycast(ray2, out hit2, 10f, layerMask))
+            {
+                newVector = (hit2.normal).normalized;
+                transform.GetChild(0).up = newVector;
+            }
+
+            if (Physics.Raycast(ray3, out hit3, 10f, layerMask))
+            {
+                newVector = (hit3.normal).normalized;
+                transform.GetChild(0).up = newVector;
+            }
+
+            var max = Math.Max(hit0.distance, Math.Max(hit1.distance, Math.Max(hit2.distance, hit3.distance)));
+            transform.GetChild(0).position = new Vector3(transform.GetChild(0).position.x,
+                transform.GetChild(0).position.y - max, transform.GetChild(0).position.z);
+        }
     }
 }

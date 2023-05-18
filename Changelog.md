@@ -1,6 +1,25 @@
 ﻿# Changelog World Generation
 
 
+## [1.2.1] - 2023-05-18
+## Bugfixes
+- Leave Burrow
+  - refactored while loop
+
+
+## [1.2.0] - 2023-05-17
+## Added
+- Ground Check for burrow
+
+
+## [1.1.0] - 2023-05-16
+## Added
+- Spawn points for leaving the burrow
+
+## Changed
+- ReloadWorld()
+
+
 ## [1.0.0] - 2023-05-15
 ## Added
 - Spawn Point for baby rabbit

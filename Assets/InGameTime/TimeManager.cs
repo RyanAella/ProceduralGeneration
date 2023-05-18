@@ -220,7 +220,7 @@ namespace InGameTime
         {
             if (Instance == null)
             {
-                DontDestroyOnLoad(gameObject);
+                // DontDestroyOnLoad(gameObject);
                 Instance = this;
             }
             else if (Instance != this)
@@ -334,9 +334,9 @@ namespace InGameTime
         /// <summary>
         ///     Restart the InGameTimer.
         /// </summary>
-        public void RestartTimer()
+        public void ResetTimer()
         {
-            // Debug.Log("Restart Timer");
+            // Debug.Log("Reset Timer");
             _inGameDate = new InGameDate
             {
                 day = 0,
@@ -349,7 +349,7 @@ namespace InGameTime
             // UnityEngine.Time.timeScale = 2f;
             _lastTimeScale = Time.timeScale;
             
-            BeginTimer();
+            _timerGoing = false;
         }
 
         /// <summary>

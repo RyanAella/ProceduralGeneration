@@ -10,13 +10,9 @@ namespace WorldGeneration._Scripts.TerrainGeneration
     {
         private readonly OpenSimplexNoise _simplexNoise;
 
-        public NoiseGenerator(NoiseSettings noiseSettings)
+        public NoiseGenerator(NoiseSettings noiseSettings, string seed)
         {
-            // Check if a random seed is wanted
-            if (noiseSettings.useRandomSeed)
-                noiseSettings.seed = UnityEngine.Time.realtimeSinceStartupAsDouble.ToString();
-            
-            _simplexNoise = new OpenSimplexNoise(noiseSettings.seed.GetHashCode());
+            _simplexNoise = new OpenSimplexNoise(seed.GetHashCode());
         }
 
         /// <summary>

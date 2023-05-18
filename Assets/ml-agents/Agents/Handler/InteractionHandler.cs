@@ -12,21 +12,18 @@ namespace ml_agents.Agents.Handler
         [Range(0.1f, 1)] public float interactionRange = 0.5f;
         public LayerMask interactableLayer;
 
-        [Space(10)] [Header("Eating")] 
-        public bool canEat = false;
+        [Space(10)] [Header("Eating")] public bool canEat = false;
         [TagSelector] public string foodTag;
 
-        [Space(10)] [Header("Drinking")] 
-        public bool canDrink = false;
+        [Space(10)] [Header("Drinking")] public bool canDrink = false;
         public int thirstDecreasePerDrink = 1;
 
-        [Space(10)] [Header("Burrow")] 
-        public bool canBuildBurrow;
+        [Space(10)] [Header("Burrow")] public bool canBuildBurrow;
         public bool isBurrowBuildableHere;
         public bool isStandingBeforeBurrow = false;
+        public GameObject detectedBurrow;
 
-        [Space(10)] [Header("Rewards")] 
-        public float rewardForBreeding = 1f;
+        [Space(10)] [Header("Rewards")] public float rewardForBreeding = 1f;
         public float penaltyForTryingToDoSomethingWithoutCorrectConditions = -0.01f;
 
         CustomAgent agent;
@@ -47,6 +44,10 @@ namespace ml_agents.Agents.Handler
                 if (hits[0].collider.gameObject.layer == interactableLayer)
                 {
                     isStandingBeforeBurrow = hits[0].collider.gameObject.CompareTag("Burrow");
+                    if (isStandingBeforeBurrow)
+                    {
+                        detectedBurrow = hits[0].collider.gameObject;
+                    }
                     canEat = hits[0].collider.gameObject.CompareTag(foodTag);
                 }
                 else if (hits[0].collider.gameObject.layer == LayerMask.NameToLayer("Water"))
@@ -69,7 +70,8 @@ namespace ml_agents.Agents.Handler
             {
                 agent.isEating = true;
                 gameObject.GetComponent<Carrot>().Eat(gameObject);
-            } else
+            }
+            else
             {
                 agent.AddReward(penaltyForTryingToDoSomethingWithoutCorrectConditions);
             }
@@ -95,12 +97,14 @@ namespace ml_agents.Agents.Handler
 
         public void Breed()
         {
-            if(CheckAllConditionsForBreeding())
+            if (CheckAllConditionsForBreeding())
             {
                 agent.hasBreeded = true;
                 agent.AddReward(rewardForBreeding);
-                transform.parent.GetComponent<Burrow>().Breed(gameObject);
-            } else
+                transform.parent.TryGetComponent<Burrow>(out Burrow burrow);
+                burrow.Breed();
+            }
+            else
             {
                 agent.AddReward(penaltyForTryingToDoSomethingWithoutCorrectConditions);
             }
@@ -110,8 +114,10 @@ namespace ml_agents.Agents.Handler
         {
             if (CheckAllConditionsForEnteringBurrow())
             {
-                gameObject.transform.parent.GetComponent<Burrow>().Enter(gameObject);
-            } else
+                detectedBurrow.TryGetComponent<Burrow>(out var burrow);
+                burrow.Enter(gameObject, agent, agent.controller);
+            }
+            else
             {
                 agent.AddReward(penaltyForTryingToDoSomethingWithoutCorrectConditions);
             }
@@ -121,8 +127,10 @@ namespace ml_agents.Agents.Handler
         {
             if (agent.isInBurrow)
             {
-                gameObject.transform.parent.GetComponent<Burrow>().Leave(gameObject);
-            } else
+                transform.parent.TryGetComponent<Burrow>(out var burrow);
+                burrow.Leave(gameObject, agent, agent.controller);
+            }
+            else
             {
                 agent.AddReward(penaltyForTryingToDoSomethingWithoutCorrectConditions);
             }
@@ -130,11 +138,11 @@ namespace ml_agents.Agents.Handler
 
         public void BuildBurrow()
         {
-            canBuildBurrow = CheckAllConditionsForBuildingBurrow();
             if (CheckAllConditionsForBuildingBurrow())
             {
-                AssetManager.GetInstance().BuildBurrow(gameObject);
-            } else
+                AssetManager.GetInstance().BuildBurrow(gameObject, this, agent);
+            }
+            else
             {
                 agent.AddReward(penaltyForTryingToDoSomethingWithoutCorrectConditions);
             }
@@ -149,7 +157,8 @@ namespace ml_agents.Agents.Handler
         {
             if (isStandingBeforeBurrow)
             {
-                return gameObject.transform.parent.GetComponent<Burrow>().inhabitants.Count < 2;
+                detectedBurrow.TryGetComponent<Burrow>(out var burrow);
+                return burrow.inhabitants.Count < 2;
             }
 
             return false;

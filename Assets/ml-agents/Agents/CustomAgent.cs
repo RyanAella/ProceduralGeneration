@@ -161,19 +161,19 @@ namespace ml_agents.Agents
 
             if (wantToDrink)
                 interaction.Drink();
-
+            
             if (wantToEat)
                 interaction.Eat();
 
             if (wantToBuildBurrow)
                 interaction.BuildBurrow();
-
+            
             if (wantToBreed)
                 interaction.Breed();
-
+            
             if (wantToEnterBurrow)
                 interaction.EnterBurrow();
-
+            
             if (wantToLeaveBurrow)
                 interaction.LeaveBurrow();
         }

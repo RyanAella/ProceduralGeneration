@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ml_agents.Agents;
 using ml_agents.Agents.Handler;
-using Unity.VisualScripting;
 using UnityEngine;
 using WorldGeneration._Scripts.Helper;
 using WorldGeneration._Scripts.ScriptableObjects;
@@ -44,6 +43,12 @@ namespace WorldGeneration._Scripts.Spawning
             return Instance;
         }
 
+        public static AssetManager ResetInstance()
+        {
+            Instance = new AssetManager();
+            return Instance;
+        }
+
         /// <summary>
         /// </summary>
         /// <param name="res"></param>
@@ -62,6 +67,8 @@ namespace WorldGeneration._Scripts.Spawning
             _settings = generalSettings;
             _map = map;
 
+            Plants.PlantsList = new List<PlantSettings>();
+            Plants.PlantParents = new Dictionary<PlantSettings, Transform>();
             Plants = plants;
 
             if (Plants.PlantsList.Count != 0)
@@ -85,8 +92,6 @@ namespace WorldGeneration._Scripts.Spawning
 
                             if (settings.nearWater)
                             {
-                                // var prefab = settings.assetPrefab[prngPrefab];
-
                                 var max = _terrainHeight * _waterLevel;
                                 var min = _terrainHeight * _waterLevel - 5f;
 
@@ -94,11 +99,7 @@ namespace WorldGeneration._Scripts.Spawning
                                 {
                                     if (CheckSurrounding(pos, settings.radius))
                                     {
-                                        var asset = Object.Instantiate(settings.assetPrefab[prngPrefab], pos,
-                                            Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
-                                        asset.transform.SetParent(Plants.PlantParents[settings]);
-
-                                        settings.assets.Add(asset);
+                                        InstantiatePlant(settings, prngPrefab, pos);
 
                                         posFound = true;
                                     }
@@ -110,11 +111,7 @@ namespace WorldGeneration._Scripts.Spawning
                                 {
                                     if (CheckSurrounding(pos, settings.radius))
                                     {
-                                        var asset = Object.Instantiate(settings.assetPrefab[prngPrefab], pos,
-                                            Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
-                                        asset.transform.SetParent(Plants.PlantParents[settings]);
-
-                                        settings.assets.Add(asset);
+                                        InstantiatePlant(settings, prngPrefab, pos);
 
                                         posFound = true;
                                     }
@@ -126,18 +123,6 @@ namespace WorldGeneration._Scripts.Spawning
             }
 
             return true;
-        }
-
-        private Vector3 GetPosition(float[,] map)
-        {
-            var xPos = UnityEngine.Random.Range(-_settings.squareSize * (_resolution.x - 1) / 2,
-                _settings.squareSize * (_resolution.x - 1) / 2);
-            var zPos = UnityEngine.Random.Range(-_settings.squareSize * (_resolution.y - 1) / 2,
-                _settings.squareSize * (_resolution.y - 1) / 2);
-
-            var pos = GeneratorFunctions.GetSurfacePointFromWorldCoordinate(xPos, zPos, _resolution,
-                _terrainHeight, map, _settings);
-            return pos;
         }
 
         /// <summary>
@@ -158,6 +143,9 @@ namespace WorldGeneration._Scripts.Spawning
             _settings = generalSettings;
             _map = map;
 
+            Burrows.BurrowsList = new List<BurrowSettings>();
+            Burrows.BurrowParents = new Dictionary<BurrowSettings, Transform>();
+
             Burrows = burrows;
 
             if (Burrows.BurrowsList.Count != 0)
@@ -172,68 +160,32 @@ namespace WorldGeneration._Scripts.Spawning
                     for (var i = 0; i < burrow.minNumber; i++)
                     {
                         var posFound = false;
+                        GameObject burrowAsset = null;
 
                         while (!posFound)
                         {
                             var pos = GetPosition(map);
 
+                            // Check position
                             if (pos.y > (_terrainHeight * _waterLevel + 5f))
                             {
                                 if (CheckSurrounding(pos, burrow.radius))
                                 {
-                                    var burrowAsset = Object.Instantiate(burrow.assetPrefab, pos,
-                                        Quaternion.Euler(new Vector3(0, 0, 0)));
-
-                                    burrowAsset.transform.SetParent(Burrows.BurrowParents[burrow]);
-
-                                    burrow.assets.Add(burrowAsset);
-
-                                    GameObject prefab = null;
-
-                                    for (int j = 0; j < 2; j++)
-                                    {
-                                        if (burrow.assetPrefab.GetComponent<Burrow>().type == AgentType.Rabbit)
-                                        {
-                                            prefab = burrow.assetPrefab.GetComponent<Burrow>().rabbitPrefab;
-
-                                            var position = burrowAsset.transform.GetChild(1).GetChild(5).position;
-
-                                            var gameObject = Object.Instantiate(prefab, position,
-                                                Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)),
-                                                burrowAsset.transform);
-
-                                            burrowAsset.GetComponent<Burrow>().inhabitants.Add(gameObject);
-
-                                            gameObject.GetComponent<CustomAgent>().isInBurrow = true;
-                                        }
-                                        // else if (burrow.assetPrefab.GetComponent<Burrow>().type == AgentType.Fox)
-                                        // {
-                                        //     prefab = burrow.assetPrefab.GetComponent<Burrow>().foxPrefab;
-                                        // }
-
-                                        // var position = burrowAsset.transform.GetChild(1).GetChild(5).position;
-                                        //
-                                        // var gameObject = Object.Instantiate(prefab, position,
-                                        //     Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)),
-                                        //     burrowAsset.transform);
-                                        //
-                                        // burrowAsset.GetComponent<Burrow>().inhabitants.Add(gameObject);
-                                        //
-                                        // Debug.Log(burrowAsset.GetComponent<Burrow>().inhabitants.Count);
-                                        // gameObject.GetComponent<CustomAgent>().isInBurrow = true;
-                                    }
-
+                                    burrowAsset = InstantiateBurrow(burrow, pos);
 
                                     posFound = true;
                                 }
                             }
                         }
+
+                        InstantiateInhabitants(burrow, burrowAsset);
                     }
                 }
             }
 
             return true;
         }
+
 
         public void SpawnPlants()
         {
@@ -251,13 +203,7 @@ namespace WorldGeneration._Scripts.Spawning
 
                     while (!posFound)
                     {
-                        var xPos = UnityEngine.Random.Range(-_settings.squareSize * (_resolution.x - 1) / 2,
-                            _settings.squareSize * (_resolution.x - 1) / 2);
-                        var zPos = UnityEngine.Random.Range(-_settings.squareSize * (_resolution.y - 1) / 2,
-                            _settings.squareSize * (_resolution.y - 1) / 2);
-
-                        var pos = GeneratorFunctions.GetSurfacePointFromWorldCoordinate(xPos, zPos, _resolution,
-                            _terrainHeight, _map, _settings);
+                        var pos = GetPosition(_map);
 
                         if (plant.nearWater)
                         {
@@ -317,13 +263,7 @@ namespace WorldGeneration._Scripts.Spawning
 
                 while (!posFound)
                 {
-                    var xPos = UnityEngine.Random.Range(-_settings.squareSize * (_resolution.x - 1) / 2,
-                        _settings.squareSize * (_resolution.x - 1) / 2);
-                    var zPos = UnityEngine.Random.Range(-_settings.squareSize * (_resolution.y - 1) / 2,
-                        _settings.squareSize * (_resolution.y - 1) / 2);
-
-                    var pos = GeneratorFunctions.GetSurfacePointFromWorldCoordinate(xPos, zPos, _resolution,
-                        _terrainHeight, _map, _settings);
+                    var pos = GetPosition(_map);
 
                     if (settings.nearWater)
                     {
@@ -332,16 +272,16 @@ namespace WorldGeneration._Scripts.Spawning
 
                         if (min < pos.y && pos.y < max)
                         {
-                            // if (CheckSurrounding(pos, settings.radius) == true)
-                            // {
-                            var asset = Object.Instantiate(settings.assetPrefab[prngPrefab], pos,
-                                Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
-                            asset.transform.SetParent(Plants.PlantParents[settings]);
+                            if (CheckSurrounding(pos, settings.radius) == true)
+                            {
+                                var asset = Object.Instantiate(settings.assetPrefab[prngPrefab], pos,
+                                    Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
+                                asset.transform.SetParent(Plants.PlantParents[settings]);
 
-                            settings.assets.Add(asset);
+                                settings.assets.Add(asset);
 
-                            posFound = true;
-                            // }
+                                posFound = true;
+                            }
                         }
                     }
                     else
@@ -368,6 +308,77 @@ namespace WorldGeneration._Scripts.Spawning
             }
         }
 
+        private GameObject InstantiateBurrow(BurrowSettings burrow, Vector3 pos)
+        {
+            var burrowAsset = Object.Instantiate(burrow.assetPrefab, pos,
+                Quaternion.Euler(new Vector3(0, 0, 0)));
+
+            burrowAsset.transform.SetParent(Burrows.BurrowParents[burrow]);
+            WorldManager.GetInstance().burrowList.Add(burrowAsset);
+
+            burrow.assets.Add(burrowAsset);
+            return burrowAsset;
+        }
+
+        private void InstantiateInhabitants(BurrowSettings burrow, GameObject burrowAsset)
+        {
+            // Instantiate inhabitants
+            for (int j = 0; j < 2; j++)
+            {
+                if (burrow.assetPrefab.GetComponent<Burrow>().type == AgentType.Rabbit)
+                {
+                    var prefab = burrow.assetPrefab.GetComponent<Burrow>().rabbitPrefab;
+
+                    var position = burrowAsset.transform.GetChild(1).GetChild(5).position;
+
+                    var gameObject = Object.Instantiate(prefab, position,
+                        Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)),
+                        burrowAsset.transform);
+
+                    WorldManager.GetInstance().rabbitList.Add(gameObject);
+                    burrowAsset.GetComponent<Burrow>().inhabitants.Add(gameObject);
+
+                    gameObject.GetComponent<CustomAgent>().isInBurrow = true;
+                }
+                // else if (burrow.assetPrefab.GetComponent<Burrow>().type == AgentType.Fox)
+                // {
+                //     prefab = burrow.assetPrefab.GetComponent<Burrow>().foxPrefab;
+                // }
+
+                // var position = burrowAsset.transform.GetChild(1).GetChild(5).position;
+                //
+                // var gameObject = Object.Instantiate(prefab, position,
+                //     Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)),
+                //     burrowAsset.transform);
+                //
+                // burrowAsset.GetComponent<Burrow>().inhabitants.Add(gameObject);
+                //
+                // Debug.Log(burrowAsset.GetComponent<Burrow>().inhabitants.Count);
+                // gameObject.GetComponent<CustomAgent>().isInBurrow = true;
+            }
+        }
+
+        private void InstantiatePlant(PlantSettings settings, int prngPrefab, Vector3 pos)
+        {
+            var asset = Object.Instantiate(settings.assetPrefab[prngPrefab], pos,
+                Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
+            asset.transform.SetParent(Plants.PlantParents[settings]);
+
+            settings.assets.Add(asset);
+        }
+
+        private Vector3 GetPosition(float[,] map)
+        {
+            var xPos = UnityEngine.Random.Range(-_settings.squareSize * (_resolution.x - 2) / 2,
+                _settings.squareSize * (_resolution.x - 2) / 2);
+            var zPos = UnityEngine.Random.Range(-_settings.squareSize * (_resolution.y - 2) / 2,
+                _settings.squareSize * (_resolution.y - 2) / 2);
+
+            var pos = GeneratorFunctions.GetSurfacePointFromWorldCoordinate(xPos, zPos, _resolution,
+                _terrainHeight, map, _settings);
+            return pos;
+        }
+
         private bool CheckSurrounding(Vector3 position, float radius)
         {
             if (Physics.CheckSphere(position, radius))
@@ -392,23 +403,29 @@ namespace WorldGeneration._Scripts.Spawning
         /// <summary>
         /// </summary>
         /// <param name="interactingObject"></param>
-        public void BuildBurrow(GameObject interactingObject)
+        /// <param name="handler"></param>
+        /// <param name="agent"></param>
+        public void BuildBurrow(GameObject interactingObject, InteractionHandler handler, CustomAgent agent)
         {
             // Transform vom Hasen
             // wenn pos frei, dann Burrow spawnen
             // wenn Burrow gespawnt, Hasen in Bau teleportieren
 
-            if (interactingObject.GetComponent<InteractionHandler>().isBurrowBuildableHere)
+            if (handler.isBurrowBuildableHere)
             {
                 var settings = Burrows.BurrowsList[2].assetPrefab;
 
-                var asset = Object.Instantiate(settings, interactingObject.transform.position, Quaternion.identity);
+                var burrowAsset =
+                    Object.Instantiate(settings, interactingObject.transform.position, Quaternion.identity);
 
-                asset.GetComponent<Burrow>().type = interactingObject.GetComponent<CustomAgent>().type;
+                burrowAsset.TryGetComponent<Burrow>(out Burrow burrow);
+                burrow.type = agent.type;
 
-                asset.transform.SetParent(Burrows.BurrowParents[Burrows.BurrowsList[2]]);
+                burrowAsset.transform.SetParent(Burrows.BurrowParents[Burrows.BurrowsList[2]]);
 
-                Burrows.BurrowsList[2].assets.Add(asset);
+                Burrows.BurrowsList[2].assets.Add(burrowAsset);
+
+                WorldManager.GetInstance().burrowList.Add(burrowAsset);
             }
         }
     }

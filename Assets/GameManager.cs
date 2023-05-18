@@ -2,8 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using InGameTime;
+using ml_agents.Agents;
 using ml_agents.Agents.Handler;
+using ml_agents.Agents.rabbit;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using WorldGeneration._Scripts;
 using WorldGeneration._Scripts.Helper;
@@ -24,12 +28,15 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private float waterLevel = 0.3f;
 
+    [Header("Seed")] [SerializeField] private bool useRandomSeed;
+    [SerializeField] private string seed = "Hello World!";
+
     [SerializeField] private GeneralSettings generalSettings;
     [SerializeField] private NoiseSettings noiseSettings;
     [SerializeField] private GroundGenerator groundGenerator;
     [SerializeField] private WaterGenerator waterGenerator;
-    
-    /*[SerializeField]*/ private AssetManager assetManager;
+
+    [SerializeField] private AssetManager assetManager;
 
     [Tooltip("A list of plants to generate.")] [SerializeField]
     private List<PlantSettings> plantsList;
@@ -45,9 +52,11 @@ public class GameManager : MonoBehaviour
 
     // private
     private TimeManager _timer;
-    private WorldManager _worldManager;
+    [SerializeField] private WorldManager _worldManager;
 
     private NoiseWithClamp _noiseWithClamp;
+
+    private float[,] map;
 
     private Plants _plants;
     private Burrows _burrows;
@@ -73,13 +82,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _timer = TimeManager.Instance;
-
         _worldManager = WorldManager.GetInstance();
         assetManager = AssetManager.GetInstance();
-
-        _noiseWithClamp.NoiseGenerator = new NoiseGenerator(noiseSettings);
-        _noiseWithClamp.ValueClamp = new ValueClamp();
 
         GenerateInitialWorld();
     }
@@ -98,6 +102,17 @@ public class GameManager : MonoBehaviour
         //     _timer.Resume();
         //     _running = true;
         // }
+        //
+        // if (Input.GetKeyDown(KeyCode.K) && _running)
+        // {
+        //     var rabbits = _worldManager.rabbitList;
+        //     for (int i = 0; i < rabbits.Count; i++)
+        //     {
+        //         rabbits[i].TryGetComponent<CustomAgent>(out var agent);
+        //         _worldManager.rabbitList.Remove(rabbits[i]);
+        //         agent.DestroyAgent();
+        //     }
+        // }
 
         if (Input.GetKeyDown(KeyCode.Alpha1) && _running) _timer.SetTimeScale(1.0f);
 
@@ -105,14 +120,13 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Alpha3) && _running) _timer.SetTimeScale(3.0f);
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            ReloadWorld();
-        }
+        if (Input.GetKeyDown(KeyCode.R) && _running) ReloadWorld();
 
         // TimeManager.OnDayChanged += print;
 
         TimeManager.OnMonthChanged += RespawnPlants;
+            
+        if (_worldManager.rabbitList.Count == 0) ReloadWorld();
     }
 
     private void print()
@@ -122,6 +136,17 @@ public class GameManager : MonoBehaviour
 
     private void GenerateInitialWorld()
     {
+        _timer = TimeManager.Instance;
+
+        // Check if a random seed is wanted
+        if (useRandomSeed)
+        {
+            seed = Time.realtimeSinceStartupAsDouble.ToString();
+        }
+
+        _noiseWithClamp.NoiseGenerator = new NoiseGenerator(noiseSettings, seed);
+        _noiseWithClamp.ValueClamp = new ValueClamp();
+
         _plants = new Plants
         {
             PlantsList = plantsList,
@@ -150,34 +175,59 @@ public class GameManager : MonoBehaviour
 
     private void ReloadWorld()
     {
-        if (_running)
+        Debug.Log("Reload World");
+        foreach (var rabbit in _worldManager.rabbitList)
         {
-            _plants = new Plants
-            {
-                PlantsList = plantsList,
-                PlantParents = _plantParents
-            };
-
-            _burrows = new Burrows
-            {
-                BurrowsList = initialBurrowsList,
-                Burrow = burrow,
-                BurrowParents = _burrowParents
-            };
-
-            _running = _worldManager.ReloadWorld(resolution, maxTerrainHeight, waterLevel, generalSettings,
-                noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator, assetManager, _plants,
-                _burrows);
-            
-            if (_running)
-            {
-                _timer.RestartTimer();
-            }
-            else
-            {
-                Debug.Log("Error while generating world");
-            }
+            rabbit.TryGetComponent<AgentRabbit>(out var agent);
+            agent.DestroyAgent();
         }
+
+        _timer.ResetTimer();
+
+        Destroy(_worldManager.World);
+
+        // _worldManager = new WorldManager();
+        // assetManager = new AssetManager();
+
+        _worldManager = WorldManager.ResetInstance();
+        assetManager = AssetManager.ResetInstance();
+
+        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().name);
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+
+        // // Check if a random seed is wanted
+        // if (useRandomSeed)
+        // {
+        //     seed = Time.realtimeSinceStartupAsDouble.ToString();
+        // }
+        //
+        // _noiseWithClamp.NoiseGenerator = new NoiseGenerator(noiseSettings, seed);
+        // _noiseWithClamp.ValueClamp = new ValueClamp();
+        //
+        // _plants = new Plants
+        // {
+        //     PlantsList = plantsList,
+        //     PlantParents = _plantParents
+        // };
+        //
+        // _burrows = new Burrows
+        // {
+        //     BurrowsList = initialBurrowsList,
+        //     Burrow = burrow,
+        //     BurrowParents = _burrowParents
+        // };
+        //
+        // _running = _worldManager.GenerateInitialWorld(resolution, maxTerrainHeight, waterLevel, generalSettings,
+        //     noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator, assetManager, _plants, _burrows);
+        //
+        // if (_running)
+        // {
+        //     _timer.BeginTimer();
+        // }
+        // else
+        // {
+        //     Debug.Log("Error while generating world");
+        // }
     }
 
     private void RespawnPlants()

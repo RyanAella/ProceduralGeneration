@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0055dd36c5f35cb4b928c4edc4e2d6b8, type: 3}
   m_Name: BurrowSettings
   m_EditorClassIdentifier: 
-  assetPrefab: {fileID: 231798731337713698, guid: 7e3e30790f99a8e4a872c42097cc7546, type: 3}
+  assetPrefab: {fileID: 231798731337713698, guid: ae5c13521ec0d8348a394314f870aa0b, type: 3}
   parent:
   - {fileID: 2748929397329019754, guid: 282f7c104cf0edc4d8584b4c9ed1cf01, type: 3}
   - {fileID: 2748929397329019754, guid: c29178bc5e2c8b6478e5829aedd7784c, type: 3}
+  minNumber: 0
+  radius: 0
   lifespan:
     day: 0
     week: 0
     month: 0
     year: 2
-  minNumber: 0
-  radius: 0
   assets: []

@@ -433,6 +433,8 @@ MonoBehaviour:
   resolution: {x: 16, y: 16}
   maxTerrainHeight: 100
   waterLevel: 0.15
+  useRandomSeed: 1
+  seed: Hello World!
   generalSettings: {fileID: 11400000, guid: 22871bac2f6726641b0f5d842a4349ec, type: 2}
   noiseSettings: {fileID: 11400000, guid: fb78098282b2a5342bad8ffa96571dbd, type: 2}
   groundGenerator: {fileID: 6045032558767503097, guid: 1b6bf5a46ef613f46bd9d7537ab8f4aa, type: 3}
@@ -440,7 +442,8 @@ MonoBehaviour:
   assetManager:
     layerMask:
       serializedVersion: 2
-      m_Bits: 0
+      m_Bits: 8
+    burrowList: []
   plantsList:
   - {fileID: 11400000, guid: 928989c489e8f804896e3f8a5546e47e, type: 2}
   - {fileID: 11400000, guid: 13941cb6dcc48534a9e9f4df72972a4f, type: 2}

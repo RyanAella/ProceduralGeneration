@@ -20,8 +20,6 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         // private
         private Vector2[] _boundaries;
 
-        // private float[,] _map;
-
         private Mesh _mesh;
         private MeshRenderer _meshRenderer;
 
@@ -35,27 +33,31 @@ namespace WorldGeneration._Scripts.TerrainGeneration
             if (Instance == null)
             {
                 transform.parent = null;
-                DontDestroyOnLoad(gameObject);
+                // DontDestroyOnLoad(gameObject);
                 Instance = this;
             }
             else if (Instance != this)
             {
-                Destroy(gameObject);
+                Destroy(Instance);
+                Instance = this;
             }
         }
 
         /// <summary>
+        /// 
         /// </summary>
+        /// <param name="resolution"></param>
         /// <param name="maxTerrainHeight"></param>
         /// <param name="generalSettings"></param>
-        /// <param name="noiseWithClamp"></param>
         /// <param name="noiseSettings"></param>
-        /// <param name="resolution"></param>
+        /// <param name="noiseWithClamp"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
         public bool GenerateGround(Vector2Int resolution, float maxTerrainHeight, GeneralSettings generalSettings,
-            NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp)
+            NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp, out float[,] map)
         {
-            try
-            {
+            // try
+            // {
                 _meshRenderer = GetComponent<MeshRenderer>();
                 _meshRenderer.enabled = true;
 
@@ -67,12 +69,13 @@ namespace WorldGeneration._Scripts.TerrainGeneration
                 gameObject.tag = "Ground";
                 gameObject.layer = LayerMask.NameToLayer("Ground");
 
-                GetComponent<MeshFilter>().sharedMesh = _mesh;
+                GetComponent<MeshFilter>().mesh = _mesh;
+                GetComponent<MeshCollider>().sharedMesh = null;
                 GetComponent<MeshCollider>().sharedMesh = _mesh;
 
                 // noiseWithClamp.ValueClamp = new ValueClamp();
-                var worldManager = WorldManager.GetInstance();
-                worldManager.Map = new float[resolution.x, resolution.y];
+                // var worldManager = WorldManager.GetInstance();
+                map = new float[resolution.x, resolution.y];
 
                 for (var x = 0; x < resolution.x; x++)
                 {
@@ -81,10 +84,10 @@ namespace WorldGeneration._Scripts.TerrainGeneration
                         var sampleX = x - (float)resolution.x / 2;
                         var sampleY = y - (float)resolution.y / 2;
 
-                        worldManager.Map[x, y] = noiseWithClamp.NoiseGenerator.GenerateNoiseValueWithFbm(noiseSettings, sampleX,
+                        map[x, y] = noiseWithClamp.NoiseGenerator.GenerateNoiseValueWithFbm(noiseSettings, sampleX,
                             sampleY);
 
-                        noiseWithClamp.ValueClamp.Compare(worldManager.Map[x, y]);
+                        noiseWithClamp.ValueClamp.Compare(map[x, y]);
                     }
                 }
 
@@ -93,19 +96,19 @@ namespace WorldGeneration._Scripts.TerrainGeneration
                 {
                     for (var y = 0; y < resolution.y; y++)
                     {
-                        worldManager.Map[x, y] = noiseWithClamp.ValueClamp.ClampValue(worldManager.Map[x, y]);
+                        map[x, y] = noiseWithClamp.ValueClamp.ClampValue(map[x, y]);
                     }
                 }
 
-                MeshGenerator.GenerateMesh(_mesh, worldManager.Map, maxTerrainHeight, generalSettings);
+                MeshGenerator.GenerateMesh(_mesh, map, maxTerrainHeight, generalSettings);
                 ColorGenerator.AssignColor(gradient, _mesh, maxTerrainHeight);
 
                 return true;
-            }
-            catch
-            {
-                return false;
-            }
+            // }
+            // catch
+            // {
+            //     return false;
+            // }
    
         }
 
@@ -118,13 +121,13 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         public bool GenerateWall(Vector2Int resolution, float maxTerrainHeight,
             GeneralSettings generalSettings)
         {
-            if (WorldManager.GetInstance().WallGenerated)
-            {
-                Destroy(_leftWall);
-                Destroy(_rightWall);
-                Destroy(_upperWall);
-                Destroy(_lowerWall);
-            }
+            // if (WorldManager.GetInstance().WallGenerated)
+            // {
+            //     Destroy(_leftWall);
+            //     Destroy(_rightWall);
+            //     Destroy(_upperWall);
+            //     Destroy(_lowerWall);
+            // }
 
             // Generate the left wall
             var tempTransform = transform;
