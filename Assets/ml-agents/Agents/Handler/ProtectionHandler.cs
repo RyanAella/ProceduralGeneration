@@ -6,7 +6,7 @@ namespace ml_agents.Agents.Handler
     public class ProtectionHandler : MonoBehaviour
     {
         public LayerMask layerMask;
-        [Range(1, 5)] public float detectionRange = 5;
+        [Range(1, 50)] public float detectionRange = 5;
 
         [Space(5)]
         [Range(0, 3)] public int protectionLevel;

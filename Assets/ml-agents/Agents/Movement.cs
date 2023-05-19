@@ -5,8 +5,9 @@ namespace ml_agents.Agents
     public class Movement : MonoBehaviour
     {
         [Header("Configuration")]
+        Animator animator;
         public GameObject head;
-        [Range(0, 1)] public float walkSpeed;
+        [Range(0, 1)] public float walkSpeed = 0;
         [Range(-1, 1)] public float rotation;
         [Space(3)]
         [Range(-9.81f, -30)] public float gravity;
@@ -29,9 +30,9 @@ namespace ml_agents.Agents
         [Space(10)]
         [Header("Multiplier")]
         [Range(1, 100)] public float rotationMultiplier = 180;
-        [Range(0.1f, 10)] public float walkSpeedMultiplier = 1;
+        [Range(0.1f, 100)] public float walkSpeedMultiplier = 1;
         [Space(5)]
-        [Range(1, 15)] public float headRotationMultiplier = 1;
+        [Range(1, 100)] public float headRotationMultiplier = 1;
         [Space(3)]
         [Range(0.01f, 1)] public float maxRotationHeadX = 0.01f;
         [Range(0.01f, 1)] public float maxRotationHeadY = 0.01f;
@@ -54,9 +55,15 @@ namespace ml_agents.Agents
             _staminaReductionHeadRotation = _staminaReductionRotation * 1.5f;
         }
 
+        void Awake()
+        {
+            animator = gameObject.GetComponent<Animator>();
+        }
+
         // Update is called once per frame
         void Update()
         {
+            animator.SetFloat("speed", walkSpeed);
             HandleMovementAndRotation();
             AddGravity();
             //calculateAndAddAngelBasedOnGround();

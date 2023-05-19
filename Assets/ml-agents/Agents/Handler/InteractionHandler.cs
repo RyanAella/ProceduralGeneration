@@ -9,7 +9,7 @@ namespace ml_agents.Agents.Handler
     public class InteractionHandler : MonoBehaviour
     {
         public Transform mouth;
-        [Range(0.1f, 1)] public float interactionRange = 0.5f;
+        [Range(0.1f, 10)] public float interactionRange = 0.5f;
         public LayerMask interactableLayer;
 
         [Space(10)] [Header("Eating")] public bool canEat = false;

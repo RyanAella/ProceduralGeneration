@@ -7,7 +7,7 @@ namespace ml_agents.Agents.Handler
         public float lastSoundDistance = -1;
         public Vector3 lastSoundDirection = new Vector3(0, 0, 0);
         public bool soundOnlyFromEnemy = false;
-        [Range(1, 10)] public float soundRangeMultiplier = 1;
+        [Range(1, 50)] public float soundRangeMultiplier = 1;
         float _soundRange = 0;
 
         CustomAgent _agent;
