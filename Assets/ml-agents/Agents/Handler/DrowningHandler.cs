@@ -23,7 +23,7 @@ namespace ml_agents.Agents.Handler
         // Update is called once per frame
         void Update()
         {
-            if(!isDrowning && nose.position.y < drowningHeight)
+            if(!isDrowning && nose.position.y < drowningHeight && !agent.isInBurrow)
             {
                 isDrowning = true;
                 timerSeconds = decreaseHealtVerySeconds;

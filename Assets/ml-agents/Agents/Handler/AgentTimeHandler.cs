@@ -19,6 +19,8 @@ namespace ml_agents.Agents.Handler {
         public int hungerIncreasePerMonth = 20; // 4 carrots per month / 3min
         public int thirstIncreasePerMonth = 20; // 4 carrots per month / 3min
 
+        [Header("Rewards")]
+        public int rewardSurvivngMonth = 2;
         // Start is called before the first frame update
         void Start()
         {
@@ -38,6 +40,8 @@ namespace ml_agents.Agents.Handler {
         void MonthOver()
         {
             ageInMonths += 1;
+
+            agent.AddReward(rewardSurvivngMonth);
 
             agent.IncreaseHungerAndThirst(hungerIncreasePerMonth, thirstIncreasePerMonth);
 

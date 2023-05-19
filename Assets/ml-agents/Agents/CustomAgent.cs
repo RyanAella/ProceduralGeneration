@@ -36,23 +36,19 @@ namespace ml_agents.Agents
         public bool isEating = false;
         public bool isDrinking = false;
 
-        [Space(10)]
-        [Header("Penalties")]
+        [Space(5)]
         public int thresholdHungerThirstForRecovery = 50;
 
         [Space(10)]
         [Header("Properties")]
         public bool hasBreeded = false;
         public bool hasBurrowBuild = false;
+        public int nutritionValue = 8;
 
         [Space(10)]
         [Header("Locations")]
         public Burrow homeLocation;
         public Burrow nearestBurrowLocation;
-
-        [Space(10)]
-        [Header("Rewards")]
-        public float eatReward;
 
         [Space(10)]
         [Header("Penalties")]
@@ -224,6 +220,19 @@ namespace ml_agents.Agents
         private bool IsHungryOrThirsty()
         {
             return hunger >= thresholdHungerThirstForRecovery || thirst >= thresholdHungerThirstForRecovery;
+        }
+
+        public void GotAttacked(CustomAgent attackingAgent)
+        {
+            attackingAgent.BlockMovementForSeconds(1);
+
+            if (attackingAgent.hunger >= nutritionValue)
+            {
+                attackingAgent.hunger -= nutritionValue;
+            } else
+            {
+                attackingAgent.hunger = 0;
+            }
         }
 
         private bool IsCloseToNotMoving()

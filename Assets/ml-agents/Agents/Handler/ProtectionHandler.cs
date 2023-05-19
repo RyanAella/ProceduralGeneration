@@ -50,7 +50,7 @@ namespace ml_agents.Agents.Handler
                 }
             }
 
-            targetsInRange -= 1;
+            targetsInRange -= 2;
 
             if (targetsInRange <= 0)
             {

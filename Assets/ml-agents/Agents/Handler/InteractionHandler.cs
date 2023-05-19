@@ -1,4 +1,5 @@
 using ml_agents.Custom_Attributes_for_editor;
+using Unity.IO.LowLevel.Unsafe;
 using UnityEditor.VersionControl;
 using UnityEngine;
 using WorldGeneration._Scripts.Spawning;
@@ -14,6 +15,7 @@ namespace ml_agents.Agents.Handler
 
         [Space(10)] [Header("Eating")] public bool canEat = false;
         [TagSelector] public string foodTag;
+        public GameObject detectedFood;
 
         [Space(10)] [Header("Drinking")] public bool canDrink = false;
         public int thirstDecreasePerDrink = 1;
@@ -38,26 +40,29 @@ namespace ml_agents.Agents.Handler
         void Update()
         {
             Ray ray = new Ray(mouth.position, mouth.TransformDirection(Vector3.forward));
-            RaycastHit[] hits = Physics.RaycastAll(ray);
-            if (hits.Length > 0 && hits[0].distance < interactionRange)
+            RaycastHit[] hits = Physics.RaycastAll(ray, interactionRange, interactableLayer);
+
+            if (hits.Length > 0)
             {
-                if (hits[0].collider.gameObject.layer == interactableLayer)
+                GameObject firstHit = hits[0].collider.gameObject;
+
+                canEat = firstHit.CompareTag(foodTag);
+                if (canEat)
                 {
-                    isStandingBeforeBurrow = hits[0].collider.gameObject.CompareTag("Burrow");
-                    if (isStandingBeforeBurrow)
-                    {
-                        detectedBurrow = hits[0].collider.gameObject;
-                    }
-                    canEat = hits[0].collider.gameObject.CompareTag(foodTag);
+                    detectedFood = firstHit;
                 }
-                else if (hits[0].collider.gameObject.layer == LayerMask.NameToLayer("Water"))
+                canDrink = firstHit.layer == LayerMask.NameToLayer("Water");
+
+                isStandingBeforeBurrow = firstHit.CompareTag("Burrow");
+                if (isStandingBeforeBurrow)
                 {
-                    canDrink = true;
+                    detectedBurrow = firstHit;
                 }
-                else
-                {
-                    canDrink = false;
-                }
+            } else
+            {
+                canEat = false;
+                canDrink = false;
+                isStandingBeforeBurrow = false; ;
             }
 
             //here check if location sit possible
@@ -69,7 +74,16 @@ namespace ml_agents.Agents.Handler
             if (canEat)
             {
                 agent.isEating = true;
-                gameObject.GetComponent<Carrot>().Eat(gameObject);
+
+                CustomAgent toEatAgent = detectedFood.GetComponent<CustomAgent>();
+
+                if ( toEatAgent != null)
+                {
+                    toEatAgent.GotAttacked(agent);
+                } else
+                {
+                    detectedFood.GetComponent<Carrot>().Eat(gameObject);
+                }
             }
             else
             {
@@ -192,8 +206,6 @@ namespace ml_agents.Agents.Handler
                 agent.hasBreeded = true;
                 return true;
             }
-
-            ;
             return false;
         }
 

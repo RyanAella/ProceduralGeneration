@@ -69,9 +69,13 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
             // Move the object upward in world space 1 unit/second.
             transform.Translate(Vector3.up * Time.deltaTime, Space.Self);
 
-            if (interactingObject.GetComponent<CustomAgent>().hunger > 0)
+            if (interactingObject.GetComponent<CustomAgent>().hunger >= nutritionValue)
             {
                 interactingObject.GetComponent<CustomAgent>().hunger -= nutritionValue;
+            }
+            else
+            {
+                interactingObject.GetComponent<CustomAgent>().hunger = 0;
             }
 
             settings.assets.Remove(gameObject);
