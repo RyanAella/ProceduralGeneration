@@ -1,14 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using InGameTime;
-using ml_agents.Agents;
-using ml_agents.Agents.Handler;
 using ml_agents.Agents.rabbit;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using WorldGeneration._Scripts;
 using WorldGeneration._Scripts.Helper;
 using WorldGeneration._Scripts.ScriptableObjects;
@@ -52,11 +46,11 @@ public class GameManager : MonoBehaviour
 
     // private
     private TimeManager _timer;
-    [SerializeField] private WorldManager _worldManager;
+    private WorldManager _worldManager;
 
     private NoiseWithClamp _noiseWithClamp;
 
-    private float[,] map;
+    private float[,] _map;
 
     private Plants _plants;
     private Burrows _burrows;
@@ -79,7 +73,6 @@ public class GameManager : MonoBehaviour
         else if (instance != this) Destroy(gameObject);
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         _worldManager = WorldManager.GetInstance();
@@ -122,16 +115,9 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R) && _running) ReloadWorld();
 
-        // TimeManager.OnDayChanged += print;
-
         TimeManager.OnMonthChanged += RespawnPlants;
             
         if (_worldManager.rabbitList.Count == 0) ReloadWorld();
-    }
-
-    private void print()
-    {
-        Debug.Log(_timer.GetCurrentDate().PrintToString("/"));
     }
 
     private void GenerateInitialWorld()
@@ -144,7 +130,7 @@ public class GameManager : MonoBehaviour
             seed = Time.realtimeSinceStartupAsDouble.ToString();
         }
 
-        _noiseWithClamp.NoiseGenerator = new NoiseGenerator(noiseSettings, seed);
+        _noiseWithClamp.NoiseGenerator = new NoiseGenerator(seed);
         _noiseWithClamp.ValueClamp = new ValueClamp();
 
         _plants = new Plants
@@ -184,10 +170,7 @@ public class GameManager : MonoBehaviour
 
         _timer.ResetTimer();
 
-        Destroy(_worldManager.World);
-
-        // _worldManager = new WorldManager();
-        // assetManager = new AssetManager();
+        Destroy(_worldManager.world);
 
         _worldManager = WorldManager.ResetInstance();
         assetManager = AssetManager.ResetInstance();

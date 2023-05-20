@@ -10,7 +10,7 @@ namespace WorldGeneration._Scripts.TerrainGeneration
     {
         private readonly OpenSimplexNoise _simplexNoise;
 
-        public NoiseGenerator(NoiseSettings noiseSettings, string seed)
+        public NoiseGenerator(string seed)
         {
             _simplexNoise = new OpenSimplexNoise(seed.GetHashCode());
         }
@@ -22,7 +22,7 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         /// <param name="x">xCoordinate</param>
         /// <param name="y">yCoordinate</param>
         /// <returns>A float value</returns>
-        public float GenerateNoiseValue(NoiseSettings noiseSettings, float x, float y)
+        private float GenerateNoiseValue(NoiseSettings noiseSettings, float x, float y)
         {
             // var seedOffset = noiseSettings.seed.GetHashCode() / noiseSettings.seedScale;
 
@@ -51,10 +51,6 @@ namespace WorldGeneration._Scripts.TerrainGeneration
 
             for (var l = 0; l < noiseSettings.octaves; l++)
             {
-                // Get the coordinates
-                // var sampleX = (x /*+ seedOffset*/) * noiseSettings.noiseScale;
-                // var sampleZ = (y /*+ seedOffset*/) * noiseSettings.noiseScale;
-
                 // calculate noise value with modified amplitude and frequency
                 // value += amplitude * Mathf.PerlinNoise(sampleX * frequency, sampleZ * frequency);
                 value += amplitude * GenerateNoiseValue(noiseSettings, x * frequency, y * frequency);

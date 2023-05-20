@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 231798731337713698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2721385447374295706}
@@ -57,7 +57,7 @@ MonoBehaviour:
     m_Bits: 8
   inhabitants: []
   isOccupied: 0
-  rabbitPrefab: {fileID: 6726708987975217167, guid: 86fce287c6f187b4083857ed3769996b, type: 3}
+  rabbitPrefab: {fileID: 3780511893139373963, guid: 88d70d9f38d388447a76427881290c74, type: 3}
   foxPrefab: {fileID: 0}
   spawnPoints:
   - {fileID: 2118135457354931654}
@@ -1009,8 +1009,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7676588740169838454}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: -10, z: 0}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2551966275559782034}

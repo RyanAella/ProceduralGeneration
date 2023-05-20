@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using InGameTime;
 using ml_agents.Agents;
 using UnityEngine;
 using WorldGeneration._Scripts.ScriptableObjects;
-using Random = System.Random;
 
 namespace WorldGeneration._Scripts.Spawning.TerrainAssets
 {
@@ -25,10 +23,10 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
         private InGameDate _birthDate;
         private InGameDate _dayOfDeath;
         private TimeManager _timer;
+        private WorldManager _worldManager;
 
-        private bool canDie;
-        private int lastSpawnPoint;
-        private System.Random _prng = new System.Random();
+        private bool _canDie;
+        private int _lastSpawnPoint;
 
         private void Awake()
         {
@@ -40,11 +38,13 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
         private void Start()
         {
             _timer = TimeManager.Instance;
+            _worldManager = WorldManager.GetInstance();
+            
             _birthDate = _timer.GetCurrentDate();
             settings.lifespan = new InGameDate().CalcDate(settings.lifespan);
             _dayOfDeath = new InGameDate().CalcDate(_birthDate.AddDates(settings.lifespan));
 
-            canDie = false;
+            _canDie = false;
 
             if (inhabitants.Count < 2)
                 isOccupied = false;
@@ -56,7 +56,7 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
 
         private void Update()
         {
-            if (_dayOfDeath.Equals(_timer.GetCurrentDate()) || canDie) Dying();
+            if (_dayOfDeath.Equals(_timer.GetCurrentDate()) || _canDie) Dying();
 
             if (inhabitants.Count >= 2)
                 isOccupied = true;
@@ -68,10 +68,11 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
             if (!isOccupied)
             {
                 settings.assets.Remove(gameObject);
+                _worldManager.burrowList.Remove(gameObject);
                 Destroy(gameObject);
             }
 
-            canDie = true;
+            _canDie = true;
         }
 
         /// <summary>
@@ -109,7 +110,7 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
         /// <param name="controller"></param>
         public void Leave(GameObject obj, CustomAgent customAgent, CharacterController controller)
         {
-            var prngSpawnPoints = (lastSpawnPoint + 1) % spawnPoints.Count;
+            var prngSpawnPoints = (_lastSpawnPoint + 1) % spawnPoints.Count;
 
             if (customAgent.type == AgentType.Rabbit)
             {
@@ -133,7 +134,7 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
 
                 if (inhabitants.Count < 2) isOccupied = false;
 
-                lastSpawnPoint = prngSpawnPoints;
+                _lastSpawnPoint = prngSpawnPoints;
                 
                 //         posFound = true;
                 //     }
@@ -163,7 +164,7 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
 
             inhabitants.Add(newRabbit);
 
-            newRabbit.TryGetComponent<CustomAgent>(out CustomAgent agent);
+            newRabbit.TryGetComponent(out CustomAgent agent);
             agent.isInBurrow = true;
         }
 
@@ -184,30 +185,26 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
             Ray ray2 = new Ray(child2, -transform.GetChild(2).transform.up);
             Ray ray3 = new Ray(child3, -transform.GetChild(3).transform.up);
 
-            RaycastHit hit0;
-            RaycastHit hit1;
-            RaycastHit hit2;
-            RaycastHit hit3;
             Vector3 newVector;
-            if (Physics.Raycast(ray0, out hit0, 10f, layerMask))
+            if (Physics.Raycast(ray0, out var hit0, 10f, layerMask))
             {
                 newVector = (hit0.normal).normalized;
                 transform.GetChild(0).up = newVector;
             }
 
-            if (Physics.Raycast(ray1, out hit1, 10f, layerMask))
+            if (Physics.Raycast(ray1, out var hit1, 10f, layerMask))
             {
                 newVector = (hit1.normal).normalized;
                 transform.GetChild(0).up = newVector;
             }
 
-            if (Physics.Raycast(ray2, out hit2, 10f, layerMask))
+            if (Physics.Raycast(ray2, out var hit2, 10f, layerMask))
             {
                 newVector = (hit2.normal).normalized;
                 transform.GetChild(0).up = newVector;
             }
 
-            if (Physics.Raycast(ray3, out hit3, 10f, layerMask))
+            if (Physics.Raycast(ray3, out var hit3, 10f, layerMask))
             {
                 newVector = (hit3.normal).normalized;
                 transform.GetChild(0).up = newVector;

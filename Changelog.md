@@ -1,6 +1,11 @@
 ﻿# Changelog World Generation
 
 
+## [1.2.2] - 2023-05-22
+## Changed
+- localScale: Fox, Rabbit, Burrow
+
+
 ## [1.2.1] - 2023-05-18
 ## Bugfixes
 - Leave Burrow

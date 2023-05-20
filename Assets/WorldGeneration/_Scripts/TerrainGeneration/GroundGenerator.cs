@@ -33,7 +33,6 @@ namespace WorldGeneration._Scripts.TerrainGeneration
             if (Instance == null)
             {
                 transform.parent = null;
-                // DontDestroyOnLoad(gameObject);
                 Instance = this;
             }
             else if (Instance != this)
@@ -56,60 +55,50 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         public bool GenerateGround(Vector2Int resolution, float maxTerrainHeight, GeneralSettings generalSettings,
             NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp, out float[,] map)
         {
-            // try
-            // {
-                _meshRenderer = GetComponent<MeshRenderer>();
-                _meshRenderer.enabled = true;
+            _meshRenderer = GetComponent<MeshRenderer>();
+            _meshRenderer.enabled = true;
 
-                _mesh = new Mesh
+            _mesh = new Mesh
+            {
+                name = "Ground Mesh"
+            };
+
+            gameObject.tag = "Ground";
+            gameObject.layer = LayerMask.NameToLayer("Ground");
+
+            GetComponent<MeshFilter>().mesh = _mesh;
+            GetComponent<MeshCollider>().sharedMesh = null;
+            GetComponent<MeshCollider>().sharedMesh = _mesh;
+
+            map = new float[resolution.x, resolution.y];
+
+            for (var x = 0; x < resolution.x; x++)
+            {
+                for (var y = 0; y < resolution.y; y++)
                 {
-                    name = "Ground Mesh"
-                };
+                    var sampleX = x - (float)resolution.x / 2;
+                    var sampleY = y - (float)resolution.y / 2;
 
-                gameObject.tag = "Ground";
-                gameObject.layer = LayerMask.NameToLayer("Ground");
+                    map[x, y] = noiseWithClamp.NoiseGenerator.GenerateNoiseValueWithFbm(noiseSettings, sampleX,
+                        sampleY);
 
-                GetComponent<MeshFilter>().mesh = _mesh;
-                GetComponent<MeshCollider>().sharedMesh = null;
-                GetComponent<MeshCollider>().sharedMesh = _mesh;
-
-                // noiseWithClamp.ValueClamp = new ValueClamp();
-                // var worldManager = WorldManager.GetInstance();
-                map = new float[resolution.x, resolution.y];
-
-                for (var x = 0; x < resolution.x; x++)
-                {
-                    for (var y = 0; y < resolution.y; y++)
-                    {
-                        var sampleX = x - (float)resolution.x / 2;
-                        var sampleY = y - (float)resolution.y / 2;
-
-                        map[x, y] = noiseWithClamp.NoiseGenerator.GenerateNoiseValueWithFbm(noiseSettings, sampleX,
-                            sampleY);
-
-                        noiseWithClamp.ValueClamp.Compare(map[x, y]);
-                    }
+                    noiseWithClamp.ValueClamp.Compare(map[x, y]);
                 }
+            }
 
-                // Get each point back into bounds
-                for (var x = 0; x < resolution.x; x++)
+            // Get each point back into bounds
+            for (var x = 0; x < resolution.x; x++)
+            {
+                for (var y = 0; y < resolution.y; y++)
                 {
-                    for (var y = 0; y < resolution.y; y++)
-                    {
-                        map[x, y] = noiseWithClamp.ValueClamp.ClampValue(map[x, y]);
-                    }
+                    map[x, y] = noiseWithClamp.ValueClamp.ClampValue(map[x, y]);
                 }
+            }
 
-                MeshGenerator.GenerateMesh(_mesh, map, maxTerrainHeight, generalSettings);
-                ColorGenerator.AssignColor(gradient, _mesh, maxTerrainHeight);
+            MeshGenerator.GenerateMesh(_mesh, map, maxTerrainHeight, generalSettings);
+            ColorGenerator.AssignColor(gradient, _mesh, maxTerrainHeight);
 
-                return true;
-            // }
-            // catch
-            // {
-            //     return false;
-            // }
-   
+            return true;
         }
 
 
@@ -121,14 +110,7 @@ namespace WorldGeneration._Scripts.TerrainGeneration
         public bool GenerateWall(Vector2Int resolution, float maxTerrainHeight,
             GeneralSettings generalSettings)
         {
-            // if (WorldManager.GetInstance().WallGenerated)
-            // {
-            //     Destroy(_leftWall);
-            //     Destroy(_rightWall);
-            //     Destroy(_upperWall);
-            //     Destroy(_lowerWall);
-            // }
-
+            var wallScale = wallPrefab.transform.localScale;
             // Generate the left wall
             var tempTransform = transform;
             var tempTransformPos = tempTransform.position;
@@ -136,8 +118,7 @@ namespace WorldGeneration._Scripts.TerrainGeneration
 
             var yScale = (generalSettings.maxBorderHeight + maxTerrainHeight) * 2;
 
-            var xPos = tempTransformPos.x - (float)resolution.x / 2 * squareSize + squareSize / 2 -
-                       wallPrefab.transform.localScale.x / 2;
+            var xPos = tempTransformPos.x - (float)resolution.x / 2 * squareSize + squareSize / 2 - wallScale.x / 2;
             var zPos = tempTransformPos.z;
             var position = new Vector3(xPos, 0, zPos);
             _leftWall = Instantiate(wallPrefab, position, Quaternion.identity, tempTransform); // generate left
@@ -145,7 +126,6 @@ namespace WorldGeneration._Scripts.TerrainGeneration
             var objScale = _leftWall.transform.localScale;
             _leftWall.transform.localScale =
                 new Vector3(objScale.x, yScale, (resolution.y - 1) * squareSize + objScale.z * 2);
-
 
             // Generate the right wall
             position = new Vector3(-xPos, 0, zPos);
@@ -157,8 +137,7 @@ namespace WorldGeneration._Scripts.TerrainGeneration
 
             // Generate the upper wall
             xPos = tempTransformPos.x;
-            zPos = tempTransformPos.z - (float)resolution.y / 2 * squareSize + squareSize / 2 -
-                   wallPrefab.transform.localScale.z / 2;
+            zPos = tempTransformPos.z - (float)resolution.y / 2 * squareSize + squareSize / 2 - wallScale.z / 2;
             position = new Vector3(xPos, 0, -zPos);
             _upperWall = Instantiate(wallPrefab, position, Quaternion.identity, tempTransform); // generate up
             _upperWall.name = "upper_wall";

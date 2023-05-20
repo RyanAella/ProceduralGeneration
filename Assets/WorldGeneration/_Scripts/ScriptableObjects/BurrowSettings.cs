@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using InGameTime;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace WorldGeneration._Scripts.ScriptableObjects
 {
@@ -15,7 +14,8 @@ namespace WorldGeneration._Scripts.ScriptableObjects
 
         [Header("General Settings")] 
         public int minNumber;
-        public float radius = 0;
+        public float radius;
+        public int initialInhabitants;
 
         public InGameDate lifespan;
 

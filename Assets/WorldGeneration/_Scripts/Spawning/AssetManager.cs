@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ml_agents.Agents;
 using ml_agents.Agents.Handler;
+using Unity.VisualScripting;
 using UnityEngine;
 using WorldGeneration._Scripts.Helper;
 using WorldGeneration._Scripts.ScriptableObjects;
@@ -30,7 +31,6 @@ namespace WorldGeneration._Scripts.Spawning
         private Random _prng = new();
 
         private List<GameObject> _plantPrefabs;
-        private GameObject _burrowPrefab;
 
         public static AssetManager GetInstance()
         {
@@ -272,13 +272,9 @@ namespace WorldGeneration._Scripts.Spawning
 
                         if (min < pos.y && pos.y < max)
                         {
-                            if (CheckSurrounding(pos, settings.radius) == true)
+                            if (CheckSurrounding(pos, settings.radius))
                             {
-                                var asset = Object.Instantiate(settings.assetPrefab[prngPrefab], pos,
-                                    Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
-                                asset.transform.SetParent(Plants.PlantParents[settings]);
-
-                                settings.assets.Add(asset);
+                                InstantiatePlant(settings, prngPrefab, pos);
 
                                 posFound = true;
                             }
@@ -290,15 +286,7 @@ namespace WorldGeneration._Scripts.Spawning
                         {
                             if (CheckSurrounding(pos, settings.radius))
                             {
-                                var asset = Object.Instantiate(settings.assetPrefab[prngPrefab], pos,
-                                    Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)));
-
-                                if (Plants.PlantParents.TryGetValue(settings, out var parent))
-                                {
-                                    asset.transform.SetParent(parent);
-                                }
-
-                                settings.assets.Add(asset);
+                                InstantiatePlant(settings, prngPrefab, pos);
 
                                 posFound = true;
                             }
@@ -322,16 +310,20 @@ namespace WorldGeneration._Scripts.Spawning
 
         private void InstantiateInhabitants(BurrowSettings burrow, GameObject burrowAsset)
         {
+            GameObject prefab;
+            GameObject gameObject;
+            var position = burrowAsset.transform.GetChild(1).GetChild(5).position;
+
             // Instantiate inhabitants
-            for (int j = 0; j < 2; j++)
+            for (int j = 0; j < burrow.initialInhabitants; j++)
             {
                 if (burrow.assetPrefab.GetComponent<Burrow>().type == AgentType.Rabbit)
                 {
-                    var prefab = burrow.assetPrefab.GetComponent<Burrow>().rabbitPrefab;
+                    prefab = burrow.assetPrefab.GetComponent<Burrow>().rabbitPrefab;
 
-                    var position = burrowAsset.transform.GetChild(1).GetChild(5).position;
+                    // var position = burrowAsset.transform.GetChild(1).GetChild(5).position;
 
-                    var gameObject = Object.Instantiate(prefab, position,
+                    gameObject = Object.Instantiate(prefab, position,
                         Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)),
                         burrowAsset.transform);
 
@@ -340,21 +332,19 @@ namespace WorldGeneration._Scripts.Spawning
 
                     gameObject.GetComponent<CustomAgent>().isInBurrow = true;
                 }
-                // else if (burrow.assetPrefab.GetComponent<Burrow>().type == AgentType.Fox)
-                // {
-                //     prefab = burrow.assetPrefab.GetComponent<Burrow>().foxPrefab;
-                // }
+                else if (burrow.assetPrefab.GetComponent<Burrow>().type == AgentType.Fox)
+                {
+                    prefab = burrow.assetPrefab.GetComponent<Burrow>().foxPrefab;
 
-                // var position = burrowAsset.transform.GetChild(1).GetChild(5).position;
-                //
-                // var gameObject = Object.Instantiate(prefab, position,
-                //     Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)),
-                //     burrowAsset.transform);
-                //
-                // burrowAsset.GetComponent<Burrow>().inhabitants.Add(gameObject);
-                //
-                // Debug.Log(burrowAsset.GetComponent<Burrow>().inhabitants.Count);
-                // gameObject.GetComponent<CustomAgent>().isInBurrow = true;
+                    gameObject = Object.Instantiate(prefab, position,
+                        Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)),
+                        burrowAsset.transform);
+
+                    WorldManager.GetInstance().foxList.Add(gameObject);
+                    burrowAsset.GetComponent<Burrow>().inhabitants.Add(gameObject);
+
+                    gameObject.GetComponent<CustomAgent>().isInBurrow = true;
+                }
             }
         }
 
@@ -407,10 +397,6 @@ namespace WorldGeneration._Scripts.Spawning
         /// <param name="agent"></param>
         public void BuildBurrow(GameObject interactingObject, InteractionHandler handler, CustomAgent agent)
         {
-            // Transform vom Hasen
-            // wenn pos frei, dann Burrow spawnen
-            // wenn Burrow gespawnt, Hasen in Bau teleportieren
-
             if (handler.isBurrowBuildableHere)
             {
                 var settings = Burrows.BurrowsList[2].assetPrefab;
@@ -418,8 +404,19 @@ namespace WorldGeneration._Scripts.Spawning
                 var burrowAsset =
                     Object.Instantiate(settings, interactingObject.transform.position, Quaternion.identity);
 
-                burrowAsset.TryGetComponent<Burrow>(out Burrow burrow);
+                burrowAsset.TryGetComponent(out Burrow burrow);
                 burrow.type = agent.type;
+
+                if (burrow.type == AgentType.Rabbit)
+                {
+                    burrow.transform.GetChild(0).localScale = new Vector3(1, 0.4f, 1);
+                    burrow.transform.GetChild(1).localScale = new Vector3(3, 3, 3);
+                }
+                else if (burrow.type == AgentType.Fox)
+                {
+                    burrow.transform.GetChild(0).localScale = new Vector3(2, 0.8f, 2);
+                    burrow.transform.GetChild(1).localScale = new Vector3(5, 5, 5);
+                }
 
                 burrowAsset.transform.SetParent(Burrows.BurrowParents[Burrows.BurrowsList[2]]);
 

@@ -1,4 +1,3 @@
-using System;
 using InGameTime;
 using ml_agents.Agents;
 using UnityEngine;
@@ -17,7 +16,7 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
         // private
         private InGameDate _birthDate;
         private InGameDate _dayOfDeath;
-        private InGameDate _fertility;
+        private InGameDate _fertilityAge;
         private bool _getsEaten;
         private TimeManager _timer;
 
@@ -33,15 +32,15 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
             _birthDate = _timer.GetCurrentDate();
             settings.lifespan = new InGameDate().CalcDate(settings.lifespan);
             _dayOfDeath = new InGameDate().CalcDate(_birthDate.AddDates(settings.lifespan));
-            
+
             var days = new InGameDate().CalcDays(settings.lifespan);
             days.day = (int)((settings.percentageAge / 100) * days.day);
-            _fertility = new InGameDate().CalcDate(days);
+            _fertilityAge = new InGameDate().CalcDate(days);
         }
 
         private void Update()
         {
-            // if (_birthDate.AddDates(_fertility).Equals(_timer.GetCurrentDate())) Reproduce();
+            if (_birthDate.AddDates(_fertilityAge).Equals(_timer.GetCurrentDate())) Reproduce();
 
             if (_dayOfDeath.Equals(_timer.GetCurrentDate())) Dying();
         }
@@ -52,7 +51,7 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
 
             if (Random.Range(0,100) == (int)settings.reproductionChance)
             {
-                // assetManager.Spawn(transform, settings);
+                assetManager.Spawn(transform, settings);
             }
         }
 

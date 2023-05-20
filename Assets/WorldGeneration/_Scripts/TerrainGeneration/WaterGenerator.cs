@@ -52,25 +52,12 @@ namespace WorldGeneration._Scripts.TerrainGeneration
 
             _map = new float[resolution.x, resolution.y];
 
-            // // System.Random prng = new System.Random();
-            // float prng = Random.Range(0.0f, 1.0f);
-            //
-            // int width = generalSettings.resolution.x;
-            // int height = generalSettings.resolution.y;
-            //
-            // for (int x = 0; x < width; x++)
-            // {
-            //     for (int y = 0; y < height; y++)
-            //     {
-            //         map[x, y] = 0.2f;//Mathf.Lerp(0.0f, 1.0f, (float) prng);
-            //     }
-            // }
-
             MeshGenerator.GenerateMesh(_mesh, _map, maxTerrainHeight, generalSettings);
 
-            GetComponent<MeshFilter>().sharedMesh = _mesh;
+            GetComponent<MeshFilter>().mesh = _mesh;
 
-            transform.position = new Vector3(transform.position.x, maxTerrainHeight * waterLevel, transform.position.z);
+            var pos = transform.position;
+            transform.position = new Vector3(pos.x, maxTerrainHeight * waterLevel, pos.z);
             
             return true;
         }

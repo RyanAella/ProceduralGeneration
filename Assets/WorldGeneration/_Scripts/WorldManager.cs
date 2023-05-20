@@ -1,34 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using ml_agents.Agents.rabbit;
 using UnityEngine;
 using WorldGeneration._Scripts.Helper;
 using WorldGeneration._Scripts.ScriptableObjects;
 using WorldGeneration._Scripts.Spawning;
-using WorldGeneration._Scripts.Spawning.TerrainAssets;
 using WorldGeneration._Scripts.TerrainGeneration;
 using Object = UnityEngine.Object;
 
 namespace WorldGeneration._Scripts
 {
     [Serializable]
-    public class WorldManager /*: MonoBehaviour*/
+    public class WorldManager 
     {
         // public
         public static WorldManager Instance;
         public float[,] Map;
-        public bool WallGenerated;
         public List<GameObject> burrowList;
         public List<GameObject> rabbitList;
+        public List<GameObject> foxList;
+        public GameObject world;
 
         //private
-        public GameObject World;
-        private Transform _parent;
-
-
-        private bool _waterGenerated;
         private bool _terrainGenerated;
-        private bool _foodGenerated;
         private bool _plantsGenerated;
         private bool _burrowsGenerated;
 
@@ -69,36 +62,25 @@ namespace WorldGeneration._Scripts
             GroundGenerator ground, WaterGenerator water, AssetManager assetManager, Plants plants,
             Burrows burrows)
         {
-            // try
-            // {
-
             burrowList = new List<GameObject>();
             rabbitList = new List<GameObject>();
+            foxList = new List<GameObject>();
             
-            World = new GameObject("World");
+            world = new GameObject("World");
 
             _terrainGenerated = GenerateTerrain(resolution, maxTerrainHeight, waterLevel, generalSettings,
-                noiseSettings, noiseWithClamp, World, ground, water);
+                noiseSettings, noiseWithClamp, ground, water);
 
             if (_terrainGenerated)
             {
                 _burrowsGenerated = assetManager.InitialSpawnBurrows(resolution, maxTerrainHeight, waterLevel,
-                    generalSettings, Map, World, burrows);
+                    generalSettings, Map, world, burrows);
                 _plantsGenerated = assetManager.InitialSpawnPlants(resolution, maxTerrainHeight, waterLevel,
-                    generalSettings, Map, World, plants);
-                return true;
-            }
-            else
-            {
-                return false;
+                    generalSettings, Map, world, plants);
+                return _burrowsGenerated && _plantsGenerated;
             }
 
-
-            // }
-            // catch
-            // {
-            //     return false;
-            // }
+            return _terrainGenerated;
         }
 
         /// <summary>
@@ -112,69 +94,11 @@ namespace WorldGeneration._Scripts
         /// <param name="noiseWithClamp"></param>
         /// <param name="ground"></param>
         /// <param name="water"></param>
-        /// <param name="assetManager"></param>
-        /// <param name="plants"></param>
-        /// <param name="burrows"></param>
-        /// <returns></returns>
-        // public bool ReloadWorld(Vector2Int resolution, float maxTerrainHeight, float waterLevel,
-        //     GeneralSettings generalSettings, NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp,
-        //     GroundGenerator ground, WaterGenerator water, AssetManager assetManager, Plants plants,
-        //     Burrows burrows)
-        // {
-        //     if (_plantsGenerated)
-        //     {
-        //         foreach (var parent in assetManager.Plants.PlantParents) Object.Destroy(parent.Value.gameObject);
-        //     }
-        //
-        //     var rabbits = GameObject.FindGameObjectsWithTag("Rabbit");
-        //     foreach (var rabbit in rabbits)
-        //     {
-        //         rabbit.transform.parent.gameObject.GetComponent<AgentRabbit>().DestroyAgent();
-        //     }
-        //
-        //     if (_burrowsGenerated)
-        //     {
-        //         foreach (var parent in assetManager.Burrows.BurrowParents)
-        //         {
-        //             var burrow = parent.Key.assetPrefab.GetComponent<Burrow>();
-        //
-        //
-        //             if (burrow.inhabitants.Count == 0)
-        //             {
-        //                 Object.Destroy(parent.Value.gameObject);
-        //             }
-        //         }
-        //     }
-        //     
-        //     Object.Destroy(_world);
-        //
-        //     GenerateInitialWorld(resolution, maxTerrainHeight, waterLevel, generalSettings,
-        //         noiseSettings, noiseWithClamp, ground, water, assetManager, plants, burrows);
-        //
-        //     return true;
-        // }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="resolution"></param>
-        /// <param name="maxTerrainHeight"></param>
-        /// <param name="waterLevel"></param>
-        /// <param name="generalSettings"></param>
-        /// <param name="noiseSettings"></param>
-        /// <param name="noiseWithClamp"></param>
-        /// <param name="world"></param>
-        /// <param name="ground"></param>
-        /// <param name="water"></param>
         /// <returns></returns>
         private bool GenerateTerrain(Vector2Int resolution, float maxTerrainHeight, float waterLevel,
-            GeneralSettings generalSettings, NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp,
-            GameObject world, GroundGenerator ground, WaterGenerator water)
+            GeneralSettings generalSettings, NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp, GroundGenerator ground, WaterGenerator water)
         {
-            var terrainGenerated = false;
-
             GroundGenerator groundGenerator = Object.Instantiate(ground);
-            var groundGen = GroundGenerator.Instance;
             groundGenerator.transform.parent = world.transform;
 
             var groundGenerated = groundGenerator.GenerateGround(resolution, maxTerrainHeight, generalSettings,
@@ -182,24 +106,16 @@ namespace WorldGeneration._Scripts
 
             if (groundGenerated)
             {
-                // try
-                // {
-                WallGenerated = groundGenerator.GenerateWall(resolution, maxTerrainHeight, generalSettings);
+                groundGenerator.GenerateWall(resolution, maxTerrainHeight, generalSettings);
 
                 WaterGenerator waterGenerator = Object.Instantiate(water);
                 waterGenerator.transform.parent = world.transform;
 
                 var waterGen = WaterGenerator.Instance;
-                var waterGenerated =
-                    waterGen.GenerateWater(resolution, maxTerrainHeight, waterLevel, generalSettings);
+                waterGen.GenerateWater(resolution, maxTerrainHeight, waterLevel, generalSettings);
 
                 return true;
             }
-            // catch
-            // {
-            //     return false;
-            // }
-            // }
             else
             {
                 Object.Destroy(groundGenerator);

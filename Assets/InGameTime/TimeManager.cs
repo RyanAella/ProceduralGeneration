@@ -129,56 +129,6 @@ namespace InGameTime
 
             return date;
         }
-
-        // /// <summary>
-        // /// If days >= 7 the date needs to be recalculated.
-        // /// </summary>
-        // /// <param name="days">The number of days that need to be recalculated.</param>
-        // /// <returns>A new InGameDate</returns>
-        // public static InGameDate DaysToDate(int days)
-        // {
-        //     int weeks = days / 7;
-        //     int months = weeks / 4;
-        //
-        //     return new InGameDate
-        //     {
-        //         day = days % 7,
-        //         week = weeks % 4,
-        //         month = months % 12,
-        //         year = months / 12,
-        //     };
-        // }
-        //
-        // /// <summary>
-        // /// If weeks >= 4 the date needs to be recalculated.
-        // /// </summary>
-        // /// <param name="weeks">The number of weeks that need to be recalculated.</param>
-        // /// <returns>A new InGameDate</returns>
-        // public static InGameDate WeeksToDate(int weeks)
-        // {
-        //     int months = weeks / 4;
-        //
-        //     return new InGameDate
-        //     {
-        //         week = weeks % 4,
-        //         month = months % 12,
-        //         year = months / 12,
-        //     };
-        // }
-        //
-        // /// <summary>
-        // /// If months >= 12 the date needs to be recalculated.
-        // /// </summary>
-        // /// <param name="months">The number of days that need to be recalculated.</param>
-        // /// <returns>A new InGameDate</returns>
-        // public static InGameDate MonthsToDate(int months)
-        // {
-        //     return new InGameDate
-        //     {
-        //         month = months % 12,
-        //         year = months / 12,
-        //     };
-        // }
     }
 
     /// <summary>

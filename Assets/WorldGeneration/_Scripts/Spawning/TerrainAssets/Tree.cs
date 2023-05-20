@@ -38,11 +38,5 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
             settings.assets.Remove(gameObject);
             Destroy(gameObject);
         }
-        
-        // private void OnDrawGizmos()
-        // {
-        //     Gizmos.color = Color.green;
-        //     Gizmos.DrawWireSphere(transform.position, settings.radius);
-        // }
     }
 }
