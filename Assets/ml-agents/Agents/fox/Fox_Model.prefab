@@ -260,6 +260,7 @@ GameObject:
   - component: {fileID: 720969801}
   - component: {fileID: 720969802}
   - component: {fileID: 720969803}
+  - component: {fileID: 7469092757165889917}
   m_Layer: 7
   m_Name: Fox_Model
   m_TagString: Fox
@@ -383,7 +384,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 22
+    VectorObservationSize: 29
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 4
@@ -420,8 +421,7 @@ MonoBehaviour:
   type: 1
   canMove: 1
   isAdult: 0
-  healthRecoveryAmount: 3
-  stamineRecoveryAmount: 5
+  hearsEnemy: 0
   isInBurrow: 0
   health: 100
   stamina: 100
@@ -430,11 +430,12 @@ MonoBehaviour:
   isEating: 0
   isDrinking: 0
   thresholdHungerThirstForRecovery: 50
+  healthRecoveryAmount: 3
+  stamineRecoveryAmount: 5
+  nutritionValue: 8
   hasBreeded: 0
   hasBurrowBuild: 0
-  nutritionValue: 8
-  homeLocation: {fileID: 0}
-  nearestBurrowLocation: {fileID: 0}
+  lastBurrow: {x: -1, y: -1, z: -1}
   deathPenalty: 5
   lowHealthPenaltyDivider: 30
   unhealthyThreshhold: 60
@@ -458,7 +459,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lastSoundDistance: -1
   lastSoundDirection: {x: 0, y: 0, z: 0}
-  soundOnlyFromEnemy: 0
+  lastEnemySoundDistance: -1
+  lastEnemySoundDirection: {x: 0, y: 0, z: 0}
+  enemy: 0
   soundRangeMultiplier: 33
   layerMask:
     serializedVersion: 2
@@ -475,6 +478,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 950af0b345b357448a68cd414fb7b9e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  someoneInGroupHearsEnemy: 0
   layerMask:
     serializedVersion: 2
     m_Bits: 128
@@ -542,6 +546,27 @@ MonoBehaviour:
   hungerIncreasePerMonth: 20
   thirstIncreasePerMonth: 20
   rewardSurvivngMonth: 2
+--- !u!114 &7469092757165889917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2222676705411982527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 282f342c2ab144bf38be65d4d0c4e07d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Camera: {fileID: 2395514441203214642}
+  m_SensorName: Eyes
+  m_Width: 80
+  m_Height: 60
+  m_Grayscale: 0
+  m_ObservationType: 0
+  m_RuntimeCameraEnable: 0
+  m_ObservationStacks: 1
+  m_Compression: 1
 --- !u!1 &2235202810429493496
 GameObject:
   m_ObjectHideFlags: 0

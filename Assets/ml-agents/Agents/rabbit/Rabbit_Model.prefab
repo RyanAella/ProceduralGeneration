@@ -301,6 +301,7 @@ GameObject:
   - component: {fileID: 4246055255610007026}
   - component: {fileID: 5507215104209848024}
   - component: {fileID: 7725572999302780172}
+  - component: {fileID: 6665658062019873143}
   m_Layer: 7
   m_Name: Rabbit_Model
   m_TagString: Rabbit
@@ -424,7 +425,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 22
+    VectorObservationSize: 29
     NumStackedVectorObservations: 10
     m_ActionSpec:
       m_NumContinuousActions: 4
@@ -461,8 +462,6 @@ MonoBehaviour:
   type: 0
   canMove: 1
   isAdult: 0
-  healthRecoveryAmount: 3
-  stamineRecoveryAmount: 5
   isInBurrow: 0
   health: 100
   stamina: 100
@@ -471,11 +470,12 @@ MonoBehaviour:
   isEating: 0
   isDrinking: 0
   thresholdHungerThirstForRecovery: 50
+  healthRecoveryAmount: 3
+  stamineRecoveryAmount: 5
+  nutritionValue: 8
   hasBreeded: 0
   hasBurrowBuild: 0
-  nutritionValue: 8
-  homeLocation: {fileID: 0}
-  nearestBurrowLocation: {fileID: 0}
+  lastBurrow: {x: -1, y: -1, z: -1}
   deathPenalty: 5
   lowHealthPenaltyDivider: 30
   unhealthyThreshhold: 60
@@ -578,11 +578,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lastSoundDistance: -1
   lastSoundDirection: {x: 0, y: 0, z: 0}
-  soundOnlyFromEnemy: 0
+  lastEnemySoundDistance: -1
+  lastEnemySoundDirection: {x: 0, y: 0, z: 0}
+  enemy: 1
   soundRangeMultiplier: 33
   layerMask:
     serializedVersion: 2
     m_Bits: 128
+--- !u!114 &6665658062019873143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3780511893139373963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 282f342c2ab144bf38be65d4d0c4e07d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Camera: {fileID: 6970247452995779387}
+  m_SensorName: CameraSensor
+  m_Width: 90
+  m_Height: 55
+  m_Grayscale: 0
+  m_ObservationType: 0
+  m_RuntimeCameraEnable: 0
+  m_ObservationStacks: 1
+  m_Compression: 1
 --- !u!1 &4502700293777290790
 GameObject:
   m_ObjectHideFlags: 0

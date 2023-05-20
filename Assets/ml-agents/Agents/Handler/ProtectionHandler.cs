@@ -1,10 +1,12 @@
 using System;
 using UnityEngine;
+using WorldGeneration._Scripts.Spawning.TerrainAssets;
 
 namespace ml_agents.Agents.Handler
 {
     public class ProtectionHandler : MonoBehaviour
     {
+        public bool someoneInGroupHearsEnemy;
         public LayerMask layerMask;
         [Range(1, 50)] public float detectionRange = 5;
 
@@ -42,15 +44,26 @@ namespace ml_agents.Agents.Handler
             int targetsInRange = 0;
 
             RaycastHit[] hits = Physics.SphereCastAll(transform.position, detectionRange, transform.forward, 0, layerMask);
+
+            bool anybodyHearAnEnemy = false;
+
             foreach (RaycastHit hit in hits)
             {
-                if (hit.transform.gameObject.CompareTag(_toSearchForTag))
+                if (hit.transform.gameObject != gameObject && hit.transform.gameObject.CompareTag(_toSearchForTag))
                 {
+                    CustomAgent agentInRange = hit.transform.gameObject.GetComponent<CustomAgent>();
+                    if (!anybodyHearAnEnemy && agentInRange != null)
+                    {
+                        anybodyHearAnEnemy = agentInRange.hearsEnemy;
+                    }
+
                     targetsInRange++;
                 }
             }
 
-            targetsInRange -= 2;
+            someoneInGroupHearsEnemy = anybodyHearAnEnemy;
+
+            targetsInRange -= 1;
 
             if (targetsInRange <= 0)
             {

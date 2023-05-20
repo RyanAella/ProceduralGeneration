@@ -142,6 +142,9 @@ namespace ml_agents.Agents.Handler
             if (agent.isInBurrow)
             {
                 transform.parent.TryGetComponent<Burrow>(out var burrow);
+
+                //save position of last visited burrow
+                agent.lastBurrow = transform.parent.position;
                 burrow.Leave(gameObject, agent, agent.controller);
             }
             else

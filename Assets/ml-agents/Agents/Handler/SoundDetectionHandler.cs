@@ -1,3 +1,5 @@
+using ml_agents.Custom_Attributes_for_editor;
+using System;
 using UnityEngine;
 
 namespace ml_agents.Agents.Handler
@@ -6,17 +8,29 @@ namespace ml_agents.Agents.Handler
     {
         public float lastSoundDistance = -1;
         public Vector3 lastSoundDirection = new Vector3(0, 0, 0);
-        public bool soundOnlyFromEnemy = false;
+
+        public float lastEnemySoundDistance = -1;
+        public Vector3 lastEnemySoundDirection = new Vector3(0, 0, 0);
+
+        public AgentType enemy;
+
         [Range(1, 50)] public float soundRangeMultiplier = 1;
         float _soundRange = 0;
 
         CustomAgent _agent;
+        ProtectionHandler protectionHandler;
         public LayerMask layerMask;
+
+
+        bool soundHasChanged = false;
+        bool enemySoundHasChanged = false;
+
 
         // Start is called before the first frame update
         void Start()
         {
             _agent = gameObject.GetComponent<CustomAgent>();
+            protectionHandler = _agent.protectionHandler;
         }
 
         // Update is called once per frame
@@ -32,23 +46,46 @@ namespace ml_agents.Agents.Handler
                     hit.collider.gameObject.GetComponent<SoundDetectionHandler>().CheckSoundOrigin(_agent);
                 }
             }
+            RemoveOldSounds();
+            _agent.hearsEnemy = lastEnemySoundDistance != -1;
+        }
+
+        private void RemoveOldSounds()
+        {
+            if (!soundHasChanged)
+            {
+                lastSoundDistance = -1;
+                lastSoundDirection = new(0, 0, 0);
+            }
+
+            if (!enemySoundHasChanged)
+            {
+                lastEnemySoundDistance = -1;
+                lastEnemySoundDirection = new(0, 0, 0);
+            }
+
+            soundHasChanged = false;
+            enemySoundHasChanged = false;
         }
 
         public void CheckSoundOrigin(CustomAgent loudAgent)
         {
             if (_agent != loudAgent)
             {
-                if (!soundOnlyFromEnemy)
+                if (_agent.type == loudAgent.type)
                 {
                     lastSoundDistance = Vector3.Distance(transform.position, loudAgent.transform.position);
                     lastSoundDirection = loudAgent.transform.position - transform.position;
                     Debug.Log("Sound!");
+                    soundHasChanged=true;
                 }
-                else if (_agent.type != loudAgent.type)
+                
+                if (loudAgent.type == enemy)
                 {
-                    lastSoundDistance = Vector3.Distance(transform.position, loudAgent.transform.position);
-                    lastSoundDirection = loudAgent.transform.position - transform.position;
+                    lastEnemySoundDistance = Vector3.Distance(transform.position, loudAgent.transform.position);
+                    lastEnemySoundDirection = loudAgent.transform.position - transform.position;
                     Debug.Log("Enemy sound!");
+                    enemySoundHasChanged=true; 
                 }
             }
         }

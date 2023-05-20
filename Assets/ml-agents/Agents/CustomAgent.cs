@@ -20,8 +20,7 @@ namespace ml_agents.Agents
         [Header("Status")]
         public bool canMove = true;
         public bool isAdult = false;
-        public int healthRecoveryAmount = 3;
-        public int stamineRecoveryAmount = 5;
+        public bool hearsEnemy = false;
 
         [Space(3)]
         public bool isInBurrow = false;
@@ -41,14 +40,15 @@ namespace ml_agents.Agents
 
         [Space(10)]
         [Header("Properties")]
+        public int healthRecoveryAmount = 3;
+        public int stamineRecoveryAmount = 5;
+        public int nutritionValue = 8;
         public bool hasBreeded = false;
         public bool hasBurrowBuild = false;
-        public int nutritionValue = 8;
-
+        
         [Space(10)]
         [Header("Locations")]
-        public Burrow homeLocation;
-        public Burrow nearestBurrowLocation;
+        public Vector3 lastBurrow = new(0,0,0);
 
         [Space(10)]
         [Header("Penalties")]
@@ -86,26 +86,24 @@ namespace ml_agents.Agents
 
             sensor.AddObservation(hasBreeded);
 
+            sensor.AddObservation(lastBurrow);
             sensor.AddObservation(hasBurrowBuild);
             sensor.AddObservation(interaction.canBuildBurrow);
             sensor.AddObservation(interaction.isBurrowBuildableHere);
 
-            sensor.AddObservation(protectionHandler.protectionLevel);
+            //needed?
+            //sensor.AddObservation(protectionHandler.protectionLevel);
+            sensor.AddObservation(protectionHandler.someoneInGroupHearsEnemy);
 
             //sound
             sensor.AddObservation(soundDetectionHandler.lastSoundDistance);
             sensor.AddObservation(soundDetectionHandler.lastSoundDirection);
 
+            sensor.AddObservation(soundDetectionHandler.lastEnemySoundDistance);
+            sensor.AddObservation(soundDetectionHandler.lastEnemySoundDirection);
+
             //velocity of agent in any direction
             sensor.AddObservation(new Vector3(controller.velocity.x, controller.velocity.y, controller.velocity.z));
-
-            ResetTemporaryObservations();
-        }
-
-        private void ResetTemporaryObservations()
-        {
-            soundDetectionHandler.lastSoundDistance = -1;
-            soundDetectionHandler.lastSoundDirection = new Vector3(0, 0, 0);
         }
 
         // Update is called once per frame
@@ -315,5 +313,4 @@ namespace ml_agents.Agents
             }
         }
     }
-
 }
