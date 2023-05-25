@@ -16,10 +16,12 @@ MonoBehaviour:
   parent:
   - {fileID: 2748929397329019754, guid: 282f7c104cf0edc4d8584b4c9ed1cf01, type: 3}
   minNumber: 1
-  radius: 9.967045
+  radius: 4.5868177
+  initialInhabitants: 2
   lifespan:
     day: 0
     week: 0
     month: 0
     year: 2
-  assets: []
+  assets:
+  - {fileID: 0}

@@ -10,20 +10,20 @@ using Object = UnityEngine.Object;
 namespace WorldGeneration._Scripts
 {
     [Serializable]
-    public class WorldManager 
+    public class WorldManager
     {
         // public
         public static WorldManager Instance;
-        public float[,] Map;
-        public List<GameObject> burrowList;
-        public List<GameObject> rabbitList;
-        public List<GameObject> foxList;
+        public List<GameObject> burrowList = new();
+        public List<GameObject> rabbitList = new();
+        public List<GameObject> foxList = new();
         public GameObject world;
+        private bool _burrowsGenerated;
+        private bool _plantsGenerated;
 
         //private
         private bool _terrainGenerated;
-        private bool _plantsGenerated;
-        private bool _burrowsGenerated;
+        public float[,] Map;
 
         public static WorldManager GetInstance()
         {
@@ -43,7 +43,6 @@ namespace WorldGeneration._Scripts
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="resolution"></param>
         /// <param name="maxTerrainHeight"></param>
@@ -62,10 +61,6 @@ namespace WorldGeneration._Scripts
             GroundGenerator ground, WaterGenerator water, AssetManager assetManager, Plants plants,
             Burrows burrows)
         {
-            burrowList = new List<GameObject>();
-            rabbitList = new List<GameObject>();
-            foxList = new List<GameObject>();
-            
             world = new GameObject("World");
 
             _terrainGenerated = GenerateTerrain(resolution, maxTerrainHeight, waterLevel, generalSettings,
@@ -84,7 +79,6 @@ namespace WorldGeneration._Scripts
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="resolution"></param>
         /// <param name="maxTerrainHeight"></param>
@@ -96,9 +90,10 @@ namespace WorldGeneration._Scripts
         /// <param name="water"></param>
         /// <returns></returns>
         private bool GenerateTerrain(Vector2Int resolution, float maxTerrainHeight, float waterLevel,
-            GeneralSettings generalSettings, NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp, GroundGenerator ground, WaterGenerator water)
+            GeneralSettings generalSettings, NoiseSettings noiseSettings, NoiseWithClamp noiseWithClamp,
+            GroundGenerator ground, WaterGenerator water)
         {
-            GroundGenerator groundGenerator = Object.Instantiate(ground);
+            var groundGenerator = Object.Instantiate(ground);
             groundGenerator.transform.parent = world.transform;
 
             var groundGenerated = groundGenerator.GenerateGround(resolution, maxTerrainHeight, generalSettings,
@@ -108,7 +103,7 @@ namespace WorldGeneration._Scripts
             {
                 groundGenerator.GenerateWall(resolution, maxTerrainHeight, generalSettings);
 
-                WaterGenerator waterGenerator = Object.Instantiate(water);
+                var waterGenerator = Object.Instantiate(water);
                 waterGenerator.transform.parent = world.transform;
 
                 var waterGen = WaterGenerator.Instance;
@@ -116,12 +111,10 @@ namespace WorldGeneration._Scripts
 
                 return true;
             }
-            else
-            {
-                Object.Destroy(groundGenerator);
-                Debug.Log("False in groundGenerated");
-                return false;
-            }
+
+            Object.Destroy(groundGenerator);
+            Debug.Log("False in groundGenerated");
+            return false;
         }
     }
 }

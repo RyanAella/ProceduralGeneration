@@ -32,6 +32,8 @@ namespace WorldGeneration._Scripts.Spawning
 
         private List<GameObject> _plantPrefabs;
 
+        private WorldManager _worldManager = WorldManager.GetInstance();
+
         public static AssetManager GetInstance()
         {
             if (Instance == null)
@@ -302,7 +304,7 @@ namespace WorldGeneration._Scripts.Spawning
                 Quaternion.Euler(new Vector3(0, 0, 0)));
 
             burrowAsset.transform.SetParent(Burrows.BurrowParents[burrow]);
-            WorldManager.GetInstance().burrowList.Add(burrowAsset);
+            _worldManager.burrowList.Add(burrowAsset);
 
             burrow.assets.Add(burrowAsset);
             return burrowAsset;
@@ -327,7 +329,7 @@ namespace WorldGeneration._Scripts.Spawning
                         Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)),
                         burrowAsset.transform);
 
-                    WorldManager.GetInstance().rabbitList.Add(gameObject);
+                    _worldManager.rabbitList.Add(gameObject);
                     burrowAsset.GetComponent<Burrow>().inhabitants.Add(gameObject);
 
                     gameObject.GetComponent<CustomAgent>().isInBurrow = true;
@@ -340,7 +342,7 @@ namespace WorldGeneration._Scripts.Spawning
                         Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0)),
                         burrowAsset.transform);
 
-                    WorldManager.GetInstance().foxList.Add(gameObject);
+                    _worldManager.foxList.Add(gameObject);
                     burrowAsset.GetComponent<Burrow>().inhabitants.Add(gameObject);
 
                     gameObject.GetComponent<CustomAgent>().isInBurrow = true;
@@ -422,7 +424,7 @@ namespace WorldGeneration._Scripts.Spawning
 
                 Burrows.BurrowsList[2].assets.Add(burrowAsset);
 
-                WorldManager.GetInstance().burrowList.Add(burrowAsset);
+                _worldManager.burrowList.Add(burrowAsset);
             }
         }
     }
