@@ -139,13 +139,13 @@ namespace ml_agents.Agents
 
         public void Interact(int v0, int v1, int v2, int v3, int v4, int v5)
         {
-            Debug.Log("I----------------");
-            Debug.Log(v0);
-            Debug.Log(v1);
-            Debug.Log(v2);
-            Debug.Log(v3);
-            Debug.Log(v4);
-            Debug.Log(v5);
+            // Debug.Log("I----------------");
+            // Debug.Log(v0);
+            // Debug.Log(v1);
+            // Debug.Log(v2);
+            // Debug.Log(v3);
+            // Debug.Log(v4);
+            // Debug.Log(v5);
             bool wantToEat = v0 != 0;
             bool wantToDrink = v1 != 0;
             bool wantToEnterBurrow = v2 != 0;

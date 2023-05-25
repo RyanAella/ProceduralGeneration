@@ -66,7 +66,7 @@ namespace ml_agents.Agents.Handler
             }
 
             //here check if location sit possible
-            isBurrowBuildableHere = AssetManager.GetInstance().CheckLocation(transform.position);
+            isBurrowBuildableHere = AssetManager.GetInstance().CheckLocation(transform.position, agent.type);
         }
 
         public void Eat()

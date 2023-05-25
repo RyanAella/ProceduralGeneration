@@ -20,6 +20,7 @@ namespace WorldGeneration._Scripts.Spawning
         public LayerMask layerMask;
         public Plants Plants;
         public Burrows Burrows;
+        public List<BurrowSettings> initialBurrowSettings = new List<BurrowSettings>();
 
         // private
         private Vector2Int _resolution;
@@ -145,8 +146,10 @@ namespace WorldGeneration._Scripts.Spawning
             _settings = generalSettings;
             _map = map;
 
-            Burrows.BurrowsList = new List<BurrowSettings>();
-            Burrows.BurrowParents = new Dictionary<BurrowSettings, Transform>();
+            // Burrows.BurrowsList = new List<BurrowSettings>();
+            // Burrows.BurrowParents = new Dictionary<BurrowSettings, Transform>();
+
+            initialBurrowSettings = burrows.BurrowsList;
 
             Burrows = burrows;
 
@@ -381,12 +384,20 @@ namespace WorldGeneration._Scripts.Spawning
             return true;
         }
 
-        public bool CheckLocation(Vector3 position)
+        public bool CheckLocation(Vector3 position, AgentType type)
         {
-            var radius = Burrows.Burrow.radius;
-            if (Physics.CheckSphere(position, radius))
+            foreach (var burrow in initialBurrowSettings)
             {
-                return false;
+                burrow.assetPrefab.TryGetComponent<Burrow>(out var _burrow);
+                
+                if (type == _burrow.type)
+                {
+                    var radius = burrow.radius;
+                    if (Physics.CheckSphere(position, radius))
+                    {
+                        return false;
+                    }
+                }
             }
 
             return true;

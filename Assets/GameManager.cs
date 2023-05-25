@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using InGameTime;
 using ml_agents.Agents.fox;
 using ml_agents.Agents.rabbit;
+using Settings;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WorldGeneration._Scripts;
@@ -43,7 +45,7 @@ public class GameManager : MonoBehaviour
     private BurrowSettings burrow;
 
     // public
-    public GameManager instance;
+    public static GameManager Instance;
     private Dictionary<BurrowSettings, Transform> _burrowParents;
     private Burrows _burrows;
     private bool _burrowsGenerated;
@@ -59,7 +61,8 @@ public class GameManager : MonoBehaviour
     private Plants _plants;
     private bool _plantsGenerated;
 
-    private bool _running;
+    private static bool _running = false;
+    private bool _reloading = true;
 
     private bool _terrainGenerated;
 
@@ -69,15 +72,20 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance == null)
-            instance = this;
-        else if (instance != this) Destroy(gameObject);
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
     }
 
     private void Start()
     {
         _worldManager = WorldManager.GetInstance();
         assetManager = AssetManager.GetInstance();
+        
+        Debug.Log("Starting");
 
         GenerateInitialWorld();
     }
@@ -114,15 +122,25 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Alpha3) && _running) _timer.SetTimeScale(3.0f);
 
-        if (Input.GetKeyDown(KeyCode.R) && _running) ReloadWorld();
+        if (Input.GetKeyDown(KeyCode.R) && /*_running*/ Checker.running)
+        {
+            _running = false;
+            ReloadWorld();
+        }
 
         TimeManager.OnMonthChanged += RespawnPlants;
 
-        if (_worldManager.rabbitList.Count == 0 && _running) ReloadWorld();
+        if (Checker.running)
+        {
+            Check();
+        }
     }
 
     private void GenerateInitialWorld()
     {
+        Checker.running = false;
+        _running = false;
+        
         _worldManager.burrowList = new List<GameObject>();
         _worldManager.rabbitList = new List<GameObject>();
         _worldManager.foxList = new List<GameObject>();
@@ -148,10 +166,12 @@ public class GameManager : MonoBehaviour
             BurrowParents = _burrowParents
         };
 
-        _running = _worldManager.GenerateInitialWorld(resolution, maxTerrainHeight, waterLevel, generalSettings,
+        Checker.running = _worldManager.GenerateInitialWorld(resolution, maxTerrainHeight, waterLevel, generalSettings,
             noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator, assetManager, _plants, _burrows);
 
-        if (_running)
+        _running = Checker.running;
+        
+        if (Checker.running)
             _timer.BeginTimer();
         else
             Debug.Log("Error while generating world");
@@ -159,6 +179,9 @@ public class GameManager : MonoBehaviour
 
     private void ReloadWorld()
     {
+        Checker.running = false;
+        _running = false;
+        
         foreach (var rabbit in _worldManager.rabbitList)
         {
             rabbit.TryGetComponent<AgentRabbit>(out var agent);
@@ -175,12 +198,11 @@ public class GameManager : MonoBehaviour
 
         Destroy(_worldManager.world);
 
-        assetManager = AssetManager.ResetInstance();
         _worldManager = WorldManager.ResetInstance();
+        assetManager = AssetManager.ResetInstance();
 
-
-        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().name);
-        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+        // SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
         // // Check if a random seed is wanted
         // if (useRandomSeed)
@@ -220,5 +242,14 @@ public class GameManager : MonoBehaviour
     private void RespawnPlants()
     {
         assetManager.SpawnPlants();
+    }
+
+    void Check()
+    {
+        if ((_worldManager.rabbitList.Count == 0 || _worldManager.foxList.Count == 0) && Checker.running == true && _running)
+        {
+            Debug.Log("Reload cause 0");
+            ReloadWorld();
+        }
     }
 }
