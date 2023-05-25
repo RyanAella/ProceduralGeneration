@@ -8,57 +8,49 @@ using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using UnityEngine;
+using WorldGeneration._Scripts;
 using WorldGeneration._Scripts.Spawning.TerrainAssets;
 
-public enum AgentType { Rabbit,Fox}
+public enum AgentType
+{
+    Rabbit,
+    Fox
+}
+
 namespace ml_agents.Agents
 {
     public abstract class CustomAgent : Agent
     {
         public AgentType type;
-        [Space(5)]
-        [Header("Status")]
-        public bool canMove = true;
+        [Space(5)] [Header("Status")] public bool canMove = true;
         public bool isAdult = false;
         public bool hearsEnemy = false;
 
-        [Space(3)]
-        public bool isInBurrow = false;
+        [Space(3)] public bool isInBurrow = false;
 
-        [Space(3)]
-        [Range(0, 100)] public float health = 100;
+        [Space(3)] [Range(0, 100)] public float health = 100;
         [Range(0, 100)] public float stamina = 100;
         [Range(0, 100)] public int thirst = 0;
         [Range(0, 100)] public int hunger = 0;
 
-        [Space(5)]
-        public bool isEating = false;
+        [Space(5)] public bool isEating = false;
         public bool isDrinking = false;
 
-        [Space(5)]
-        public int thresholdHungerThirstForRecovery = 50;
+        [Space(5)] public int thresholdHungerThirstForRecovery = 50;
 
-        [Space(10)]
-        [Header("Properties")]
-        public int healthRecoveryAmount = 3;
+        [Space(10)] [Header("Properties")] public int healthRecoveryAmount = 3;
         public int stamineRecoveryAmount = 5;
         public int nutritionValue = 8;
         public bool hasBreeded = false;
         public bool hasBurrowBuild = false;
-        
-        [Space(10)]
-        [Header("Locations")]
-        public Vector3 lastBurrow = new(0,0,0);
 
-        [Space(10)]
-        [Header("Penalties")]
-        public float deathPenalty = 5;
+        [Space(10)] [Header("Locations")] public Vector3 lastBurrow = new(0, 0, 0);
+
+        [Space(10)] [Header("Penalties")] public float deathPenalty = 5;
         [Range(10, 60)] public int lowHealthPenaltyDivider = 30;
         public float unhealthyThreshhold = 60;
 
-        [Space(10)]
-        [Header("External Data")]
-        public CharacterController controller;
+        [Space(10)] [Header("External Data")] public CharacterController controller;
         public Movement movement;
         public ProtectionHandler protectionHandler;
         public InteractionHandler interaction;
@@ -148,19 +140,19 @@ namespace ml_agents.Agents
 
             if (wantToDrink)
                 interaction.Drink();
-            
+
             if (wantToEat)
                 interaction.Eat();
 
             if (wantToBuildBurrow)
                 interaction.BuildBurrow();
-            
+
             if (wantToBreed)
                 interaction.Breed();
-            
+
             if (wantToEnterBurrow)
                 interaction.EnterBurrow();
-            
+
             if (wantToLeaveBurrow)
                 interaction.LeaveBurrow();
         }
@@ -220,7 +212,8 @@ namespace ml_agents.Agents
             if (attackingAgent.hunger >= nutritionValue)
             {
                 attackingAgent.hunger -= nutritionValue;
-            } else
+            }
+            else
             {
                 attackingAgent.hunger = 0;
             }
@@ -229,14 +222,24 @@ namespace ml_agents.Agents
         private bool IsCloseToNotMoving()
         {
             return movement.walkSpeed <= 0.1f && Mathf.Abs(movement.rotation) <= 0.1f &&
-                Mathf.Abs(movement.headRotationX) <= 0.1f && Mathf.Abs(movement.headRotationY) <= 0.1f;
+                   Mathf.Abs(movement.headRotationX) <= 0.1f && Mathf.Abs(movement.headRotationY) <= 0.1f;
         }
 
         public void Kill()
         {
             AddReward(deathPenalty);
             EndEpisode();
-            Destroy(this.gameObject);
+            
+            if (type == AgentType.Rabbit)
+            {
+                WorldManager.Instance.rabbitList.Remove(gameObject);
+            }
+            else if (type == AgentType.Fox)
+            {
+                WorldManager.Instance.foxList.Remove(gameObject);
+            }
+
+            Destroy(gameObject);
         }
 
         public void DestroyAgent()

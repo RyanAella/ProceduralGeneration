@@ -165,9 +165,13 @@ public class GameManager : MonoBehaviour
             Burrow = burrow,
             BurrowParents = _burrowParents
         };
+        
+        Debug.Log(Checker.running);
 
         Checker.running = _worldManager.GenerateInitialWorld(resolution, maxTerrainHeight, waterLevel, generalSettings,
             noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator, assetManager, _plants, _burrows);
+        
+        Debug.Log(Checker.running);
 
         _running = Checker.running;
         
@@ -246,9 +250,9 @@ public class GameManager : MonoBehaviour
 
     void Check()
     {
-        if ((_worldManager.rabbitList.Count == 0 || _worldManager.foxList.Count == 0) && Checker.running == true && _running)
+        if ((_worldManager.rabbitList.Count == 0 || _worldManager.foxList.Count == 0))
         {
-            Debug.Log("Reload cause 0");
+            // Debug.Log("Reload cause 0");
             ReloadWorld();
         }
     }
