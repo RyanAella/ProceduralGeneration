@@ -39,7 +39,7 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
         {
             _timer = TimeManager.Instance;
             _worldManager = WorldManager.GetInstance();
-            
+
             _birthDate = _timer.GetCurrentDate();
             settings.lifespan = new InGameDate().CalcDate(settings.lifespan);
             _dayOfDeath = new InGameDate().CalcDate(_birthDate.AddDates(settings.lifespan));
@@ -83,7 +83,7 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
         /// <param name="controller"></param>
         public void Enter(GameObject obj, CustomAgent customAgent, CharacterController controller)
         {
-            if (customAgent.type == AgentType.Rabbit)
+            if (customAgent.type == type)
             {
                 if (!isOccupied)
                 {
@@ -99,7 +99,7 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
 
                     // Debug.Log("Enter Burrow");
                 }
-            }
+            } 
         }
 
         /// <summary>
@@ -111,20 +111,13 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
         public void Leave(GameObject obj, CustomAgent customAgent, CharacterController controller)
         {
             var prngSpawnPoints = (_lastSpawnPoint + 1) % spawnPoints.Count;
-
-            if (customAgent.type == AgentType.Rabbit)
-            {
+            //
+            // if (customAgent.type == AgentType.Rabbit)
+            // {
                 inhabitants.Remove(obj);
 
                 customAgent.isInBurrow = false;
 
-                // var posFound = false;
-                // while (!posFound)
-                // {
-                // var prngSpawnPoints = _prng.Next(spawnPoints.Count);
-                // if (prngSpawnPoints != lastSpawnPoint)
-                // {
-                
                 var pos = spawnPoints[prngSpawnPoints].transform.position;
                 pos.y -= 1;
 
@@ -135,11 +128,24 @@ namespace WorldGeneration._Scripts.Spawning.TerrainAssets
                 if (inhabitants.Count < 2) isOccupied = false;
 
                 _lastSpawnPoint = prngSpawnPoints;
-                
-                //         posFound = true;
-                //     }
-                // }
-            }
+            // }
+            // else if (customAgent.type == AgentType.Fox)
+            // {
+            //     inhabitants.Remove(obj);
+            //
+            //     customAgent.isInBurrow = false;
+            //
+            //     var pos = spawnPoints[prngSpawnPoints].transform.position;
+            //     pos.y -= 1;
+            //
+            //     Teleport(obj, controller, pos);
+            //
+            //     obj.transform.parent = null;
+            //
+            //     if (inhabitants.Count < 2) isOccupied = false;
+            //
+            //     _lastSpawnPoint = prngSpawnPoints;
+            // }
         }
 
         private void Teleport(GameObject obj, CharacterController controller, Vector3 pos)
