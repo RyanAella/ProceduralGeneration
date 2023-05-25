@@ -437,7 +437,7 @@ MonoBehaviour:
   hasBreeded: 0
   hasBurrowBuild: 0
   lastBurrow: {x: -1, y: -1, z: -1}
-  deathPenalty: 5
+  deathPenalty: -5
   lowHealthPenaltyDivider: 30
   unhealthyThreshhold: 60
   controller: {fileID: 2619528471722129941}

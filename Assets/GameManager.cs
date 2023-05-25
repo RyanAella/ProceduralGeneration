@@ -171,7 +171,7 @@ public class GameManager : MonoBehaviour
         Checker.running = _worldManager.GenerateInitialWorld(resolution, maxTerrainHeight, waterLevel, generalSettings,
             noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator, assetManager, _plants, _burrows);
         
-        Debug.Log(Checker.running);
+        //Debug.Log(Checker.running);
 
         _running = Checker.running;
         
