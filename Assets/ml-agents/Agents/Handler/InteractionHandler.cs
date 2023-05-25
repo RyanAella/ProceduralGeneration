@@ -66,7 +66,8 @@ namespace ml_agents.Agents.Handler
             }
 
             //here check if location sit possible
-            isBurrowBuildableHere = AssetManager.GetInstance().CheckLocation(transform.position, agent.type);
+            isBurrowBuildableHere = AssetManager.GetInstance().CheckLocation(transform.position, agent.type) 
+                                    && !agent.isInBurrow && !agent.hasBurrowBuild;
         }
 
         public void Eat()
@@ -155,7 +156,7 @@ namespace ml_agents.Agents.Handler
 
         public void BuildBurrow()
         {
-            if (CheckAllConditionsForBuildingBurrow())
+            if (isBurrowBuildableHere)
             {
                 AssetManager.GetInstance().BuildBurrow(gameObject, this, agent);
             }
@@ -163,11 +164,6 @@ namespace ml_agents.Agents.Handler
             {
                 agent.AddReward(penaltyForTryingToDoSomethingWithoutCorrectConditions);
             }
-        }
-
-        private bool CheckAllConditionsForBuildingBurrow()
-        {
-            return isBurrowBuildableHere && !agent.isInBurrow && !agent.hasBurrowBuild;
         }
 
         private bool CheckAllConditionsForEnteringBurrow()
