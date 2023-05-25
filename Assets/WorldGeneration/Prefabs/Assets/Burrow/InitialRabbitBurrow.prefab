@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2536998349709168676}
   m_Layer: 0
   m_Name: InitialRabbitBurrow
-  m_TagString: Burrow
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -73,7 +73,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8943784668319207991}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Check_zPlus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 7771053315302593105}
   - component: {fileID: 8058664561838828140}
   - component: {fileID: 6710752630364226323}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Burrow_roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -266,7 +266,7 @@ GameObject:
   - component: {fileID: 1604718410806822175}
   - component: {fileID: 3363937686607713831}
   - component: {fileID: 7645373204449143907}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Burrow_wall2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -360,7 +360,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7220399321317441885}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Check_zMinus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -394,7 +394,7 @@ GameObject:
   - component: {fileID: 3443190820804331557}
   - component: {fileID: 8825938112899735140}
   - component: {fileID: 3744720934674755888}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Burrow_wall3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -613,7 +613,7 @@ GameObject:
   - component: {fileID: 4199025122133347048}
   - component: {fileID: 1663892903501594961}
   - component: {fileID: 9163918294661156632}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Burrow_wall1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -710,7 +710,7 @@ GameObject:
   - component: {fileID: 6305877123775843108}
   - component: {fileID: 6953241501280154456}
   - component: {fileID: 619955581140179822}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Burrow_floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -804,7 +804,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3887047998816484957}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Check_xPlus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -900,7 +900,7 @@ GameObject:
   - component: {fileID: 4481143792365300763}
   - component: {fileID: 7875350605056149430}
   - component: {fileID: 2481440680451567932}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Burrow_wall4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -994,7 +994,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2920322876632258847}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Burrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1031,7 +1031,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2378283681010250019}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Check_xMinus
   m_TagString: Untagged
   m_Icon: {fileID: 0}

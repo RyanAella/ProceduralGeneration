@@ -82,7 +82,7 @@ namespace ml_agents.Agents.Handler
                 {
                     lastSoundDistance = Vector3.Distance(transform.position, loudAgent.transform.position);
                     lastSoundDirection = loudAgent.transform.position - transform.position;
-                    Debug.Log("Sound!");
+                    //Debug.Log("Sound!");
                     soundHasChanged = true;
                 }
 
@@ -90,7 +90,7 @@ namespace ml_agents.Agents.Handler
                 {
                     lastEnemySoundDistance = Vector3.Distance(transform.position, loudAgent.transform.position);
                     lastEnemySoundDirection = loudAgent.transform.position - transform.position;
-                    Debug.Log("Enemy sound!");
+                    //Debug.Log("Enemy sound!");
                     enemySoundHasChanged = true;
                 }
             }

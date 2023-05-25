@@ -50,19 +50,35 @@ namespace ml_agents.Agents.Handler
                 if (canEat)
                 {
                     detectedFood = firstHit;
+
+                    canDrink = false;
+                    isStandingBeforeBurrow = false;
+                    detectedBurrow = null;
                 }
-                canDrink = firstHit.layer == LayerMask.NameToLayer("Water");
+
+                if (firstHit.layer == LayerMask.NameToLayer("Water"))
+                {
+                    canDrink = true;
+
+                    canEat = false;
+                    isStandingBeforeBurrow = false;
+                    detectedBurrow = null;
+                }
+                
 
                 isStandingBeforeBurrow = firstHit.CompareTag("Burrow");
                 if (isStandingBeforeBurrow)
                 {
                     detectedBurrow = firstHit;
+                    canDrink = false;
+                    canEat = false;
                 }
             } else
             {
                 canEat = false;
                 canDrink = false;
-                isStandingBeforeBurrow = false; ;
+                isStandingBeforeBurrow = false;
+                detectedBurrow = null;
             }
 
             //here check if location sit possible
@@ -129,7 +145,7 @@ namespace ml_agents.Agents.Handler
         {
             if (CheckAllConditionsForEnteringBurrow())
             {
-                detectedBurrow.TryGetComponent<Burrow>(out var burrow);
+                detectedBurrow.transform.parent.TryGetComponent<Burrow>(out var burrow);
                 burrow.Enter(gameObject, agent, agent.controller);
             }
             else
@@ -170,7 +186,7 @@ namespace ml_agents.Agents.Handler
         {
             if (isStandingBeforeBurrow)
             {
-                detectedBurrow.TryGetComponent<Burrow>(out var burrow);
+                detectedBurrow.transform.parent.TryGetComponent<Burrow>(out var burrow);
                 return burrow.inhabitants.Count < 2;
             }
 

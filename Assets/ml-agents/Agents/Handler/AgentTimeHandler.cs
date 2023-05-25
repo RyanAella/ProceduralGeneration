@@ -34,6 +34,7 @@ namespace ml_agents.Agents.Handler {
 
         void WeekOver()
         {
+            Debug.Log("Week over");
             CheckHealthCondition();
         }
 
