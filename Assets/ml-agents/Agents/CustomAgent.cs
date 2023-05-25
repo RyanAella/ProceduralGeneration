@@ -255,6 +255,9 @@ namespace ml_agents.Agents
         public void BlockMovementForSeconds(float sec)
         {
             canMove = false;
+            movement.walkSpeed = 0;
+            movement.headRotationX = 0;
+            movement.headRotationY = 0;
             blockMovementSeconds = sec;
             blockTimerActive = true;
         }

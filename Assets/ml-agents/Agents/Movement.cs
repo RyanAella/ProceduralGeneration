@@ -64,27 +64,12 @@ namespace ml_agents.Agents
         void Update()
         {
             animator.SetFloat("speed", walkSpeed);
-            HandleMovementAndRotation();
-            AddGravity();
-            //calculateAndAddAngelBasedOnGround();
-            HandleHeadRotation();
-        }
-
-        //TODO: Not working
-        private void calculateAndAddAngelBasedOnGround()
-        {
-            Ray ray = new Ray(transform.position, Vector3.down);
-            Debug.DrawRay(ray.origin, ray.direction * 5, Color.red);
-
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, groundDistance, groundLayer))
+            if (_agent.canMove)
             {
-                Debug.Log(hit.normal.z);
-                Quaternion rotation = transform.rotation;
-                rotation.x = hit.normal.z;
-                transform.rotation = rotation;
+                HandleHeadRotation();
+                HandleMovementAndRotation();
             }
+            AddGravity();
         }
 
         private void AddGravity()
