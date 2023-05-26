@@ -412,30 +412,58 @@ namespace WorldGeneration._Scripts.Spawning
         {
             if (handler.isBurrowBuildableHere)
             {
-                var settings = Burrows.BurrowsList[2].assetPrefab;
+                GameObject burrowAssetPrefab;
+                // var settings = Burrows.BurrowsList[2].assetPrefab;
+                // var burrowAssetPrefab = Burrows.Burrow.assetPrefab;
 
-                var burrowAsset =
-                    Object.Instantiate(settings, interactingObject.transform.position, Quaternion.identity);
+                // var burrowAsset =
+                //     Object.Instantiate(burrowAssetPrefab, interactingObject.transform.position, Quaternion.identity);
 
-                burrowAsset.TryGetComponent(out Burrow burrow);
-                burrow.type = agent.type;
+                // burrowAsset.TryGetComponent(out Burrow burrow);
+                // burrow.type = agent.type;
 
-                if (burrow.type == AgentType.Rabbit)
+                if (agent.type == AgentType.Rabbit)
                 {
+                    burrowAssetPrefab = Burrows.BurrowsList[0].assetPrefab;
+                    var burrowAsset =
+                        Object.Instantiate(burrowAssetPrefab, interactingObject.transform.position, Quaternion.identity);
+                    
+                    burrowAsset.TryGetComponent(out Burrow burrow);
+                    burrow.type = agent.type;
+                    
                     burrow.transform.GetChild(0).localScale = new Vector3(1, 0.4f, 1);
                     burrow.transform.GetChild(1).localScale = new Vector3(3, 3, 3);
+                    
+                    burrowAsset.transform.SetParent(Burrows.BurrowParents[Burrows.BurrowsList[0]]);
+
+                    Burrows.Burrow.assets.Add(burrowAsset);
+
+                    _worldManager.burrowList.Add(burrowAsset);
                 }
-                else if (burrow.type == AgentType.Fox)
+                else if (agent.type == AgentType.Fox)
                 {
+                    burrowAssetPrefab = Burrows.BurrowsList[1].assetPrefab;
+                    var burrowAsset =
+                        Object.Instantiate(burrowAssetPrefab, interactingObject.transform.position, Quaternion.identity);
+                    
+                    burrowAsset.TryGetComponent(out Burrow burrow);
+                    burrow.type = agent.type;
+                    
                     burrow.transform.GetChild(0).localScale = new Vector3(2, 0.8f, 2);
                     burrow.transform.GetChild(1).localScale = new Vector3(5, 5, 5);
+                    
+                    burrowAsset.transform.SetParent(Burrows.BurrowParents[Burrows.BurrowsList[1]]);
+
+                    Burrows.Burrow.assets.Add(burrowAsset);
+
+                    _worldManager.burrowList.Add(burrowAsset);
                 }
 
-                burrowAsset.transform.SetParent(Burrows.BurrowParents[Burrows.BurrowsList[2]]);
-
-                Burrows.BurrowsList[2].assets.Add(burrowAsset);
-
-                _worldManager.burrowList.Add(burrowAsset);
+                // burrowAsset.transform.SetParent(Burrows.BurrowParents[Burrows.Burrow]);
+                //
+                // Burrows.Burrow.assets.Add(burrowAsset);
+                //
+                // _worldManager.burrowList.Add(burrowAsset);
             }
         }
     }
