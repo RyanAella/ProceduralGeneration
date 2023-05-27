@@ -47,6 +47,12 @@ namespace ml_agents.Agents.Handler
                 GameObject firstHit = hits[0].collider.gameObject;
 
                 canEat = firstHit.CompareTag(foodTag);
+
+                if (agent.type == AgentType.Fox)
+                {
+                    firstHit = firstHit.transform.parent.gameObject;
+                }
+
                 if (canEat)
                 {
                     detectedFood = firstHit;
@@ -90,6 +96,7 @@ namespace ml_agents.Agents.Handler
         {
             if (canEat)
             {
+                Debug.Log(agent.type + " - " + "ate succesful");
                 agent.isEating = true;
 
                 CustomAgent toEatAgent = detectedFood.GetComponent<CustomAgent>();
@@ -112,6 +119,7 @@ namespace ml_agents.Agents.Handler
         {
             if (canDrink)
             {
+                Debug.Log(agent.type + " - " + "drunk succesful");
                 agent.isDrinking = true;
                 agent.BlockMovementForSeconds(0.5f);
 
@@ -130,6 +138,7 @@ namespace ml_agents.Agents.Handler
         {
             if (CheckAllConditionsForBreeding())
             {
+                Debug.Log(agent.type + " - " + "breeded succesful");
                 agent.hasBreeded = true;
                 agent.AddReward(rewardForBreeding);
                 transform.parent.TryGetComponent<Burrow>(out Burrow burrow);
@@ -174,6 +183,7 @@ namespace ml_agents.Agents.Handler
         {
             if (isBurrowBuildableHere)
             {
+                Debug.Log(agent.type + " - " + "builded burrow succesful");
                 AssetManager.GetInstance().BuildBurrow(gameObject, this, agent);
             }
             else
