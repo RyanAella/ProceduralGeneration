@@ -1,13 +1,13 @@
 # Projekt im Kurs Labor Games im SS23
 
-Projektname: 	"Nature's Symphony: Procedurally Generated Fox and Hare Ecosystem"
+Projektname: "Nature's Symphony: Procedurally Generated Fox and Hare Ecosystem"
 
 ### Teammitglieder:	
 
 - Alexander Bleisinger (205042)
 - Rebecca Biebl (205037)
 
-## Besonderheiten des Projekts (z.B. wie es gestartet und bedient werden muss):
+## Besonderheiten des Projekts / Bedienung:
 
 ## Besondere Leistungen, Herausforderungen und gesammelte Erfahrungen während des Projekts. Was hat die meiste Zeit gekostet?
 
@@ -55,10 +55,6 @@ ob das Training erfolgreich war.
 	- Quirky Series - Animals Mega Pack Vol 1 - https://assetstore.unity.com/packages/3d/characters/animals/quirky-series-animals-mega-pack-vol-1-137259
 	- 
 
-## Link zu einem kurzen Video (ca. 60-120s), welches das Projekt und seine Features in Action zeigt
+## Video
 
 	- 
-
-## Link zum Projekt falls zu groß für Upload in Ilias.
-
-	- https://github.com/RyanAella/ProceduralGeneration
