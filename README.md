@@ -8,7 +8,7 @@ Projektname: "Nature's Symphony: Procedurally Generated Fox and Hare Ecosystem"
 - Rebecca Biebl (205037)
 
 ## Besonderheiten des Projekts / Bedienung:
-- Im Branch ai-support-settings, wurden eineige Features entfernt, wodurch es der KI erelichtert werden soll, zu trainieren
+- Im Branch ai-support-settings, wurden einige Features entfernt, wodurch es der KI erleichtert werden soll, zu trainieren.
 
 ## Besondere Leistungen, Herausforderungen und gesammelte Erfahrungen während des Projekts. Was hat die meiste Zeit gekostet?
 
