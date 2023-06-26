@@ -1,6 +1,119 @@
 ﻿# Changelog World Generation
 
 
+## [1.9.1] - 2023-06-25
+## Fixed
+- Error in saving data from menu
+- First Person character always falling through ground
+
+
+## [1.9.0] - 2023-06-23
+## Added
+- FlyCam
+- It is possible to switch between FlyCam and FirstPerson
+
+
+## [1.8.0] - 2023-06-21
+## Added
+- First Person Camera
+- First Person Movement
+
+
+## [1.7.5] - 2023-06-20
+# Changed
+- Counter for rabbits and foxes
+  - if one counter reaches 0 the level gets reloaded
+
+ 
+## [1.7.4] - 2023-06-19
+- Trying to solve problems with carrots
+
+
+## [1.7.3] - 2023-06-17
+## Added
+- float variable for height of mountain area
+- DeathFloor, if Agents fall through the terrain and hit the DeathFloor they die
+
+## Changed 
+- Agents are now instantiated only after generation is complete
+
+
+## [1.7.2] - 2023-06-16
+## Changed
+- All scripts are now in one global folder/directory
+- Reworked Reproduce()
+- Fixed clock
+- Fixed RespawnPlants()
+
+
+## [1.7.1] - 2023-06-14
+## Changed
+- RespawnPlants now only respawns carrots
+- Radius of burrow
+- Spawn procedure for Grass and Reed
+
+
+## [1.7.0] - 2023-06-09
+## Added
+- Main Menu
+  - seed
+  - maxTerrainHeight
+  - resolution
+
+## Changed
+- AssetManager
+  - inMountainRegion
+
+
+## [1.6.0] -2023-06-07
+## Added
+- Date display
+
+
+## [1.5.2] - 2023-06-06
+## Added
+- Missing code in Breed()
+
+
+## [1.5.1] - 2023-06-03
+## Added
+- Unload Scene
+
+
+## [1.5.0] - 2023-06-02
+## Changed
+- Moved Rabbit/Fox/Burrow lists to separate file and changed them to Dictionaries
+  - agents are saved with their ID as key
+- ID initialization for agents now depends on a counter and is no loner a random number
+  - each agent has its own counter
+
+## [1.4.0] - 2023-05-31
+## Added
+- numberOfPlacementAttempts added to asset settings
+- Collider to water
+  - changed ProjectSettings so Raycasts can hit but collider is not collidable
+
+
+## [1.3.0] - 2023-05-30
+## Added
+- Separate prefabs for rabbit and ox burrow
+- Break counter for asset spawning
+
+## Changed
+- deleted delay before carrot gets destroyed
+- Burrow / Carrot:
+  - Check if object needs to be destroyed now only when day is over
+  
+## Removed
+- Trees, reed and grass are no longer able to die or reproduce
+
+
+## [1.2.3] - 2023-05-27
+## Changed
+- Kill():
+  - Check if Agent is in list -> then delete
+
+
 ## [1.2.2] - 2023-05-22
 ## Changed
 - localScale: Fox, Rabbit, Burrow
@@ -134,7 +247,7 @@
 ## Added
 - Classes:
   - TimeManager
-    - New data struct IngameDate
+    - New data struct InGameDate
     - ToString method
     - Check for correct input
     - 3 different timeScales
@@ -152,7 +265,7 @@
 ## Added
 - Classes:
   - TimeManager
-    - Handles ingame time
+    - Handles inGame time
 
 
 ## [0.2.0] - 2023-03-19

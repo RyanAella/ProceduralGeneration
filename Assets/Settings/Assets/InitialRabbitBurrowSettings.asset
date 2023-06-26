@@ -12,16 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0055dd36c5f35cb4b928c4edc4e2d6b8, type: 3}
   m_Name: InitialRabbitBurrowSettings
   m_EditorClassIdentifier: 
-  assetPrefab: {fileID: 231798731337713698, guid: 91ae73ef88612564388dd9181f40cf37, type: 3}
+  burrowPrefabs:
+  - {fileID: 231798731337713698, guid: 91ae73ef88612564388dd9181f40cf37, type: 3}
   parent:
   - {fileID: 2748929397329019754, guid: 282f7c104cf0edc4d8584b4c9ed1cf01, type: 3}
-  minNumber: 1
-  radius: 4.5868177
+  maxNumber: 7
+  numberOfPlacementAttempts: 500
+  radius: 13.000002
   initialInhabitants: 2
   lifespan:
     day: 0
-    week: 0
     month: 0
     year: 2
   assets:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 0}

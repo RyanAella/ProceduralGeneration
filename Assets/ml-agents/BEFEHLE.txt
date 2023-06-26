@@ -1,7 +1,7 @@
 
 Python Environment:
 
-C:\Users\Alex\python-envs\mlAgent-env\Scripts\activate
+C:\Users\student\python-envs\training-env\Scripts\activate
 
 tensorboard --logdir results
 
@@ -16,3 +16,22 @@ mlagents-learn Joined.yaml --initialize-from=15Mio --run-id=finalMaze
 
 
 mlagents-learn Rabbit.yaml --run-id=bugs-Test01
+
+
+
+mlagents-learn Animals2.yaml --initialize-from=ExodusPart12 --run-id=swiper01
+
+mlagents-learn Animals2.yaml --run-id=Gemini32Part01
+
+
+--run-id=knowsAllRotationEtc-01
+
+
+
+
+mlagents-learn Animals4.yaml --run-id=fixedDrowningHeight-01 --resume
+
+
+onnxInstalled-01
+
+mlagents-learn Animals4.yaml --run-id=onnxInstalled-01 --resume

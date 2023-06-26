@@ -12,7 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d79c052f0272f6408e337316b3c3cad, type: 3}
   m_Name: GeneralSettings
   m_EditorClassIdentifier: 
-  squareSize: 75
+  seed: 16,6202536000001
+  useRandomSeed: 1
+  maxTerrainHeight: 50
+  resolution: {x: 12, y: 12}
+  squareSize: 30
   maxBorderHeight: 50
-  initialRabbitBurrows: 1
-  initialFoxBurrows: 1
+  watchMode: 0
+  isStartingFromMenu: 0

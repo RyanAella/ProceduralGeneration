@@ -299,13 +299,13 @@ GameObject:
   - component: {fileID: 4008355099703617862}
   - component: {fileID: 8285904914508243193}
   - component: {fileID: 4246055255610007026}
-  - component: {fileID: 5507215104209848024}
   - component: {fileID: 7725572999302780172}
+  - component: {fileID: 5507215104209848024}
   - component: {fileID: 6665658062019873143}
   - component: {fileID: 6403304985229036686}
   m_Layer: 0
   m_Name: Rabbit_Model
-  m_TagString: Untagged
+  m_TagString: Rabbit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -319,7 +319,7 @@ Transform:
   m_GameObject: {fileID: 3780511893139373963}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 624803142018685314}
@@ -407,7 +407,7 @@ MonoBehaviour:
   headRotationX: 0
   headRotationY: 0
   pointToLookAt: {fileID: 1638289293191547675}
-  staminaReductionMovement: 1.66
+  staminaReductionMovement: 1
   rotationMultiplier: 80
   walkSpeedMultiplier: 45
   headRotationMultiplier: 15
@@ -427,7 +427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 29
+    VectorObservationSize: 23
     NumStackedVectorObservations: 10
     m_ActionSpec:
       m_NumContinuousActions: 4
@@ -461,27 +461,25 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
+  id: 0
   type: 0
-  canMove: 1
+  canInteract: 1
   isAdult: 0
   hearsEnemy: 0
+  dead: 0
   isInBurrow: 0
   health: 100
   stamina: 100
   thirst: 0
   hunger: 0
-  isEating: 0
-  isDrinking: 0
   thresholdHungerThirstForRecovery: 50
-  healthRecoveryAmount: 3
-  stamineRecoveryAmount: 5
-  nutritionValue: 8
-  hasBreeded: 0
+  healthRecoveryAmount: 0.3
+  staminaRecoveryAmount: 0.75
+  nutritionValue: 10
+  hasBred: 0
   hasBurrowBuild: 0
   lastBurrow: {x: -1, y: -1, z: -1}
-  deathPenalty: -5
-  lowHealthPenaltyDivider: 30
-  unhealthyThreshhold: 60
+  deathPenalty: -8
   controller: {fileID: 2800955171979198396}
   movement: {fileID: 5914910881219264738}
   protectionHandler: {fileID: 5507215104209848024}
@@ -504,7 +502,7 @@ MonoBehaviour:
   ageWhenAdult: 4
   hungerIncreasePerMonth: 20
   thirstIncreasePerMonth: 20
-  rewardSurvivngMonth: 2
+  rewardSurvivingMonth: 2
 --- !u!114 &8285904914508243193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -519,8 +517,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nose: {fileID: 7706844991045277604}
   isDrowning: 0
-  drowningHeight: 0
-  decreaseHealtVerySeconds: 3
+  drowningHeight: 7.5
+  decreaseHealthVerySeconds: 3
   healthDecreaseForDrowning: 4
 --- !u!114 &4246055255610007026
 MonoBehaviour:
@@ -543,13 +541,35 @@ MonoBehaviour:
   foodTag: Carrot
   detectedFood: {fileID: 0}
   canDrink: 0
-  thirstDecreasePerDrink: 1
+  thirstDecreasePerDrink: 5
   canBuildBurrow: 0
   isBurrowBuildableHere: 0
   isStandingBeforeBurrow: 0
   detectedBurrow: {fileID: 0}
-  rewardForBreeding: 1
-  penaltyForTryingToDoSomethingWithoutCorrectConditions: -0.01
+  rewardForBreeding: 5
+  rewardForDoingSomethingCorrect: 1
+  penaltyForTryingToDoSomethingWithoutCorrectConditions: -1
+  debugColor: '#1d95ff'
+  agent: {fileID: 2766421925992730414}
+--- !u!114 &7725572999302780172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3780511893139373963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3e9acf10ced151459bfda4780de1d1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lastEnemySoundDistance: -1
+  lastEnemySoundDirection: {x: 0, y: 0, z: 0}
+  enemy: 1
+  soundRangeMultiplier: 50
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!114 &5507215104209848024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -566,29 +586,7 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 128
-  detectionRange: 20
-  protectionLevel: 0
---- !u!114 &7725572999302780172
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3780511893139373963}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3e9acf10ced151459bfda4780de1d1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lastSoundDistance: -1
-  lastSoundDirection: {x: 0, y: 0, z: 0}
-  lastEnemySoundDistance: -1
-  lastEnemySoundDirection: {x: 0, y: 0, z: 0}
-  enemy: 1
-  soundRangeMultiplier: 33
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 128
+  detectionRange: 40
 --- !u!114 &6665658062019873143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -710,14 +708,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5003649441990605472}
-  m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
+  m_LocalRotation: {x: 0.14780942, y: 0, z: 0, w: 0.9890159}
   m_LocalPosition: {x: 0, y: -0.58, z: 1.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 242560369365871309}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 17, y: 0, z: 0}
 --- !u!1 &6011071402127876466
 GameObject:
   m_ObjectHideFlags: 0
@@ -783,7 +781,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6503967988131449080}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.198, z: 0.208}
+  m_LocalPosition: {x: 0, y: 0.22, z: 0.21599999}
   m_LocalScale: {x: 0.14285713, y: 0.14285713, z: 0.14285713}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1118,7 +1116,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8490412122534220090}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.31, z: 1.17}
+  m_LocalPosition: {x: 0, y: 0.01, z: 0.94}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1149,7 +1147,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8864905013817356572}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.198, z: 0.496}
+  m_LocalPosition: {x: 0, y: 0.22, z: 0.504}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []

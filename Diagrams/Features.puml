@@ -1,0 +1,165 @@
+﻿@startuml Rabbit
+
+<style>
+    activityDiagram {
+        FontStyle bold
+    }
+
+    .Implemented {
+        LineColor Green
+        LineThickness 4
+    }
+
+    .SemiImplemented {
+        LineColor Orange
+        LineThickness 4
+    }
+
+    .Wip {
+        LineColor #FF5555 /' slightly lighter red '/
+        LineThickness 4
+    }
+
+    .Base {
+        BackgroundColor LightGrey
+    }
+
+    .Mesh {
+        BackgroundColor YellowGreen
+    }
+
+    .Asset {
+        BackgroundColor Yellow
+    }
+
+</style>
+
+start
+    split
+        <<Implemented>> <<Base>> :Ground;
+            split
+                <<Implemented>> <<Base>> :Land;
+                    split
+                        <<Implemented>> <<Mesh>> :Mesh;
+                        detach
+                    split again
+                        <<Implemented>> <<Asset>> :Assets;
+                        split
+                            <<Implemented>> <<Asset>> :Carrots;                            
+                        split again
+                            <<Implemented>> <<Asset>> :Trees;                            
+                        split again
+                            <<Implemented>> <<Asset>> :Reed;                            
+                        split again
+                            <<Implemented>> <<Asset>> :Grass;                    
+                        split again
+                            <<Implemented>> <<Asset>> :Burrows;
+                            split
+                                <<Implemented>> <<Asset>> :Rabbit;                                
+                            split again
+                                <<Implemented>> <<Asset>> :Fox;                                
+                            end split 
+                        end split
+                        <<Wip>> :Reproduction;
+                        detach
+                    end split
+        split again
+            <<Implemented>> <<Base>> :Water;
+                split
+                    <<Implemented>> <<Mesh>> :Mesh;
+                    detach
+                split again
+                    <<SemiImplemented>> :WaterShader;
+                    detach
+                end split
+        end split
+    split again
+        <<Implemented>> <<Base>> :Timer;
+            <<Implemented>> <<Asset>> :Clock;
+            detach
+    split again
+        <<Implemented>> <<Base>> :Menu;
+        detach
+    split again
+        <<Implemented>> :PlayerInput;
+            split
+            <<Implemented>> <<Asset>> :FlyCam;
+            detach
+            split again
+            <<Implemented>> <<Asset>> :First Person Controller;
+            detach
+            end split
+    end split
+
+    
+
+
+
+'<<Implemented>> <<Base>> :Indor/Outdoor;
+'split
+'    <<Implemented>> <<Base>> :Indoor;
+'    <<Implemented>> <<Biom>> :Mountain;
+'    split
+'        <<Implemented>> <<Asset>> :Massive Rock;
+'        detach
+'    split again
+'        <<Implemented>> <<Asset>> :Cave;
+'        detach
+'    split again
+'        <<Implemented>> <<Asset>> :Stone;
+'        detach
+'    split again
+'        <<SemiImplemented>> <<Asset>> :Water;
+'        detach
+'    end split
+'split again
+'    <<Implemented>> <<Base>> :Outdoor;
+'    split
+'        <<Implemented>> <<Biom>> :Woods;
+'        split
+'            <<Implemented>> <<Asset>> :Trees;
+'            detach
+'        split again
+'            <<Implemented>> <<Asset>> :Bushes;
+'            detach
+'        split again
+'            <<Implemented>> <<Asset>> :Stone;
+'            detach
+'        split again
+'            <<Implemented>> <<Asset>> :Grass;
+'            detach
+'        split again
+'            <<SemiImplemented>> <<Asset>> :Water;
+'            detach
+'        end split
+'    split again
+'        <<Implemented>> <<Biom>> :Meadows;
+'        split
+'            <<Implemented>> <<Asset>> :Trees;
+'            detach
+'        split again
+'            <<Implemented>> <<Asset>> :Bushes;
+'            detach
+'        split again
+'            <<Implemented>> <<Asset>> :Stone;
+'            detach
+'        split again
+'            <<Implemented>> <<Asset>> :Grass;
+'            detach
+'        split again
+'            <<SemiImplemented>> <<Asset>> :Water;
+'            detach
+'        end split        
+'    split again
+'        <<Wip>> <<Biom>> :Settlement;
+'        split
+'            <<Wip>> <<Asset>> :Village;
+'            detach
+'        split again
+'            <<Wip>> <<Asset>> :Fields;
+'            detach
+'        end split
+'    end split
+'end split
+
+@enduml

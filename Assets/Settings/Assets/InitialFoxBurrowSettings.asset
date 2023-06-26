@@ -12,16 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0055dd36c5f35cb4b928c4edc4e2d6b8, type: 3}
   m_Name: InitialFoxBurrowSettings
   m_EditorClassIdentifier: 
-  assetPrefab: {fileID: 231798731337713698, guid: 4967c24e99fef9c4ab13fd236c8c6835, type: 3}
+  burrowPrefabs:
+  - {fileID: 231798731337713698, guid: 4967c24e99fef9c4ab13fd236c8c6835, type: 3}
   parent:
   - {fileID: 2748929397329019754, guid: c29178bc5e2c8b6478e5829aedd7784c, type: 3}
-  minNumber: 1
-  radius: 8.1736355
+  maxNumber: 6
+  numberOfPlacementAttempts: 500
+  radius: 21.000004
   initialInhabitants: 2
   lifespan:
     day: 0
-    week: 0
     month: 0
     year: 2
   assets:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 0}

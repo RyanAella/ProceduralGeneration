@@ -1,51 +1,79 @@
+/*
+* Copyright (c) mmq
+*/
+
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using InGameTime;
-using ml_agents.Agents.fox;
-using ml_agents.Agents.rabbit;
-using Settings;
+using _Scripts.Cameras.FirstPerson;
+using _Scripts.Cameras.FlyCam;
+using _Scripts.InGameTime;
+using _Scripts.ml_agents.Agents.Fox;
+using _Scripts.ml_agents.Agents.Rabbit;
+using _Scripts.WorldGeneration;
+using _Scripts.WorldGeneration.Helper;
+using _Scripts.WorldGeneration.ScriptableObjects;
+using _Scripts.WorldGeneration.Spawning;
+using _Scripts.WorldGeneration.TerrainGeneration;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using WorldGeneration._Scripts;
-using WorldGeneration._Scripts.Helper;
-using WorldGeneration._Scripts.ScriptableObjects;
-using WorldGeneration._Scripts.Spawning;
-using WorldGeneration._Scripts.TerrainGeneration;
 
 public class GameManager : MonoBehaviour
 {
-    // [SerializeField]
-    [Header("General Settings")] [SerializeField]
-    private Vector2Int resolution = new(128, 128);
+    #region Variables
 
-    [SerializeField] private float maxTerrainHeight = 180.0f;
+    // public
+    public static GameManager Instance;
+
+    // [SerializeField]
+    [Header("General Settings")] 
+    [Tooltip("Should be between 1 and ")]
+    [SerializeField] private Vector2Int resolution = new(16, 16);
+
+    [Range(25, 150)][SerializeField] private float maxTerrainHeight = 50.0f;
 
     [Tooltip("The height of the water level as a percentage of the maximum terrain height.")]
     [Range(0.0f, 1.0f)]
     [SerializeField]
     private float waterLevel = 0.3f;
 
-    [Header("Seed")] [SerializeField] private bool useRandomSeed;
-    [SerializeField] private string seed = "Hello World!";
+    [Tooltip("The height of the mountain area as a percentage of the maximum terrain height.")]
+    [Range(0.0f, 1.0f)]
+    [SerializeField]
+    private float mountainArea = 0.99f;
 
-    [SerializeField] private GeneralSettings generalSettings;
+    [Space(10)] [Header("Seed")] [SerializeField]
+    private bool useRandomSeed;
+
+    [SerializeField] private string seed = "Labor Games 2023";
+
+    [Space(10)] [Header("Terrain Generation")] 
+    [SerializeField] public GeneralSettings generalSettings;
+    [SerializeField] public GeneralSettings generalMenuSettings;
+
     [SerializeField] private NoiseSettings noiseSettings;
     [SerializeField] private GroundGenerator groundGenerator;
     [SerializeField] private WaterGenerator waterGenerator;
 
-    [SerializeField] private AssetManager assetManager;
+    [Space(10)] [Header("Asset Generation")]
+    [Tooltip("A list of plants to generate.")] 
+    [SerializeField] private List<PlantSettings> plantsList;
+    [SerializeField] private List<PlantSettings> plantsListFromMenu;
 
-    [Tooltip("A list of plants to generate.")] [SerializeField]
-    private List<PlantSettings> plantsList;
-
-    [Tooltip("A list of burrows to generate.")] [SerializeField]
-    private List<BurrowSettings> initialBurrowsList;
+    [Tooltip("A list of burrows to generate.")] 
+    [SerializeField] private List<BurrowSettings> initialBurrowsList;
+    [SerializeField] private List<BurrowSettings> initialBurrowsListFromMenu;
 
     [Tooltip("The burrow to generate.")] [SerializeField]
     private BurrowSettings burrow;
 
-    // public
-    public static GameManager Instance;
+    [Space(10)] [Header("Watcher")] 
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private GameObject firstPerson;
+    [SerializeField] private FlyCam flyCam;
+
+    private AssetManager _assetManager;
+    
+    private GeneralSettings _settings;
+
     private Dictionary<BurrowSettings, Transform> _burrowParents;
     private Burrows _burrows;
     private bool _burrowsGenerated;
@@ -61,14 +89,18 @@ public class GameManager : MonoBehaviour
     private Plants _plants;
     private bool _plantsGenerated;
 
-    private static bool _running = false;
-    private bool _reloading = true;
-
     private bool _terrainGenerated;
 
     // private
     private TimeManager _timer;
     private WorldManager _worldManager;
+    private bool _initialWorldGenerated;
+    private GameObject _flyCam;
+    private GameObject _fps;
+
+    #endregion
+
+    #region Unity Methods
 
     private void Awake()
     {
@@ -77,183 +109,216 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
         Instance = this;
     }
 
     private void Start()
     {
         _worldManager = WorldManager.GetInstance();
-        assetManager = AssetManager.GetInstance();
-        
-        Debug.Log("Starting");
+        _assetManager = AssetManager.GetInstance();
 
-        GenerateInitialWorld();
-    }
+        Checker.BurrowList = new List<GameObject>();
 
-    // Update is called once per frame
-    private void Update()
-    {
-        // Only for Debugging
-        // if (Input.GetKeyDown(KeyCode.P) && _running)
-        // {
-        //     _timer.Stop();
-        //     _running = false;
-        // }
-        // else if (Input.GetKeyDown(KeyCode.P) && !_running)
-        // {
-        //     _timer.Resume();
-        //     _running = true;
-        // }
-        //
-        // if (Input.GetKeyDown(KeyCode.K) && _running)
-        // {
-        //     var rabbits = _worldManager.rabbitList;
-        //     for (int i = 0; i < rabbits.Count; i++)
-        //     {
-        //         rabbits[i].TryGetComponent<CustomAgent>(out var agent);
-        //         _worldManager.rabbitList.Remove(rabbits[i]);
-        //         agent.DestroyAgent();
-        //     }
-        // }
+        Debug.Log("<color=#7dff33> Starting</color>");
 
-        if (Input.GetKeyDown(KeyCode.Alpha1) && _running) _timer.SetTimeScale(1.0f);
-
-        if (Input.GetKeyDown(KeyCode.Alpha2) && _running) _timer.SetTimeScale(2.0f);
-
-        if (Input.GetKeyDown(KeyCode.Alpha3) && _running) _timer.SetTimeScale(3.0f);
-
-        if (Input.GetKeyDown(KeyCode.R) && /*_running*/ Checker.running)
+        if (GenerateInitialWorld())
         {
-            _running = false;
-            ReloadWorld();
+            Checker.Running = true;
+            _timer.BeginTimer();
         }
 
-        TimeManager.OnMonthChanged += RespawnPlants;
-
-        if (Checker.running)
-        {
-            Check();
-        }
+        // Subscribe();
     }
 
-    private void GenerateInitialWorld()
+    /// <summary>
+    ///     Generate the initial world.
+    /// </summary>
+    /// <returns></returns>
+    private bool GenerateInitialWorld()
     {
-        Checker.running = false;
-        _running = false;
-        
-        _worldManager.burrowList = new List<GameObject>();
-        _worldManager.rabbitList = new List<GameObject>();
-        _worldManager.foxList = new List<GameObject>();
+        // init
+        Checker.Running = false;
+        Checker.RabbitID = 0;
+        Checker.FoxID = 0;
 
         _timer = TimeManager.Instance;
 
-        // Check if a random seed is wanted
-        if (useRandomSeed) seed = Time.realtimeSinceStartupAsDouble.ToString();
-
-        _noiseWithClamp.NoiseGenerator = new NoiseGenerator(seed);
-        _noiseWithClamp.ValueClamp = new ValueClamp();
-
-        _plants = new Plants
+        if (Checker.IsStartingFromMenu)
         {
-            PlantsList = plantsList,
-            PlantParents = _plantParents
-        };
+            _noiseWithClamp.NoiseGenerator = new NoiseGenerator(generalMenuSettings.seed);
+            _noiseWithClamp.ValueClamp = new ValueClamp();
+            
+            _plants = new Plants
+            {
+                PlantsList = plantsListFromMenu,
+                PlantParents = _plantParents
+            };
 
-        _burrows = new Burrows
-        {
-            BurrowsList = initialBurrowsList,
-            Burrow = burrow,
-            BurrowParents = _burrowParents
-        };
-        
-        // Debug.Log(Checker.running);
-
-        Checker.running = _worldManager.GenerateInitialWorld(resolution, maxTerrainHeight, waterLevel, generalSettings,
-            noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator, assetManager, _plants, _burrows);
-        
-        // Debug.Log(Checker.running);
-
-        _running = Checker.running;
-        
-        if (Checker.running)
-            _timer.BeginTimer();
+            _burrows = new Burrows
+            {
+                BurrowsList = initialBurrowsListFromMenu,
+                Burrow = burrow,
+                BurrowParents = _burrowParents
+            };
+            
+            _initialWorldGenerated = _worldManager.GenerateInitialWorld(generalMenuSettings.resolution, generalMenuSettings.maxTerrainHeight, waterLevel,
+                mountainArea, generalMenuSettings, noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator,
+                _assetManager, _plants, _burrows, firstPerson, flyCam, mainCamera);
+        }
         else
-            Debug.Log("Error while generating world");
+        {            
+            // Check if a random seed is wanted
+            if (useRandomSeed) seed = Time.realtimeSinceStartupAsDouble.ToString();
+            
+            _noiseWithClamp.NoiseGenerator = new NoiseGenerator(seed);
+            _noiseWithClamp.ValueClamp = new ValueClamp();
+            
+            _plants = new Plants
+            {
+                PlantsList = plantsList,
+                PlantParents = _plantParents
+            };
+
+            _burrows = new Burrows
+            {
+                BurrowsList = initialBurrowsList,
+                Burrow = burrow,
+                BurrowParents = _burrowParents
+            };
+            
+            _initialWorldGenerated = _worldManager.GenerateInitialWorld(resolution, maxTerrainHeight, waterLevel,
+                mountainArea, generalSettings, noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator,
+                _assetManager, _plants, _burrows, firstPerson, flyCam, mainCamera);
+        }
+
+        if (!_initialWorldGenerated) Debug.Log("Error while generating world");
+
+        return _initialWorldGenerated;
     }
 
+    /// <summary>
+    ///     Subscribe to InGameTime events.
+    /// </summary>
+    private void Subscribe()
+    {
+        TimeManager.OnDayChanged += Check;
+        TimeManager.OnMonthChanged += RespawnPlants;
+    }
+
+    /// <summary>
+    ///     Reload the world.
+    /// </summary>
     private void ReloadWorld()
     {
-        Checker.running = false;
-        _running = false;
-        
-        foreach (var rabbit in _worldManager.rabbitList)
-        {
-            rabbit.TryGetComponent<AgentRabbit>(out var agent);
-            agent.DestroyAgent();
-        }
+        Debug.Log("<color=#7dff33>Reload</color>");
+        Checker.Running = false;
 
-        foreach (var rabbit in _worldManager.foxList)
-        {
-            rabbit.TryGetComponent<AgentFox>(out var agent);
-            agent.DestroyAgent();
-        }
+        // Delete possibly remaining rabbits
+        if (Checker.RabbitCounter != 0)
+            foreach (var rabbit in FindObjectsOfType<AgentRabbit>())
+                if (rabbit)
+                {
+                    Checker.RabbitCounter--;
+                    Destroy(rabbit.gameObject);
+                }
+
+        Debug.Log("Checker.RabbitCounter: " + Checker.RabbitCounter);
+
+        // Delete possibly remaining foxes
+        if (Checker.FoxCounter != 0)
+            foreach (var fox in FindObjectsOfType<AgentFox>())
+                if (fox)
+                {
+                    Checker.FoxCounter--;
+                    Destroy(fox.gameObject);
+                }
+
+        Debug.Log("Checker.FoxCounter: " + Checker.FoxCounter);
 
         _timer.ResetTimer();
 
-        Destroy(_worldManager.world);
+        Destroy(_worldManager.World);
 
         _worldManager = WorldManager.ResetInstance();
-        assetManager = AssetManager.ResetInstance();
+        _assetManager = AssetManager.ResetInstance();
 
-        // SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().name);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-
-        // // Check if a random seed is wanted
-        // if (useRandomSeed)
-        // {
-        //     seed = Time.realtimeSinceStartupAsDouble.ToString();
-        // }
-        //
-        // _noiseWithClamp.NoiseGenerator = new NoiseGenerator(noiseSettings, seed);
-        // _noiseWithClamp.ValueClamp = new ValueClamp();
-        //
-        // _plants = new Plants
-        // {
-        //     PlantsList = plantsList,
-        //     PlantParents = _plantParents
-        // };
-        //
-        // _burrows = new Burrows
-        // {
-        //     BurrowsList = initialBurrowsList,
-        //     Burrow = burrow,
-        //     BurrowParents = _burrowParents
-        // };
-        //
-        // _running = _worldManager.GenerateInitialWorld(resolution, maxTerrainHeight, waterLevel, generalSettings,
-        //     noiseSettings, _noiseWithClamp, groundGenerator, waterGenerator, assetManager, _plants, _burrows);
-        //
-        // if (_running)
-        // {
-        //     _timer.BeginTimer();
-        // }
-        // else
-        // {
-        //     Debug.Log("Error while generating world");
-        // }
-    }
-
-    private void RespawnPlants()
-    {
-        assetManager.SpawnPlants();
-    }
-
-    void Check()
-    {
-        if ((_worldManager.rabbitList.Count == 0 || _worldManager.foxList.Count == 0))
+        var scene = SceneManager.GetActiveScene();
+        if (scene.name.Equals("WorldGen1"))
         {
-            // Debug.Log("Reload cause 0");
-            ReloadWorld();
+            Debug.Log("<color=#7dff33>Reload: WorldGen2</color>");
+            SceneManager.LoadScene("WorldGen2");
+        }
+        else if (scene.name.Equals("WorldGen2"))
+        {
+            Debug.Log("<color=#7dff33>Reload: WorldGen1</color>");
+            SceneManager.LoadScene("WorldGen1");
         }
     }
+
+    /// <summary>
+    ///     Respawn plants.
+    /// </summary>
+    private void RespawnPlants()
+    {
+        _worldManager.RespawnPlants(_plants);
+    }
+
+    /// <summary>
+    ///     Check if one of the counters is 0. Then reload the world.
+    ///     Check if
+    /// </summary>
+    private void Check()
+    {
+        if (!Checker.Running) return;
+
+        if (Checker.RabbitCounter <= 0 || Checker.FoxCounter <= 0) ReloadWorld();
+
+        // Checker.CheckCarrots(_plants);
+    }
+
+    /// <summary>
+    /// Change the current view from flyCam to FirstPerson and back.
+    /// </summary>
+    public void ChangeView()
+    {
+        switch (generalMenuSettings.watchMode)
+        {
+            case WatchMode.FlyCam:
+            {
+                generalMenuSettings.watchMode = WatchMode.FirstPerson;
+                
+                // Destroy FlyCam
+                var pos = FindObjectOfType<FlyCam>().gameObject.transform.position;
+                
+                DestroyImmediate(FindObjectOfType<FlyCam>().gameObject);
+
+                // Instantiate the first person controller
+                _fps = Instantiate(firstPerson,
+                    GeneratorFunctions.GetSurfacePointFromWorldCoordinate(pos.x, pos.z, resolution, maxTerrainHeight, _worldManager.Map,
+                        generalMenuSettings), Quaternion.identity);
+                pos = _fps.transform.position;
+                pos.y += 2.5f;
+                _fps.transform.position = pos;
+                
+                break;
+            }
+            case WatchMode.FirstPerson:
+            {
+                generalMenuSettings.watchMode = WatchMode.FlyCam;
+
+                // Destroy
+                var pos = FindObjectOfType<FirstPersonController>().gameObject.transform.position;
+                
+                DestroyImmediate(FindObjectOfType<FirstPersonController>().gameObject);
+                
+                // Instantiate the FlyCam
+                _flyCam = Instantiate(flyCam.gameObject, new Vector3(pos.x, maxTerrainHeight + 25f, pos.z), Quaternion.identity);
+
+                break;
+            }
+        }
+    }
+
+    #endregion
 }

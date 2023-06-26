@@ -24,3 +24,8 @@
 *.pidb.meta
 *.pdb.meta
 *.mdb.meta
+
+# project specific files
+*_timers.json
+Assets/ml-agents/Timers
+Assets/ml-agents/Training Configs/results/

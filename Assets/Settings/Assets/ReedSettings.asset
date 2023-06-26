@@ -15,42 +15,21 @@ MonoBehaviour:
   assetPrefab:
   - {fileID: 190654, guid: f80320821301293469fd7263b5c778a3, type: 3}
   parent: {fileID: 2748929397329019754, guid: aff7cbc84eb009b4d8a57b8397be6317, type: 3}
-  minNumber: 100
-  radius: 7.612626
+  maxNumber: 75
+  numberOfPlacementAttempts: 5000
+  radius: 6.043966
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
   nearWater: 1
+  inMountainArea: 0
   lifespan:
     day: 0
-    week: 0
     month: 0
     year: 1
   percentageAge: 0
   reproductionChance: 0
   assets:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

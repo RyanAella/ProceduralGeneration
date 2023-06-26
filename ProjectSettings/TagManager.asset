@@ -13,6 +13,7 @@ TagManager:
   - Grass
   - Reed
   - Tree
+  - Camera
   layers:
   - Default
   - TransparentFX
@@ -27,7 +28,7 @@ TagManager:
   - Tree
   - Reed
   - Grass
-  - 
+  - Player
   - 
   - 
   - 
