@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace _Scripts.ml_agents.Agents.Handler
@@ -14,14 +13,14 @@ namespace _Scripts.ml_agents.Agents.Handler
         private string _toSearchForTag;
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             _agent = gameObject.GetComponent<CustomAgent>();
             _toSearchForTag = _agent.type.ToString();
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             CheckSomeoneInGroupHearsEnemy();
         }

@@ -50,6 +50,7 @@ namespace _Scripts.ml_agents.Agents.Handler
         }
         private void CheckSoundOrigin(CustomAgent loudAgent)
         {
+            //check if loud agent is not itself & is an enemy
             if (_agent != loudAgent && loudAgent.type == enemy)
             {
                 lastEnemySoundDistance = Vector3.Distance(transform.position, loudAgent.transform.position);

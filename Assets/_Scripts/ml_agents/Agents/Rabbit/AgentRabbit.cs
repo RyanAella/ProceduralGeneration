@@ -4,12 +4,12 @@ namespace _Scripts.ml_agents.Agents.Rabbit
 {
     public class AgentRabbit : CustomAgent
     {
-        void Start()
+        private void Start()
         {
             interaction.foodTag = "Carrot";
         }
 
-        void Update()
+        private void Update()
         {
             if (Input.GetKeyDown(KeyCode.L) && isInBurrow)
             {

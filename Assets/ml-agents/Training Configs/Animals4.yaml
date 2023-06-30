@@ -24,7 +24,11 @@ behaviors:
     max_steps:  40000000
     time_horizon:   256
     summary_freq:   20000
+<<<<<<< HEAD
     threaded:   true
+=======
+    threaded:   false
+>>>>>>> training-old
   Fox:
     trainer_type: ppo
     hyperparameters:
@@ -50,4 +54,8 @@ behaviors:
     max_steps:  40000000
     time_horizon:   256
     summary_freq:   20000
+<<<<<<< HEAD
     threaded:   true
+=======
+    threaded:   false
+>>>>>>> training-old

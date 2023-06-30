@@ -6,7 +6,7 @@ using _Scripts.Cameras.FirstPerson;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace _Scripts.Cameras
+namespace _Scripts.Cameras.FirstPerson
 {
     public class FirstPersonInputManager : MonoBehaviour
     {

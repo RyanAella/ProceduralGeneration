@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Resources/URP/New Universal Render Pipeline Asset.asset.meta
 guid: be8aa407f684968489b310dff30fa089
+========
+guid: c385cd8d6b3785c4aaf8a2610e5ac54a
+>>>>>>>> training-old:Assets/Resources/URP/New Universal Render Pipeline Asset_Renderer.asset.meta
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 11400000

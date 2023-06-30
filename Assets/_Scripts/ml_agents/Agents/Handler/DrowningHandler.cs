@@ -15,7 +15,7 @@ namespace _Scripts.ml_agents.Agents.Handler
         private float _timerSeconds;
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             _agent = gameObject.GetComponent<CustomAgent>();
         }
@@ -23,6 +23,7 @@ namespace _Scripts.ml_agents.Agents.Handler
         // Update is called once per frame
         void Update()
         {
+            //check that agent is not drowning in burrow
             if (!isDrowning && nose.position.y < drowningHeight && !_agent.isInBurrow)
             {
                 isDrowning = true;

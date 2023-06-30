@@ -1,8 +1,15 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Resources/Materials/Watcher/FirstPerson.mat.meta
 guid: 63632415d7df2cf41919e8d019b6d342
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 0
+========
+guid: 8db2bac5be37f2847a162ea154ba376a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 4300000
+>>>>>>>> training-old:Assets/Resources/Meshes/carrot.mesh.meta
   userData: 
   assetBundleName: 
   assetBundleVariant: 

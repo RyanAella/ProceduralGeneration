@@ -1,8 +1,15 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Resources/URP/New Universal Render Pipeline Asset_Renderer.asset.meta
 guid: c385cd8d6b3785c4aaf8a2610e5ac54a
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 11400000
+========
+guid: 63632415d7df2cf41919e8d019b6d342
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+>>>>>>>> training-old:Assets/Resources/Materials/Watcher/FirstPerson.mat.meta
   userData: 
   assetBundleName: 
   assetBundleVariant: 

@@ -48,12 +48,11 @@ namespace _Scripts.Menu
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Tab))
-            {
-                _selectedInput++;
-                if (_selectedInput > 3) _selectedInput = 0;
-                SelectInputField();
-            }
+            if (!Input.GetKeyDown(KeyCode.Tab)) return;
+            
+            _selectedInput++;
+            if (_selectedInput > 3) _selectedInput = 0;
+            SelectInputField();
         }
 
         private void SelectInputField()

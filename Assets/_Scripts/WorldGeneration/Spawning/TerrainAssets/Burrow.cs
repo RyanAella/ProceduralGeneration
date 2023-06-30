@@ -28,7 +28,6 @@ namespace _Scripts.WorldGeneration.Spawning.TerrainAssets
         private bool _canDie;
         private InGameDate _dayOfDeath;
         private int _lastSpawnPoint;
-        private TimeManager _timer;
 
         private void Awake()
         {
@@ -41,7 +40,6 @@ namespace _Scripts.WorldGeneration.Spawning.TerrainAssets
 
         private void Start()
         {
-            _timer = TimeManager.Instance;
             WorldManager.GetInstance();
 
             // Get the dates and check if they are in the correct form

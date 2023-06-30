@@ -13,7 +13,6 @@ namespace _Scripts.Cameras.FlyCam
         private FlyCam _cam;
         private InputMaster.FlyCamActions _flyCamActions;
 
-        private GameManager _gameManager;
         private InputMaster _inputMaster;
 
         #endregion
@@ -25,8 +24,7 @@ namespace _Scripts.Cameras.FlyCam
             _inputMaster = new InputMaster();
             _flyCamActions = _inputMaster.FlyCam;
 
-            _cam = GetComponent<Cameras.FlyCam.FlyCam>();
-            _gameManager = GameManager.Instance;
+            _cam = GetComponent<FlyCam>();
 
             _flyCamActions.Up.performed += ctx => _cam.UpAndDown(1f);
             _flyCamActions.Up.canceled += ctx => _cam.UpAndDownDone();

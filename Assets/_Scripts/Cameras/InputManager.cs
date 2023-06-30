@@ -2,7 +2,6 @@
 * Copyright (c) mmq
 */
 
-using System;
 using UnityEngine;
 
 namespace _Scripts.Cameras

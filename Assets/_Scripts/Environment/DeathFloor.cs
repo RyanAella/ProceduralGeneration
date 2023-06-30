@@ -9,17 +9,16 @@ namespace _Scripts.Environment
         {
             if (other.gameObject.tag.Equals("Rabbit") || other.gameObject.tag.Equals("Fox"))
             {
-                if (other.gameObject.tag.Equals("Rabbit"))
+                switch (other.gameObject.tag)
                 {
-                    Checker.RabbitCounter--;
+                    case "Rabbit":
+                        Checker.RabbitCounter--;
+                        break;
+                    case "Fox":
+                        Checker.FoxCounter--;
+                        break;
                 }
 
-                if (other.gameObject.tag.Equals("Fox"))
-                {
-                    Checker.FoxCounter--;
-                }
-
-                Debug.Log(other.gameObject.tag + " killed by DeathFloor");
                 Destroy(other.gameObject);
             }
         }

@@ -1,9 +1,17 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Resources/Textures/GrassTexture3.png.meta
 guid: 887b0f4165d5a6e4c9c78bae86165261
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 11
+========
+guid: 43437a52e967b6944be6b515daead6e1
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 12
+>>>>>>>> training-old:Assets/Resources/Pictures/Octave1_3_5_8.png.meta
   mipmaps:
     mipMapMode: 0
     enableMipMap: 1
@@ -63,6 +71,10 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+<<<<<<<< HEAD:Assets/Resources/Textures/GrassTexture3.png.meta
+========
+  cookieLightType: 0
+>>>>>>>> training-old:Assets/Resources/Pictures/Octave1_3_5_8.png.meta
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform

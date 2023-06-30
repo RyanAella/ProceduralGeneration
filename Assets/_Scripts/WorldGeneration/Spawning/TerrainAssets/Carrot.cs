@@ -6,7 +6,6 @@ using _Scripts.InGameTime;
 using _Scripts.ml_agents.Agents;
 using _Scripts.WorldGeneration.ScriptableObjects;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _Scripts.WorldGeneration.Spawning.TerrainAssets
 {
@@ -24,7 +23,6 @@ namespace _Scripts.WorldGeneration.Spawning.TerrainAssets
         public InGameDate dayOfDeath;
         public InGameDate fertilityDate;
         private bool _getsEaten;
-        private AssetManager _assetManager;
         private bool _reproductionChance;
         
         public bool isFertile;
@@ -35,7 +33,7 @@ namespace _Scripts.WorldGeneration.Spawning.TerrainAssets
 
         private void Awake()
         {
-            _assetManager = AssetManager.GetInstance();
+            AssetManager.GetInstance();
 
             // Get the size and calculate the radius
             var size = gameObject.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size;
@@ -88,16 +86,10 @@ namespace _Scripts.WorldGeneration.Spawning.TerrainAssets
         /// </summary>
         private void Dying()
         {
-            try
+            if(settings.assets.Contains(gameObject))
             {
-                if(settings.assets.Contains(gameObject))
-                {
-                    settings.assets.Remove(gameObject);
-                    Destroy(gameObject);
-                }
-            }
-            catch {
-                Debug.LogWarning("Could not Destroy Carrot");
+                settings.assets.Remove(gameObject);
+                Destroy(gameObject);
             }
         }
 

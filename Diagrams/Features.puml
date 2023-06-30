@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 ﻿@startuml Rabbit
+=======
+﻿@startuml Features
+skinparam ArrowHeadColor none
+>>>>>>> training-old
 
 <style>
     activityDiagram {
@@ -36,6 +41,7 @@
 
 start
     split
+<<<<<<< HEAD
         <<Implemented>> <<Base>> :Ground;
             split
                 <<Implemented>> <<Base>> :Land;
@@ -64,6 +70,19 @@ start
                         detach
                     end split
         split again
+=======
+        <<Implemented>> <<Base>> :World;
+            split
+                <<Implemented>> <<Base>> :Land;
+                split
+                    <<Implemented>> <<Mesh>> :Mesh;
+                    detach
+                split again
+                    <<SemiImplemented>> :TerrainShader;
+                    detach
+                end split
+            split again
+>>>>>>> training-old
             <<Implemented>> <<Base>> :Water;
                 split
                     <<Implemented>> <<Mesh>> :Mesh;
@@ -72,7 +91,31 @@ start
                     <<SemiImplemented>> :WaterShader;
                     detach
                 end split
+<<<<<<< HEAD
         end split
+=======
+            split again
+                <<Implemented>> <<Asset>> :Assets;
+                split
+                    <<Implemented>> <<Asset>> :Carrots;                            
+                    split again
+                        <<Implemented>> <<Asset>> :Trees;                            
+                    split again
+                        <<Implemented>> <<Asset>> :Reed;                            
+                    split again
+                        <<Implemented>> <<Asset>> :Grass;                    
+                    split again
+                        <<Implemented>> <<Asset>> :Burrows;
+                    split
+                        <<Implemented>> <<Asset>> :Rabbit;                                
+                    split again
+                        <<Implemented>> <<Asset>> :Fox;                                
+                    end split 
+                end split
+                <<Wip>> :Reproduction;
+                detach
+            end split
+>>>>>>> training-old
     split again
         <<Implemented>> <<Base>> :Timer;
             <<Implemented>> <<Asset>> :Clock;
@@ -91,6 +134,7 @@ start
             end split
     end split
 
+<<<<<<< HEAD
     
 
 
@@ -162,4 +206,6 @@ start
 '    end split
 'end split
 
+=======
+>>>>>>> training-old
 @enduml

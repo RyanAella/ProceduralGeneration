@@ -386,7 +386,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_BrainParameters:
     VectorObservationSize: 23
-    NumStackedVectorObservations: 10
+    NumStackedVectorObservations: 3
     m_ActionSpec:
       m_NumContinuousActions: 4
       BranchSizes: 020000000200000002000000020000000200000002000000
@@ -431,13 +431,13 @@ MonoBehaviour:
   thirst: 0
   hunger: 0
   thresholdHungerThirstForRecovery: 50
-  healthRecoveryAmount: 0.3
-  staminaRecoveryAmount: 0.75
+  healthRecoveryAmount: 0.5
+  staminaRecoveryAmount: 0.8
   nutritionValue: 8
   hasBred: 0
   hasBurrowBuild: 0
   lastBurrow: {x: -1, y: -1, z: -1}
-  deathPenalty: -8
+  deathPenalty: -20
   controller: {fileID: 2619528471722129941}
   movement: {fileID: 8770803600216680132}
   protectionHandler: {fileID: 720969800}
@@ -493,7 +493,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mouth: {fileID: 4814573581355962727}
-  interactionRange: 1.6
+  interactionRange: 5
   interactableLayer:
     serializedVersion: 2
     m_Bits: 208
@@ -506,9 +506,9 @@ MonoBehaviour:
   isBurrowBuildableHere: 0
   isStandingBeforeBurrow: 0
   detectedBurrow: {fileID: 0}
-  rewardForBreeding: 5
-  rewardForDoingSomethingCorrect: 1
-  penaltyForTryingToDoSomethingWithoutCorrectConditions: -1
+  rewardForBreeding: 15
+  rewardForDoingSomethingCorrect: 7
+  penaltyForTryingToDoSomethingWithoutCorrectConditions: -2
   debugColor: '#ff981d'
   agent: {fileID: 720969804}
 --- !u!114 &720969802
@@ -541,10 +541,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ageInMonths: 0
-  ageWhenAdult: 5
-  hungerIncreasePerMonth: 20
-  thirstIncreasePerMonth: 20
-  rewardSurvivingMonth: 2
+  ageWhenAdult: 3
+  hungerIncreasePerMonth: 25
+  thirstIncreasePerMonth: 25
+  rewardSurvivingMonth: 25
 --- !u!114 &7469092757165889917
 MonoBehaviour:
   m_ObjectHideFlags: 0

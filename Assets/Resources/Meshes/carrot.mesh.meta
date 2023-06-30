@@ -1,8 +1,15 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Resources/Meshes/carrot.mesh.meta
 guid: 8db2bac5be37f2847a162ea154ba376a
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 4300000
+========
+guid: be8aa407f684968489b310dff30fa089
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+>>>>>>>> training-old:Assets/Resources/URP/New Universal Render Pipeline Asset.asset.meta
   userData: 
   assetBundleName: 
   assetBundleVariant: 

@@ -95,7 +95,6 @@ public class GameManager : MonoBehaviour
     private TimeManager _timer;
     private WorldManager _worldManager;
     private bool _initialWorldGenerated;
-    private GameObject _flyCam;
     private GameObject _fps;
 
     #endregion
@@ -128,7 +127,7 @@ public class GameManager : MonoBehaviour
             _timer.BeginTimer();
         }
 
-        // Subscribe();
+        Subscribe();
     }
 
     /// <summary>
@@ -223,8 +222,6 @@ public class GameManager : MonoBehaviour
                     Destroy(rabbit.gameObject);
                 }
 
-        Debug.Log("Checker.RabbitCounter: " + Checker.RabbitCounter);
-
         // Delete possibly remaining foxes
         if (Checker.FoxCounter != 0)
             foreach (var fox in FindObjectsOfType<AgentFox>())
@@ -233,8 +230,6 @@ public class GameManager : MonoBehaviour
                     Checker.FoxCounter--;
                     Destroy(fox.gameObject);
                 }
-
-        Debug.Log("Checker.FoxCounter: " + Checker.FoxCounter);
 
         _timer.ResetTimer();
 
@@ -313,7 +308,7 @@ public class GameManager : MonoBehaviour
                 DestroyImmediate(FindObjectOfType<FirstPersonController>().gameObject);
                 
                 // Instantiate the FlyCam
-                _flyCam = Instantiate(flyCam.gameObject, new Vector3(pos.x, maxTerrainHeight + 25f, pos.z), Quaternion.identity);
+                Instantiate(flyCam.gameObject, new Vector3(pos.x, maxTerrainHeight + 25f, pos.z), Quaternion.identity);
 
                 break;
             }

@@ -8,18 +8,18 @@ namespace _Scripts.ml_agents.Agents.Handler
         [Space(5)] 
         [Header("Age")] 
         public int ageInMonths;
-        public int ageWhenAdult = 4;
+        public int ageWhenAdult = 3;
 
         [Header("Reduction Per Month")] 
-        public int hungerIncreasePerMonth = 20; // 4 carrots per month / 3min
-        public int thirstIncreasePerMonth = 20; // 4 carrots per month / 3min
+        public int hungerIncreasePerMonth = 20;
+        public int thirstIncreasePerMonth = 20;
 
         [Header("Rewards")] 
         public int rewardSurvivingMonth = 2;
 
         private CustomAgent _agent;
 
-        void Start()
+        private void Start()
         {
             _agent = gameObject.GetComponent<CustomAgent>();
             gameObject.GetComponent<InteractionHandler>();

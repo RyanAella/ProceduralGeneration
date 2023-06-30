@@ -29,7 +29,6 @@ namespace _Scripts.WorldGeneration.ScriptableObjects
         public float percentageAge;
         public float reproductionChance;
 
-        /*[HideInInspector] */
-        public List<GameObject> assets;
+        [HideInInspector] public List<GameObject> assets;
     }
 }

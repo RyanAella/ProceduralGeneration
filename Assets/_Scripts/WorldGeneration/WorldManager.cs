@@ -196,7 +196,6 @@ namespace _Scripts.WorldGeneration
             }
 
             Object.Destroy(groundGenerator);
-            Debug.Log("False in groundGenerated");
             return false;
         }
 

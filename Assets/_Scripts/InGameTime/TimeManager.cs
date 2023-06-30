@@ -133,22 +133,21 @@ namespace _Scripts.InGameTime
     public class TimeManager : MonoBehaviour
     {
         #region Variables
-        
-        // fixed time intervals for one second
-        [SerializeField] private float timeInterval = 0.5f;
 
         public static TimeManager Instance;
-
         public static event Action OnDayChanged;
         public static event Action OnMonthChanged;
         public static event Action OnYearChanged;
 
         private static InGameDate _inGameDate;
+        
+        // fixed time intervals for one second
+        private readonly float _timeInterval = 0.5f;
 
         // private float timeScale = 1.0f;
         private float _lastTimeScale;
 
-        private readonly float _daysToRealTime = 6.0f; // 6s are one day
+        private readonly float dayToRealTimeSeconds = 6.0f; // 6s are one day
         // private float _weekToRealTime = 42.0f; // 42s are one week
         // private float _monthToRealTime = 168.0f; // 168s are one month
         // private float _yearsToRealTime = 2016.0f; // 2016s are one year
@@ -179,7 +178,7 @@ namespace _Scripts.InGameTime
                 month = 0,
                 year = 0
             };
-            _timer = _daysToRealTime;
+            _timer = dayToRealTimeSeconds;
 
             // UnityEngine.Time.timeScale = 2f;
             _lastTimeScale = Time.timeScale;
@@ -192,12 +191,12 @@ namespace _Scripts.InGameTime
         private IEnumerator UpdateTime()
         {
             // multiply timer with 1 / timeInterval
-            _timer *= 1 / timeInterval;
+            _timer *= 1 / _timeInterval;
 
             while (_timerGoing)
             {
                 // wait for timeInterval -> two ticks per second
-                yield return new WaitForSeconds(timeInterval);
+                yield return new WaitForSeconds(_timeInterval);
                 _timer--;
 
                 if (_timer <= 0)
@@ -220,7 +219,7 @@ namespace _Scripts.InGameTime
                     }
 
                     // reset day timer
-                    _timer = _daysToRealTime * (1 / timeInterval);
+                    _timer = dayToRealTimeSeconds * (1 / _timeInterval);
                 }
 
                 yield return null;
@@ -249,7 +248,6 @@ namespace _Scripts.InGameTime
         /// </summary>
         public void Stop()
         {
-            // Debug.Log("Pause Game");
             EndTimer();
             _lastTimeScale = Time.timeScale;
             Time.timeScale = 0.0f;
@@ -260,7 +258,6 @@ namespace _Scripts.InGameTime
         /// </summary>
         public void Resume()
         {
-            // Debug.Log("Resume Game");
             BeginTimer();
             Time.timeScale = _lastTimeScale;
         }
@@ -270,7 +267,6 @@ namespace _Scripts.InGameTime
         /// </summary>
         public void ResetTimer()
         {
-            // Debug.Log("Reset Timer");
             _inGameDate = new InGameDate
             {
                 day = 1,
@@ -278,7 +274,7 @@ namespace _Scripts.InGameTime
                 month = 0,
                 year = 0
             };
-            _timer = _daysToRealTime;
+            _timer = dayToRealTimeSeconds;
 
             // UnityEngine.Time.timeScale = 2f;
             _lastTimeScale = Time.timeScale;
@@ -294,7 +290,6 @@ namespace _Scripts.InGameTime
         {
             _lastTimeScale = Time.timeScale;
             Time.timeScale = timeScale;
-            // Debug.Log("timeScale: " + UnityEngine.Time.timeScale);
         }
 
         /// <summary>
@@ -317,7 +312,7 @@ namespace _Scripts.InGameTime
         /// <returns>The time in seconds</returns>
         public float GetDaysToRealtime()
         {
-            return _daysToRealTime;
+            return dayToRealTimeSeconds;
         }
     }
 }

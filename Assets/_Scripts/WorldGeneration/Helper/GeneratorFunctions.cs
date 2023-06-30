@@ -23,7 +23,6 @@ namespace _Scripts.WorldGeneration.Helper
             var zLow = Mathf.FloorToInt(z);
             var zHigh = Mathf.CeilToInt(z);
 
-            // Debug.Log(xLow + ", " + zLow);
             var val00 = map[xLow, zLow];
             var val01 = map[xLow, zHigh];
             var val10 = map[xHigh, zLow];
@@ -35,10 +34,10 @@ namespace _Scripts.WorldGeneration.Helper
             // values for:
             //      - r1 val00 -> val10,
             //      - r2 val01 -> val11
-            var r1 = (xHigh - x) * val00 + (x - xLow) * val10;
-            var r2 = (xHigh - x) * val01 + (x - xLow) * val11;
+            var r1 = ((xHigh - x) / (xHigh - xLow)) * val00 + ((x - xLow) / (xHigh - xLow)) * val10;
+            var r2 = ((xHigh - x) / (xHigh - xLow)) * val01 + ((x - xLow) / (xHigh - xLow)) * val11;
 
-            var yPos = (zHigh - z) * r1 + (z - zLow) * r2;
+            var yPos = ((zHigh - z) / (zHigh - zLow)) * r1 + ((z - zLow) / (zHigh - zLow)) * r2;
 
             var mapWidth = resolution.x * generalSettings.squareSize;
             var mapHeight = resolution.y * generalSettings.squareSize;

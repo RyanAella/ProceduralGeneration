@@ -12,16 +12,16 @@ namespace _Scripts.ml_agents.Agents.Handler
         [Range(0.1f, 10)] public float interactionRange = 0.5f;
         public LayerMask interactableLayer;
 
-        [Space(10)] [Header("Eating")] public bool canEat = false;
+        [Space(10)] [Header("Eating")] public bool canEat;
         public string foodTag;
         public GameObject detectedFood;
 
-        [Space(10)] [Header("Drinking")] public bool canDrink = false;
+        [Space(10)] [Header("Drinking")] public bool canDrink;
         public int thirstDecreasePerDrink = 1;
 
         [Space(10)] [Header("Burrow")] public bool canBuildBurrow;
         public bool isBurrowBuildableHere;
-        public bool isStandingBeforeBurrow = false;
+        public bool isStandingBeforeBurrow;
         public GameObject detectedBurrow;
 
         [Space(10)] [Header("Rewards")] 
@@ -100,9 +100,9 @@ namespace _Scripts.ml_agents.Agents.Handler
                         //must be checked because other agents could interact at same time or carrot dies
                         if (detectedFood != null)
                         {
-                            detectedFood.TryGetComponent<Carrot>(out Carrot toEatCarrot);
+                            detectedFood.TryGetComponent(out Carrot toEatCarrot);
                             toEatCarrot.Eat(agent);
-                            Debug.Log("<color=" + debugColor + ">" + agent.type + "</color>" + " - " + "ate succesful [" + agent.GetComponent<AgentRabbit>().id + "]");
+                            Debug.Log("<color=" + debugColor + ">" + agent.type + "</color>" + " - " + "ate successful [" + agent.GetComponent<AgentRabbit>().id + "]");
                         } else
                         {
                             
@@ -113,9 +113,9 @@ namespace _Scripts.ml_agents.Agents.Handler
                         //check because rabbit could die in between
                         if(detectedFood != null)
                         {
-                            detectedFood.TryGetComponent<CustomAgent>(out CustomAgent toEatAgent);
+                            detectedFood.TryGetComponent(out CustomAgent toEatAgent);
                             toEatAgent.GotAttacked(agent);
-                            Debug.Log("<color=" + debugColor + ">" + agent.type + "</color>" + " - " + "ate succesful [" + agent.GetComponent<AgentFox>().id + "]");
+                            Debug.Log("<color=" + debugColor + ">" + agent.type + "</color>" + " - " + "ate successful [" + agent.GetComponent<AgentFox>().id + "]");
                         } else
                         {
                             Debug.LogWarning("<color=" + debugColor + ">" + agent.type + "</color>" + " - " + " rabbit to eat already destroyed [" + agent.GetComponent<AgentFox>().id + "]");
@@ -124,7 +124,7 @@ namespace _Scripts.ml_agents.Agents.Handler
                 }
                 if(agent.hunger >= 0)
                 {
-                    agent.AddReward(rewardForDoingSomethingCorrect*3);
+                    agent.AddReward(rewardForDoingSomethingCorrect*2.25f);
                 }
             }
         }
@@ -133,7 +133,7 @@ namespace _Scripts.ml_agents.Agents.Handler
         {
             if (canDrink)
             {
-                Debug.Log("<color=" + debugColor + ">" + agent.type + "</color>" + " - " + "drunk succesful [" + agent.id + "]");
+                Debug.Log("<color=" + debugColor + ">" + agent.type + "</color>" + " - " + "drunk successful [" + agent.id + "]");
                 agent.BlockInteractionsForSeconds(1f);
 
                 if (agent.thirst > -30)
@@ -158,10 +158,10 @@ namespace _Scripts.ml_agents.Agents.Handler
         {
             if (CheckAllConditionsForBreeding())
             {
-                Debug.Log("<color=" + debugColor + ">" + agent.type + "</color>" + " - " + "breeded succesful [" + agent.id + "]");
+                Debug.Log("<color=" + debugColor + ">" + agent.type + "</color>" + " - " + "bred successful [" + agent.id + "]");
                 agent.hasBred = true;
                 agent.AddReward(rewardForBreeding);
-                transform.parent.TryGetComponent<Burrow>(out Burrow burrow);
+                transform.parent.TryGetComponent(out Burrow burrow);
                 burrow.Breed(agent);
                 agent.BlockInteractionsForSeconds(20);
             }
@@ -172,8 +172,8 @@ namespace _Scripts.ml_agents.Agents.Handler
             if (CheckAllConditionsForEnteringBurrow())
             {
                 agent.BlockInteractionsForSeconds(3);
-                //Debug.Log("<color=" + debugColor + ">" + agent.type + "</color>" + " - " + "entered burrow succesful [" + agent.id + "]");
-                detectedBurrow.transform.parent.TryGetComponent<Burrow>(out var burrow);
+                //Debug.Log("<color=" + debugColor + ">" + agent.type + "</color>" + " - " + "entered burrow successful [" + agent.id + "]");
+                detectedBurrow.transform.parent.TryGetComponent(out Burrow burrow);
                 burrow.Enter(gameObject, agent, agent.controller);
             }
         }
@@ -183,8 +183,8 @@ namespace _Scripts.ml_agents.Agents.Handler
             if (agent.isInBurrow)
             {
                 agent.BlockInteractionsForSeconds(3);
-                //Debug.Log("<color=" + debugColor + ">" + agent.type + "</color>" + " - " + "left burrow succesful [" + agent.id + "]");
-                transform.parent.TryGetComponent<Burrow>(out var burrow);
+                //Debug.Log("<color=" + debugColor + ">" + agent.type + "</color>" + " - " + "left burrow successful [" + agent.id + "]");
+                transform.parent.TryGetComponent(out Burrow burrow);
 
                 //save position of last visited burrow
                 agent.lastBurrow = transform.parent.position;
@@ -198,7 +198,7 @@ namespace _Scripts.ml_agents.Agents.Handler
             {
                 agent.BlockInteractionsForSeconds(5f);
                 agent.hasBurrowBuild = true;
-                Debug.Log("<color=" + debugColor + ">" + agent.type + "</color>" + " - " + "builded burrow succesful [" + agent.id + "]");
+                Debug.Log("<color=" + debugColor + ">" + agent.type + "</color>" + " - " + "built burrow successful [" + agent.id + "]");
                 AssetManager.GetInstance().BuildBurrow(gameObject, this, agent);
             }
         }
@@ -207,7 +207,8 @@ namespace _Scripts.ml_agents.Agents.Handler
         {
             if (isStandingBeforeBurrow && !agent.isInBurrow)
             {
-                detectedBurrow.transform.parent.TryGetComponent<Burrow>(out var burrow);
+                detectedBurrow.transform.parent.TryGetComponent(out Burrow burrow);
+
                 return burrow.inhabitants.Count < 2;
             }
 
@@ -244,7 +245,7 @@ namespace _Scripts.ml_agents.Agents.Handler
          * sets agent as has bred and returning true, 
          * if breeding is possible
          */
-        public bool CanIBreed()
+        private bool CanIBreed()
         {
             if (agent.isAdult && !agent.hasBred)
             {

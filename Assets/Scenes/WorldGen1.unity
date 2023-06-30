@@ -504,9 +504,9 @@ MonoBehaviour:
   waterLevel: 0.15
   mountainArea: 0.99
   useRandomSeed: 1
-  seed: Hello World!
+  seed: Labor Games 2023
   generalSettings: {fileID: 11400000, guid: 22871bac2f6726641b0f5d842a4349ec, type: 2}
-  generalMenuSettings: {fileID: 0}
+  generalMenuSettings: {fileID: 11400000, guid: 0d4b6d9be7fcfb34b97060b8f5f0e40a, type: 2}
   noiseSettings: {fileID: 11400000, guid: fb78098282b2a5342bad8ffa96571dbd, type: 2}
   groundGenerator: {fileID: 6045032558767503097, guid: 1b6bf5a46ef613f46bd9d7537ab8f4aa, type: 3}
   waterGenerator: {fileID: 8391093040582111047, guid: bbad8adef54a3f94c96f956ec681e2e3, type: 3}

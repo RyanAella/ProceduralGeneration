@@ -1,7 +1,6 @@
 ﻿using _Scripts.InGameTime;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _Scripts.UI
 {

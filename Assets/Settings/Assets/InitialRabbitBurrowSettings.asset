@@ -24,11 +24,4 @@ MonoBehaviour:
     day: 0
     month: 0
     year: 2
-  assets:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  assets: []

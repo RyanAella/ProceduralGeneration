@@ -68,8 +68,9 @@ namespace _Scripts.ml_agents.Agents
         {
             HandleHeadRotation();
             HandleMovementAndRotation();
-            _animator.SetFloat(Speed, walkSpeed);
 
+            //updating animation after AI input
+            _animator.SetFloat(Speed, walkSpeed);
             AddGravity();
         }
 

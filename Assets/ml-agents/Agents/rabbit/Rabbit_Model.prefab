@@ -296,9 +296,9 @@ GameObject:
   - component: {fileID: 5914910881219264738}
   - component: {fileID: 6696096786512823633}
   - component: {fileID: 2766421925992730414}
-  - component: {fileID: 4008355099703617862}
   - component: {fileID: 8285904914508243193}
   - component: {fileID: 4246055255610007026}
+  - component: {fileID: 4008355099703617862}
   - component: {fileID: 7725572999302780172}
   - component: {fileID: 5507215104209848024}
   - component: {fileID: 6665658062019873143}
@@ -428,7 +428,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_BrainParameters:
     VectorObservationSize: 23
-    NumStackedVectorObservations: 10
+    NumStackedVectorObservations: 3
     m_ActionSpec:
       m_NumContinuousActions: 4
       BranchSizes: 020000000200000002000000020000000200000002000000
@@ -473,9 +473,9 @@ MonoBehaviour:
   thirst: 0
   hunger: 0
   thresholdHungerThirstForRecovery: 50
-  healthRecoveryAmount: 0.3
-  staminaRecoveryAmount: 0.75
-  nutritionValue: 10
+  healthRecoveryAmount: 0.5
+  staminaRecoveryAmount: 0.8
+  nutritionValue: 20
   hasBred: 0
   hasBurrowBuild: 0
   lastBurrow: {x: -1, y: -1, z: -1}
@@ -486,23 +486,6 @@ MonoBehaviour:
   interaction: {fileID: 4246055255610007026}
   drowningHandler: {fileID: 8285904914508243193}
   soundDetectionHandler: {fileID: 7725572999302780172}
---- !u!114 &4008355099703617862
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3780511893139373963}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27e2f7c45a3a5bd4f8051944cad97e46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ageInMonths: 0
-  ageWhenAdult: 4
-  hungerIncreasePerMonth: 20
-  thirstIncreasePerMonth: 20
-  rewardSurvivingMonth: 2
 --- !u!114 &8285904914508243193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -533,7 +516,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mouth: {fileID: 7120466918056948560}
-  interactionRange: 1.7
+  interactionRange: 4.5
   interactableLayer:
     serializedVersion: 2
     m_Bits: 80
@@ -546,11 +529,28 @@ MonoBehaviour:
   isBurrowBuildableHere: 0
   isStandingBeforeBurrow: 0
   detectedBurrow: {fileID: 0}
-  rewardForBreeding: 5
-  rewardForDoingSomethingCorrect: 1
-  penaltyForTryingToDoSomethingWithoutCorrectConditions: -1
+  rewardForBreeding: 15
+  rewardForDoingSomethingCorrect: 7
+  penaltyForTryingToDoSomethingWithoutCorrectConditions: -2
   debugColor: '#1d95ff'
   agent: {fileID: 2766421925992730414}
+--- !u!114 &4008355099703617862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3780511893139373963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27e2f7c45a3a5bd4f8051944cad97e46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ageInMonths: 0
+  ageWhenAdult: 3
+  hungerIncreasePerMonth: 25
+  thirstIncreasePerMonth: 25
+  rewardSurvivingMonth: 25
 --- !u!114 &7725572999302780172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -708,14 +708,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5003649441990605472}
-  m_LocalRotation: {x: 0.14780942, y: 0, z: 0, w: 0.9890159}
-  m_LocalPosition: {x: 0, y: -0.58, z: 1.02}
+  m_LocalRotation: {x: 0.12186928, y: 0, z: 0, w: 0.9925462}
+  m_LocalPosition: {x: 0, y: -0.12, z: 0.97}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 242560369365871309}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 17, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 14, y: 0, z: 0}
 --- !u!1 &6011071402127876466
 GameObject:
   m_ObjectHideFlags: 0

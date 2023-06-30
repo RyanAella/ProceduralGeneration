@@ -75,9 +75,8 @@ namespace _Scripts.ml_agents.Agents
         protected override void Awake()
         {
             base.Awake();
-
-            hunger = _random.Next(1, 81);
-            thirst = _random.Next(1, 81);
+            hunger = _random.Next(15, 81);
+            thirst = _random.Next(15, 81);
 
             if (type == AgentType.Rabbit)
             {
@@ -93,13 +92,11 @@ namespace _Scripts.ml_agents.Agents
 
                 Checker.FoxCounter++;
             }
-
-            //Debug.Log("<color=" + interaction.debugColor + ">" + type + "</color>" + " - " + " created [" + id + "]");
         }
 
         /*
-         * endEpsiode needed if gameobject will be destroyed
-         * OnDestroy throws errors on endding game via Unity Editor
+         * EndEpisode needed if gameObject will be destroyed
+         * OnDestroy throws errors on ending game via Unity Editor
          * ml-Agents not optimized for creating / deleting agents dynamically
          */
         private void OnDestroy()
@@ -167,25 +164,22 @@ namespace _Scripts.ml_agents.Agents
         }
 
         /**
-         * adding penbalties based on
+         * adding penalties based on
          * health state below 80
          * stamina below 50
          * hunger or thirst over 50
-         * overating / oberdrinking == hunger / thirst below -10
+         * overeating / overdrinking == hunger / thirst below -10
          */
         private void AddPenalties()
         {
             if (health <= 80) 
             {
-                AddReward(-((100 - health) / 60) * Time.deltaTime);
-            } else
-            {
-                AddReward(health/500 * Time.deltaTime);
+                AddReward(-((100 - health) / 80) * Time.deltaTime);
             }
 
             if (stamina <= 50) 
             { 
-                AddReward(-((100 - stamina) / 80) * Time.deltaTime); 
+                AddReward(-((100 - stamina) / 100) * Time.deltaTime); 
             }
 
             if (hunger >= 50 || thirst >= 50)
@@ -210,7 +204,7 @@ namespace _Scripts.ml_agents.Agents
         }
 
         /**
-         * interactions fron NN (0 or 1) mapped to bool
+         * interactions from NN (0 or 1) mapped to bool
          * calling method of interaction, based on bool
          */
         public void Interact(int v0, int v1, int v2, int v3, int v4, int v5)
@@ -257,7 +251,7 @@ namespace _Scripts.ml_agents.Agents
 
         /**
          * recovering stamina  & thirst if agent ist not moving much
-         * healt condition: stamina over 50
+         * health condition: stamina over 50
          * stamina condition: not moving much
          */
         private void Recover()
@@ -317,7 +311,7 @@ namespace _Scripts.ml_agents.Agents
         }
 
         /**
-         * starting a timer (updatet via Update())
+         * starting a timer (updated via Update())
          * for blocking agent interactions for seconds
          * @param sec seconds for blocking interactions
          */
@@ -394,7 +388,7 @@ namespace _Scripts.ml_agents.Agents
        /**
         * killing agent, includes 
         * ending episode of agent
-        * destroying the gameobject
+        * destroying the gameObject
         * 
         * reducing counter of existing agents if thi type
         */
