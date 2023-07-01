@@ -224,7 +224,7 @@ namespace _Scripts.ml_agents.Agents.Handler
                     foreach (GameObject agentGameObject in gameObject.transform.parent.GetComponent<Burrow>()
                                  .inhabitants)
                     {
-                        if (agentGameObject != this.gameObject)
+                        if (agentGameObject && agentGameObject != this.gameObject)
                         {
                             return agentGameObject.GetComponent<InteractionHandler>().CanIBreed();
                         }
