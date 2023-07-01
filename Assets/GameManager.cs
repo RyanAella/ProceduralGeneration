@@ -266,6 +266,9 @@ public class GameManager : MonoBehaviour
     private void Check()
     {
         if (!Checker.Running) return;
+        
+        Debug.Log("Checker.RabbitCounter: " + Checker.RabbitCounter);
+        Debug.Log("Checker.FoxCounter: " + Checker.FoxCounter);
 
         if (Checker.RabbitCounter <= 0 || Checker.FoxCounter <= 0) ReloadWorld();
 
@@ -289,12 +292,7 @@ public class GameManager : MonoBehaviour
                 DestroyImmediate(FindObjectOfType<FlyCam>().gameObject);
 
                 // Instantiate the first person controller
-                _fps = Instantiate(firstPerson,
-                    GeneratorFunctions.GetSurfacePointFromWorldCoordinate(pos.x, pos.z, resolution, maxTerrainHeight, _worldManager.Map,
-                        generalMenuSettings), Quaternion.identity);
-                pos = _fps.transform.position;
-                pos.y += 2.5f;
-                _fps.transform.position = pos;
+                _fps = Instantiate(firstPerson, pos, Quaternion.identity);
                 
                 break;
             }

@@ -141,14 +141,13 @@ namespace _Scripts.WorldGeneration
                     // If there is a first person controller destroy it
                     if (_flyCam != null) Object.Destroy(Object.FindObjectOfType<FlyCam>().gameObject);
 
-                    // Instantiate the first person controller
-                    _firstPersonController = Object.Instantiate(firstPerson,
-                        GeneratorFunctions.GetSurfacePointFromWorldCoordinate(0, 0, resolution, maxTerrainHeight, Map,
-                            generalSettings), Quaternion.identity);
-                    var pos = _firstPersonController.transform.position;
-                    pos.y += 2.5f;
-                    _firstPersonController.transform.position = pos;
+                    var pos = GeneratorFunctions.GetSurfacePointFromWorldCoordinate(0, 0, resolution, maxTerrainHeight,
+                        Map, generalSettings);
+                    pos.y += 10f;
                     
+                    // Instantiate the first person controller
+                    _firstPersonController = Object.Instantiate(firstPerson, pos, Quaternion.identity);
+
                     break;
                 }
             }
