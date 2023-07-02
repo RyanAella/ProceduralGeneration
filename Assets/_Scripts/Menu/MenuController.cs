@@ -115,7 +115,6 @@ namespace _Scripts.Menu
             Checker.IsStartingFromMenu = true;
 
             SceneManager.LoadSceneAsync(newGameLevel);
-            SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().name);
         }
 
         public void ExitButton()
